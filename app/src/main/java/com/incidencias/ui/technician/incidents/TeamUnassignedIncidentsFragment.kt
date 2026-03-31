@@ -16,6 +16,7 @@ import com.incidencias.databinding.FragmentActiveIncidentsBinding
 import com.incidencias.session.SessionManager
 import com.incidencias.ui.common.adapter.IncidentAdapter
 import com.incidencias.ui.incident.IncidentDetailActivity
+import com.incidencias.ui.technician.TechnicianMainActivity
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
@@ -31,10 +32,11 @@ class TeamUnassignedIncidentsFragment : Fragment(R.layout.fragment_active_incide
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentActiveIncidentsBinding.bind(view)
 
+        (requireActivity() as? TechnicianMainActivity)?.setToolbarTitle("Pendientes del equipo")
+
         setupRecycler()
         setupRefresh()
         observeUiState()
-
 
         if (savedInstanceState == null) {
             viewModel.loadIncidents(TechnicianListMode.TEAM_UNASSIGNED)

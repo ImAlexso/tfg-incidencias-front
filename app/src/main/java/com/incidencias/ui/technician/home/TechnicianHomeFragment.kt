@@ -11,7 +11,9 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.incidencias.R
 import com.incidencias.databinding.FragmentTechnicianHomeBinding
+import com.incidencias.ui.notifications.NotificationsFragment
 import com.incidencias.ui.settings.SettingsActivity
+import com.incidencias.ui.technician.TechnicianMainActivity
 import com.incidencias.ui.technician.incidents.MyAssignedIncidentsFragment
 import com.incidencias.ui.technician.incidents.TeamUnassignedIncidentsFragment
 import kotlinx.coroutines.launch
@@ -27,15 +29,20 @@ class TechnicianHomeFragment : Fragment(R.layout.fragment_technician_home) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentTechnicianHomeBinding.bind(view)
 
+        (requireActivity() as? TechnicianMainActivity)?.setToolbarTitle("Portal técnico")
+
         setupClicks()
         observeState()
-        viewModel.loadCounts()
+
+        if (savedInstanceState == null) {
+            viewModel.loadHomeData()
+        }
     }
 
     override fun onResume() {
         super.onResume()
         if (_binding != null) {
-            viewModel.loadCounts()
+            viewModel.loadHomeData(forceRefresh = true)
         }
     }
 
@@ -54,6 +61,13 @@ class TechnicianHomeFragment : Fragment(R.layout.fragment_technician_home) {
                 .commit()
         }
 
+        binding.cardNotifications.setOnClickListener {
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.technicianFragmentContainer, NotificationsFragment())
+                .addToBackStack(null)
+                .commit()
+        }
+
         binding.cardSettings.setOnClickListener {
             startActivity(Intent(requireContext(), SettingsActivity::class.java))
         }
@@ -63,8 +77,23 @@ class TechnicianHomeFragment : Fragment(R.layout.fragment_technician_home) {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.uiState.collect { state ->
-                    binding.tvTeamQueueCount.text = if (state.isLoading) "…" else state.teamQueueCount.toString()
-                    binding.tvMyAssignedCount.text = if (state.isLoading) "…" else state.myAssignedCount.toString()
+                    val firstName = state.firstName?.takeIf { it.isNotBlank() } ?: "técnico"
+
+                    binding.tvWelcome.text = "Bienvenido, $firstName"
+                    binding.tvSubtitle.text =
+                        "Revisa tu cola del equipo, tus incidencias asignadas y las notificaciones"
+
+                    binding.tvTeamQueueCount.text = state.teamQueueCount.toString()
+                    binding.tvTeamQueueCount.visibility =
+                        if (state.teamQueueCount > 0) View.VISIBLE else View.GONE
+
+                    binding.tvMyAssignedCount.text = state.myAssignedCount.toString()
+                    binding.tvMyAssignedCount.visibility =
+                        if (state.myAssignedCount > 0) View.VISIBLE else View.GONE
+
+                    binding.tvNotificationsCount.text = state.unreadNotificationsCount.toString()
+                    binding.tvNotificationsCount.visibility =
+                        if (state.unreadNotificationsCount > 0) View.VISIBLE else View.GONE
 
                     state.errorMessage?.let { message ->
                         Toast.makeText(requireContext(), message, Toast.LENGTH_LONG).show()

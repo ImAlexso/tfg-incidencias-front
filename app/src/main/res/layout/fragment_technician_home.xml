@@ -2,7 +2,8 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:fillViewport="true">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -11,25 +12,35 @@
         android:padding="20dp">
 
         <TextView
+            android:id="@+id/tvWelcome"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Portal técnico"
+            android:text="Bienvenido, técnico"
+            android:textColor="@color/onSurface"
             android:textSize="24sp"
             android:textStyle="bold" />
 
         <TextView
+            android:id="@+id/tvSubtitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="6dp"
-            android:text="Entra en tu cola del equipo o en tus incidencias ya asignadas." />
+            android:text="Revisa tu cola del equipo, tus incidencias asignadas y las notificaciones"
+            android:textColor="@color/secondaryText"
+            android:textSize="16sp" />
 
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/cardTeamQueue"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:stateListAnimator="@animator/card_press_state_animator"
+            app:cardBackgroundColor="@color/surface"
             app:cardCornerRadius="20dp"
-            app:cardElevation="4dp">
+            app:cardElevation="6dp"
+            app:rippleColor="@color/card_ripple">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -38,9 +49,17 @@
                 android:orientation="horizontal"
                 android:padding="20dp">
 
+                <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:contentDescription="@null"
+                    android:src="@android:drawable/ic_menu_agenda"
+                    android:tint="@color/primary" />
+
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
                     android:layout_weight="1"
                     android:orientation="vertical">
 
@@ -48,6 +67,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Pendientes del equipo"
+                        android:textColor="@color/onSurface"
                         android:textSize="18sp"
                         android:textStyle="bold" />
 
@@ -55,20 +75,21 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="6dp"
-                        android:text="Incidencias visibles para ti que aún no tienen técnico." />
+                        android:text="Consulta incidencias de tu equipo que aún no tienen técnico asignado"
+                        android:textColor="@color/secondaryText" />
                 </LinearLayout>
 
                 <TextView
                     android:id="@+id/tvTeamQueueCount"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/bg_neutral_chip"
+                    android:background="@drawable/bg_home_counter"
                     android:paddingHorizontal="12dp"
-                    android:paddingVertical="8dp"
+                    android:paddingVertical="6dp"
                     android:text="0"
-                    android:textColor="@android:color/white"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
+                    android:textColor="@color/primary"
+                    android:textStyle="bold"
+                    android:visibility="gone" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
@@ -77,8 +98,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:stateListAnimator="@animator/card_press_state_animator"
+            app:cardBackgroundColor="@color/surface"
             app:cardCornerRadius="20dp"
-            app:cardElevation="4dp">
+            app:cardElevation="6dp"
+            app:rippleColor="@color/card_ripple">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -87,16 +113,25 @@
                 android:orientation="horizontal"
                 android:padding="20dp">
 
+                <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:contentDescription="@null"
+                    android:src="@android:drawable/ic_menu_edit"
+                    android:tint="@color/primary" />
+
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
                     android:layout_weight="1"
                     android:orientation="vertical">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Asignadas a mí"
+                        android:text="Mis incidencias asignadas"
+                        android:textColor="@color/onSurface"
                         android:textSize="18sp"
                         android:textStyle="bold" />
 
@@ -104,20 +139,85 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="6dp"
-                        android:text="Abiertas, en curso, resueltas o cerradas si siguen asignadas a ti." />
+                        android:text="Revisa las incidencias que tienes actualmente asignadas"
+                        android:textColor="@color/secondaryText" />
                 </LinearLayout>
 
                 <TextView
                     android:id="@+id/tvMyAssignedCount"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/bg_status_open"
+                    android:background="@drawable/bg_home_counter"
                     android:paddingHorizontal="12dp"
-                    android:paddingVertical="8dp"
+                    android:paddingVertical="6dp"
                     android:text="0"
-                    android:textColor="@android:color/white"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
+                    android:textColor="@color/primary"
+                    android:textStyle="bold"
+                    android:visibility="gone" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardNotifications"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:stateListAnimator="@animator/card_press_state_animator"
+            app:cardBackgroundColor="@color/surface"
+            app:cardCornerRadius="20dp"
+            app:cardElevation="6dp"
+            app:rippleColor="@color/card_ripple">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="20dp">
+
+                <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:contentDescription="@null"
+                    android:src="@android:drawable/ic_dialog_email"
+                    android:tint="@color/primary" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Notificaciones"
+                        android:textColor="@color/onSurface"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:text="Consulta incidencias creadas, asignaciones, mensajes y adjuntos recientes"
+                        android:textColor="@color/secondaryText" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tvNotificationsCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_home_counter"
+                    android:paddingHorizontal="12dp"
+                    android:paddingVertical="6dp"
+                    android:text="0"
+                    android:textColor="@color/primary"
+                    android:textStyle="bold"
+                    android:visibility="gone" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
@@ -126,27 +226,51 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:stateListAnimator="@animator/card_press_state_animator"
+            app:cardBackgroundColor="@color/surface"
             app:cardCornerRadius="20dp"
-            app:cardElevation="4dp">
+            app:cardElevation="6dp"
+            app:rippleColor="@color/card_ripple">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
                 android:padding="20dp">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Perfil y ajustes"
-                    android:textSize="18sp"
-                    android:textStyle="bold" />
+                <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:contentDescription="@null"
+                    android:src="@android:drawable/ic_menu_manage"
+                    android:tint="@color/primary" />
 
-                <TextView
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
-                    android:text="Cambia tus datos o revisa la sesión actual." />
+                    android:layout_marginStart="16dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Perfil y ajustes"
+                        android:textColor="@color/onSurface"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:text="Edita tus datos y revisa la sesión actual"
+                        android:textColor="@color/secondaryText" />
+                </LinearLayout>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 

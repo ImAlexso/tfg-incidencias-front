@@ -16,6 +16,7 @@ import com.incidencias.R
 import com.incidencias.databinding.FragmentNotificationsBinding
 import com.incidencias.session.SessionManager
 import com.incidencias.ui.incident.IncidentDetailActivity
+import com.incidencias.ui.technician.TechnicianMainActivity
 import com.incidencias.ui.user.UserMainActivity
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -35,7 +36,10 @@ class NotificationsFragment : Fragment(R.layout.fragment_notifications) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentNotificationsBinding.bind(view)
 
-        (requireActivity() as? UserMainActivity)?.setToolbarTitle("Notificaciones")
+        when (val activity = requireActivity()) {
+            is UserMainActivity -> activity.setToolbarTitle("Notificaciones")
+            is TechnicianMainActivity -> activity.setToolbarTitle("Notificaciones")
+        }
 
         viewLifecycleOwner.lifecycleScope.launch {
             val sessionManager = SessionManager(requireContext())
@@ -124,24 +128,28 @@ class NotificationsFragment : Fragment(R.layout.fragment_notifications) {
     private fun configureFiltersForRole(role: String) {
         when (role) {
             "USER" -> {
+                binding.chipCreated.visibility = View.GONE
                 binding.chipStatus.visibility = View.VISIBLE
                 binding.chipAssigned.visibility = View.GONE
                 binding.chipAttachments.visibility = View.VISIBLE
             }
 
             "TECHNICIAN" -> {
+                binding.chipCreated.visibility = View.VISIBLE
                 binding.chipStatus.visibility = View.GONE
                 binding.chipAssigned.visibility = View.VISIBLE
                 binding.chipAttachments.visibility = View.VISIBLE
             }
 
             "MANAGER" -> {
+                binding.chipCreated.visibility = View.VISIBLE
                 binding.chipStatus.visibility = View.VISIBLE
                 binding.chipAssigned.visibility = View.GONE
                 binding.chipAttachments.visibility = View.GONE
             }
 
             else -> {
+                binding.chipCreated.visibility = View.VISIBLE
                 binding.chipStatus.visibility = View.VISIBLE
                 binding.chipAssigned.visibility = View.GONE
                 binding.chipAttachments.visibility = View.VISIBLE
@@ -230,7 +238,11 @@ class NotificationsFragment : Fragment(R.layout.fragment_notifications) {
                     when (state.selectedFilter) {
                         NotificationFilter.ALL -> binding.chipGroup.check(binding.chipAll.id)
                         NotificationFilter.UNREAD -> binding.chipGroup.check(binding.chipUnread.id)
-                        NotificationFilter.INCIDENT_CREATED -> binding.chipGroup.check(binding.chipCreated.id)
+                        NotificationFilter.INCIDENT_CREATED -> {
+                            if (binding.chipCreated.visibility == View.VISIBLE) {
+                                binding.chipGroup.check(binding.chipCreated.id)
+                            }
+                        }
                         NotificationFilter.STATUS_CHANGED -> {
                             if (binding.chipStatus.visibility == View.VISIBLE) {
                                 binding.chipGroup.check(binding.chipStatus.id)

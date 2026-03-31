@@ -14,6 +14,7 @@ import com.incidencias.R
 import com.incidencias.databinding.FragmentActiveIncidentsBinding
 import com.incidencias.ui.common.adapter.IncidentAdapter
 import com.incidencias.ui.incident.IncidentDetailActivity
+import com.incidencias.ui.technician.TechnicianMainActivity
 import kotlinx.coroutines.launch
 
 class MyAssignedIncidentsFragment : Fragment(R.layout.fragment_active_incidents) {
@@ -28,10 +29,11 @@ class MyAssignedIncidentsFragment : Fragment(R.layout.fragment_active_incidents)
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentActiveIncidentsBinding.bind(view)
 
+        (requireActivity() as? TechnicianMainActivity)?.setToolbarTitle("Mis incidencias asignadas")
+
         setupRecycler()
         setupRefresh()
         observeUiState()
-
 
         if (savedInstanceState == null) {
             viewModel.loadIncidents(TechnicianListMode.MY_ASSIGNED)

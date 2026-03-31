@@ -6,7 +6,6 @@ data class TechnicianIncidentsUiState(
     val isLoading: Boolean = false,
     val isRefreshing: Boolean = false,
     val incidents: List<IncidentListItemResponse> = emptyList(),
-    val errorMessage: String? = null,
     val emptyMessage: String? = null,
-    val mode: TechnicianListMode = TechnicianListMode.TEAM_UNASSIGNED
+    val errorMessage: String? = null
 )

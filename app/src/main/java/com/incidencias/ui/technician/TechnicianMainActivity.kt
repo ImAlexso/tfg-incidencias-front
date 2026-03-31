@@ -23,4 +23,8 @@ class TechnicianMainActivity : AppCompatActivity() {
                 .commit()
         }
     }
+
+    fun setToolbarTitle(title: String) {
+        binding.toolbar.title = title
+    }
 }

@@ -5,13 +5,10 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.incidencias.data.remote.dto.incident.IncidentListItemResponse
 import com.incidencias.data.repository.IncidentRepository
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import java.io.IOException
-import java.time.OffsetDateTime
 
 class TechnicianIncidentsViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -20,61 +17,99 @@ class TechnicianIncidentsViewModel(application: Application) : AndroidViewModel(
     private val _uiState = MutableStateFlow(TechnicianIncidentsUiState())
     val uiState: StateFlow<TechnicianIncidentsUiState> = _uiState
 
+    private var currentMode: TechnicianListMode? = null
+
     private val pageSize = 100
+    private val statuses = listOf("OPEN", "IN_PROGRESS", "RESOLVED")
 
     fun loadIncidents(mode: TechnicianListMode, forceRefresh: Boolean = false) {
+        currentMode = mode
+
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(
                 isLoading = !forceRefresh,
                 isRefreshing = forceRefresh,
-                errorMessage = null,
-                emptyMessage = null,
-                mode = mode
+                errorMessage = null
             )
 
             try {
-                val statusResults = mode.includedStatuses.map { status ->
-                    async { fetchAllPagesForStatus(status) }
-                }.awaitAll()
+                val allItems = mutableListOf<IncidentListItemResponse>()
 
-                val allItems = statusResults
-                    .flatten()
-                    .distinctBy { it.id }
-                    .filter { item ->
-                        when (mode) {
-                            TechnicianListMode.TEAM_UNASSIGNED -> item.assignedTechnicianId == null
-                            TechnicianListMode.MY_ASSIGNED ->
-                                item.isAssignedToCurrentUser && item.statusName != "CLOSED"
+                for (status in statuses) {
+                    var page = 0
+                    var hasMore = true
+
+                    while (hasMore) {
+                        val response = repository.getIncidents(
+                            status = status,
+                            page = page,
+                            size = pageSize
+                        )
+
+                        if (!response.isSuccessful || response.body() == null) {
+                            _uiState.value = _uiState.value.copy(
+                                isLoading = false,
+                                isRefreshing = false,
+                                incidents = emptyList(),
+                                emptyMessage = null,
+                                errorMessage = when (response.code()) {
+                                    401 -> "La sesión ha expirado"
+                                    403 -> when (mode) {
+                                        TechnicianListMode.MY_ASSIGNED ->
+                                            "No tienes permiso para ver tus incidencias asignadas"
+                                        TechnicianListMode.TEAM_UNASSIGNED ->
+                                            "No tienes permiso para ver las pendientes del equipo"
+                                    }
+
+                                    else -> buildGenericErrorMessage(mode)
+                                }
+                            )
+                            return@launch
                         }
+
+                        val body = response.body()!!
+                        allItems += body.content
+                        hasMore = body.page + 1 < body.totalPages
+                        page++
                     }
-                    .sortedWith(compareByDescending<IncidentListItemResponse> { parseCreatedAt(it.createdAt) }
-                        .thenByDescending { it.id ?: 0 })
+                }
+
+                val filteredItems = when (mode) {
+                    TechnicianListMode.MY_ASSIGNED -> {
+                        allItems
+                            .distinctBy { it.id }
+                            .filter { it.isAssignedToCurrentUser }
+                    }
+
+                    TechnicianListMode.TEAM_UNASSIGNED -> {
+                        allItems
+                            .distinctBy { it.id }
+                            .filter { it.assignedTechnicianId == null }
+                    }
+                }
 
                 _uiState.value = _uiState.value.copy(
                     isLoading = false,
                     isRefreshing = false,
-                    incidents = allItems,
-                    errorMessage = null,
-                    emptyMessage = if (allItems.isEmpty()) mode.emptyMessage else null,
-                    mode = mode
+                    incidents = filteredItems,
+                    emptyMessage = buildEmptyMessage(mode, filteredItems),
+                    errorMessage = null
                 )
             } catch (e: IOException) {
                 _uiState.value = _uiState.value.copy(
                     isLoading = false,
                     isRefreshing = false,
-                    errorMessage = "No se pudo conectar con el servidor",
                     incidents = emptyList(),
                     emptyMessage = null,
-                    mode = mode
+                    errorMessage = "No se pudo conectar con el servidor"
                 )
             } catch (e: Exception) {
                 _uiState.value = _uiState.value.copy(
                     isLoading = false,
                     isRefreshing = false,
-                    errorMessage = e.message ?: "No se pudieron cargar las incidencias",
                     incidents = emptyList(),
                     emptyMessage = null,
-                    mode = mode
+                    errorMessage = e.message ?: buildGenericErrorMessage(mode)
                 )
             }
         }
@@ -84,38 +119,31 @@ class TechnicianIncidentsViewModel(application: Application) : AndroidViewModel(
         _uiState.value = _uiState.value.copy(errorMessage = null)
     }
 
-    private suspend fun fetchAllPagesForStatus(status: String): List<IncidentListItemResponse> {
-        val collected = mutableListOf<IncidentListItemResponse>()
-        var page = 0
-        var hasMore = true
+    private fun buildEmptyMessage(
+        mode: TechnicianListMode,
+        items: List<IncidentListItemResponse>
+    ): String? {
+        if (items.isNotEmpty()) return null
 
-        while (hasMore) {
-            val response = repository.getIncidents(status = status, page = page, size = pageSize)
+        return when (mode) {
+            TechnicianListMode.MY_ASSIGNED ->
+                "No tienes incidencias asignadas en este momento"
 
-            if (!response.isSuccessful || response.body() == null) {
-                throw IOException(
-                    when (response.code()) {
-                        401 -> "La sesión ha expirado"
-                        403 -> "No tienes permiso para ver estas incidencias"
-                        else -> "No se pudieron cargar las incidencias"
-                    }
-                )
-            }
-
-            val body = response.body()!!
-            collected += body.content
-            hasMore = body.page + 1 < body.totalPages
-            page++
+            TechnicianListMode.TEAM_UNASSIGNED ->
+                "No hay incidencias pendientes de asignación en tu equipo"
         }
-
-        return collected
     }
 
-    private fun parseCreatedAt(value: String?): OffsetDateTime? {
-        return try {
-            if (value.isNullOrBlank()) null else OffsetDateTime.parse(value)
-        } catch (_: Exception) {
-            null
+    private fun buildGenericErrorMessage(mode: TechnicianListMode?): String {
+        return when (mode) {
+            TechnicianListMode.MY_ASSIGNED ->
+                "No se pudieron cargar tus incidencias asignadas"
+
+            TechnicianListMode.TEAM_UNASSIGNED ->
+                "No se pudieron cargar las incidencias pendientes del equipo"
+
+            null ->
+                "No se pudieron cargar las incidencias"
         }
     }
 }
