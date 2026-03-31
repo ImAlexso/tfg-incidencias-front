@@ -14,8 +14,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.incidencias.R
 import com.incidencias.databinding.FragmentNotificationsBinding
+import com.incidencias.session.SessionManager
 import com.incidencias.ui.incident.IncidentDetailActivity
 import com.incidencias.ui.user.UserMainActivity
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 class NotificationsFragment : Fragment(R.layout.fragment_notifications) {
@@ -27,19 +29,29 @@ class NotificationsFragment : Fragment(R.layout.fragment_notifications) {
     private lateinit var adapter: NotificationAdapter
     private lateinit var layoutManager: LinearLayoutManager
 
+    private var currentRole: String = "USER"
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentNotificationsBinding.bind(view)
 
         (requireActivity() as? UserMainActivity)?.setToolbarTitle("Notificaciones")
 
-        setupRecycler()
-        setupFilters()
-        setupActions()
-        observeUiState()
+        viewLifecycleOwner.lifecycleScope.launch {
+            val sessionManager = SessionManager(requireContext())
+            currentRole = sessionManager.roleFlow.first() ?: "USER"
 
-        if (savedInstanceState == null) {
-            viewModel.loadNotifications()
+            viewModel.setRole(currentRole)
+
+            setupRecycler(currentRole)
+            configureFiltersForRole(currentRole)
+            setupFilters()
+            setupActions()
+            observeUiState()
+
+            if (savedInstanceState == null) {
+                viewModel.loadNotifications()
+            }
         }
     }
 
@@ -50,8 +62,9 @@ class NotificationsFragment : Fragment(R.layout.fragment_notifications) {
         }
     }
 
-    private fun setupRecycler() {
+    private fun setupRecycler(role: String) {
         adapter = NotificationAdapter(
+            role = role,
             onClick = { notification ->
                 val openDetail = {
                     val incidentId = notification.incidentId
@@ -108,6 +121,34 @@ class NotificationsFragment : Fragment(R.layout.fragment_notifications) {
         })
     }
 
+    private fun configureFiltersForRole(role: String) {
+        when (role) {
+            "USER" -> {
+                binding.chipStatus.visibility = View.VISIBLE
+                binding.chipAssigned.visibility = View.GONE
+                binding.chipAttachments.visibility = View.VISIBLE
+            }
+
+            "TECHNICIAN" -> {
+                binding.chipStatus.visibility = View.GONE
+                binding.chipAssigned.visibility = View.VISIBLE
+                binding.chipAttachments.visibility = View.VISIBLE
+            }
+
+            "MANAGER" -> {
+                binding.chipStatus.visibility = View.VISIBLE
+                binding.chipAssigned.visibility = View.GONE
+                binding.chipAttachments.visibility = View.GONE
+            }
+
+            else -> {
+                binding.chipStatus.visibility = View.VISIBLE
+                binding.chipAssigned.visibility = View.GONE
+                binding.chipAttachments.visibility = View.VISIBLE
+            }
+        }
+    }
+
     private fun setupFilters() {
         binding.chipAll.setOnClickListener {
             viewModel.setFilter(NotificationFilter.ALL)
@@ -125,11 +166,12 @@ class NotificationsFragment : Fragment(R.layout.fragment_notifications) {
             viewModel.setFilter(NotificationFilter.STATUS_CHANGED)
         }
 
-        binding.chipMessages.setOnClickListener {
-            viewModel.setFilter(NotificationFilter.MESSAGE_PUBLIC)
+        binding.chipAssigned.setOnClickListener {
+            viewModel.setFilter(NotificationFilter.ASSIGNED)
         }
-        binding.chipMessagesInternal.setOnClickListener {
-            viewModel.setFilter(NotificationFilter.MESSAGE_INTERNAL)
+
+        binding.chipMessages.setOnClickListener {
+            viewModel.setFilter(NotificationFilter.MESSAGES)
         }
 
         binding.chipAttachments.setOnClickListener {
@@ -189,10 +231,22 @@ class NotificationsFragment : Fragment(R.layout.fragment_notifications) {
                         NotificationFilter.ALL -> binding.chipGroup.check(binding.chipAll.id)
                         NotificationFilter.UNREAD -> binding.chipGroup.check(binding.chipUnread.id)
                         NotificationFilter.INCIDENT_CREATED -> binding.chipGroup.check(binding.chipCreated.id)
-                        NotificationFilter.STATUS_CHANGED -> binding.chipGroup.check(binding.chipStatus.id)
-                        NotificationFilter.MESSAGE_PUBLIC -> binding.chipGroup.check(binding.chipMessages.id)
-                        NotificationFilter.MESSAGE_INTERNAL -> binding.chipGroup.check(binding.chipMessagesInternal.id)
-                        NotificationFilter.ATTACHMENT_UPLOADED -> binding.chipGroup.check(binding.chipAttachments.id)
+                        NotificationFilter.STATUS_CHANGED -> {
+                            if (binding.chipStatus.visibility == View.VISIBLE) {
+                                binding.chipGroup.check(binding.chipStatus.id)
+                            }
+                        }
+                        NotificationFilter.ASSIGNED -> {
+                            if (binding.chipAssigned.visibility == View.VISIBLE) {
+                                binding.chipGroup.check(binding.chipAssigned.id)
+                            }
+                        }
+                        NotificationFilter.MESSAGES -> binding.chipGroup.check(binding.chipMessages.id)
+                        NotificationFilter.ATTACHMENT_UPLOADED -> {
+                            if (binding.chipAttachments.visibility == View.VISIBLE) {
+                                binding.chipGroup.check(binding.chipAttachments.id)
+                            }
+                        }
                     }
 
                     if (state.errorMessage != null && state.items.isNotEmpty()) {

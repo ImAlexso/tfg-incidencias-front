@@ -11,6 +11,7 @@ data class IncidentDetailResponse(
     val createdByEmail: String?,
     val assignedTechnicianId: Long?,
     val assignedTechnicianEmail: String?,
+    val assignedTechnicianName: String?,
     val currentTeamName: String?,
     val categoryName: String?,
     val priorityName: String?,

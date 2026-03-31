@@ -11,8 +11,10 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.incidencias.R
 import com.incidencias.databinding.FragmentPublicMessagesBinding
+import com.incidencias.session.SessionManager
 import com.incidencias.ui.incident.IncidentDetailViewModel
 import com.incidencias.ui.incident.adapter.PublicMessageAdapter
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 class PublicMessagesFragment : Fragment(R.layout.fragment_public_messages) {
@@ -27,16 +29,24 @@ class PublicMessagesFragment : Fragment(R.layout.fragment_public_messages) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentPublicMessagesBinding.bind(view)
 
-        adapter = PublicMessageAdapter(emptyList())
-        binding.recyclerViewMessages.layoutManager = LinearLayoutManager(requireContext())
-        binding.recyclerViewMessages.adapter = adapter
+        viewLifecycleOwner.lifecycleScope.launch {
+            val currentUserEmail = SessionManager(requireContext()).emailFlow.first().orEmpty()
 
-        binding.btnSendMessage.setOnClickListener {
-            val message = binding.etNewMessage.text?.toString()?.trim().orEmpty()
-            viewModel.sendPublicMessage(message)
+            adapter = PublicMessageAdapter(
+                currentUserEmail = currentUserEmail,
+                items = emptyList()
+            )
+
+            binding.recyclerViewMessages.layoutManager = LinearLayoutManager(requireContext())
+            binding.recyclerViewMessages.adapter = adapter
+
+            binding.btnSendMessage.setOnClickListener {
+                val message = binding.etNewMessage.text?.toString()?.trim().orEmpty()
+                viewModel.sendPublicMessage(message)
+            }
+
+            observeState()
         }
-
-        observeState()
     }
 
     private fun observeState() {

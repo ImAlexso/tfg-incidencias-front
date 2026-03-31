@@ -5,8 +5,13 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.incidencias.data.remote.dto.message.IncidentMessageResponse
 import com.incidencias.databinding.ItemPublicMessageBinding
+import java.time.LocalDateTime
+import java.time.OffsetDateTime
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 class PublicMessageAdapter(
+    private val currentUserEmail: String,
     private var items: List<IncidentMessageResponse>
 ) : RecyclerView.Adapter<PublicMessageAdapter.ViewHolder>() {
 
@@ -26,13 +31,41 @@ class PublicMessageAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = items[position]
-        holder.binding.tvAuthor.text = item.authorEmail
-        holder.binding.tvCreatedAt.text = item.createdAt
+        holder.binding.tvAuthor.text = buildAuthorLabel(item)
+        holder.binding.tvCreatedAt.text = formatDate(item.createdAt)
         holder.binding.tvMessage.text = item.message
     }
 
     fun updateData(newItems: List<IncidentMessageResponse>) {
         items = newItems
         notifyDataSetChanged()
+    }
+
+    private fun buildAuthorLabel(item: IncidentMessageResponse): String {
+        return if (item.authorEmail.equals(currentUserEmail, ignoreCase = true)) {
+            "Tú"
+        } else {
+            when (item.authorRole) {
+                "TECHNICIAN" -> "Técnico: ${item.authorName}"
+                "MANAGER" -> "Manager: ${item.authorName}"
+                "ADMIN" -> "Admin: ${item.authorName}"
+                "USER" -> "Usuario: ${item.authorName}"
+                else -> item.authorName
+            }
+        }
+    }
+
+    private fun formatDate(dateString: String): String {
+        val formatter = DateTimeFormatter.ofPattern("dd MMM yyyy · HH:mm", Locale("es"))
+
+        return try {
+            OffsetDateTime.parse(dateString).format(formatter)
+        } catch (_: Exception) {
+            try {
+                LocalDateTime.parse(dateString).format(formatter)
+            } catch (_: Exception) {
+                dateString
+            }
+        }
     }
 }

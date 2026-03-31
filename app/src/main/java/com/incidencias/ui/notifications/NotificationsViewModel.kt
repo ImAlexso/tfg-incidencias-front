@@ -21,6 +21,11 @@ class NotificationsViewModel(application: Application) : AndroidViewModel(applic
     val uiState: StateFlow<NotificationsUiState> = _uiState
 
     private val pageSize = 20
+    private var currentRole: String = "USER"
+
+    fun setRole(role: String) {
+        currentRole = role
+    }
 
     fun loadNotifications(forceRefresh: Boolean = false) {
         fetchNotifications(
@@ -154,11 +159,12 @@ class NotificationsViewModel(application: Application) : AndroidViewModel(applic
 
                 val type = when (currentFilter) {
                     NotificationFilter.INCIDENT_CREATED -> "INCIDENT_CREATED"
-                    NotificationFilter.STATUS_CHANGED -> "STATUS_CHANGED"
-                    NotificationFilter.MESSAGE_PUBLIC -> "MESSAGE_PUBLIC"
-                    NotificationFilter.MESSAGE_INTERNAL -> "MESSAGE_INTERNAL"
                     NotificationFilter.ATTACHMENT_UPLOADED -> "ATTACHMENT_UPLOADED"
-                    else -> null
+                    NotificationFilter.ALL,
+                    NotificationFilter.UNREAD,
+                    NotificationFilter.STATUS_CHANGED,
+                    NotificationFilter.ASSIGNED,
+                    NotificationFilter.MESSAGES -> null
                 }
 
                 val notificationsResponse = repository.getNotifications(
@@ -185,7 +191,6 @@ class NotificationsViewModel(application: Application) : AndroidViewModel(applic
                 }
 
                 val currentUserId = sessionManager.userIdFlow.firstOrNull()
-
                 val pageBody = notificationsResponse.body()!!
 
                 val newItems = pageBody.content
@@ -200,6 +205,8 @@ class NotificationsViewModel(application: Application) : AndroidViewModel(applic
                     newItems
                 }
 
+                val filteredItems = applyClientFilter(mergedItems, currentFilter, currentRole)
+
                 val unreadCount = if (unreadCountResponse.isSuccessful && unreadCountResponse.body() != null) {
                     unreadCountResponse.body()!!.count
                 } else {
@@ -210,7 +217,7 @@ class NotificationsViewModel(application: Application) : AndroidViewModel(applic
                     isLoading = false,
                     isRefreshing = false,
                     isLoadingMore = false,
-                    items = mergedItems,
+                    items = filteredItems,
                     unreadCount = unreadCount,
                     errorMessage = null,
                     currentPage = pageBody.page,
@@ -230,6 +237,63 @@ class NotificationsViewModel(application: Application) : AndroidViewModel(applic
                     isLoadingMore = false,
                     errorMessage = e.message ?: "Error al cargar notificaciones"
                 )
+            }
+        }
+    }
+
+    private fun applyClientFilter(
+        items: List<NotificationUiModel>,
+        filter: NotificationFilter,
+        role: String
+    ): List<NotificationUiModel> {
+        return when (filter) {
+            NotificationFilter.ALL -> items
+
+            NotificationFilter.UNREAD -> items.filter { !it.read }
+
+            NotificationFilter.INCIDENT_CREATED -> items.filter {
+                it.type == NotificationType.INCIDENT_CREATED
+            }
+
+            NotificationFilter.STATUS_CHANGED -> when (role) {
+                "USER", "MANAGER" -> items.filter {
+                    it.type == NotificationType.STATUS_CHANGED ||
+                            it.type == NotificationType.INCIDENT_RESOLVED ||
+                            it.type == NotificationType.INCIDENT_CLOSED ||
+                            it.type == NotificationType.TECHNICIAN_ASSIGNED ||
+                            it.type == NotificationType.ASSIGNEE_REMOVED
+                }
+
+                else -> emptyList()
+            }
+
+            NotificationFilter.ASSIGNED -> when (role) {
+                "TECHNICIAN" -> items.filter {
+                    it.type == NotificationType.TECHNICIAN_ASSIGNED ||
+                            it.type == NotificationType.ASSIGNEE_REMOVED
+                }
+
+                else -> emptyList()
+            }
+
+            NotificationFilter.MESSAGES -> when (role) {
+                "USER" -> items.filter {
+                    it.type == NotificationType.MESSAGE_PUBLIC
+                }
+
+                "TECHNICIAN", "MANAGER" -> items.filter {
+                    it.type == NotificationType.MESSAGE_PUBLIC ||
+                            it.type == NotificationType.MESSAGE_INTERNAL
+                }
+
+                else -> emptyList()
+            }
+
+            NotificationFilter.ATTACHMENT_UPLOADED -> when (role) {
+                "MANAGER" -> emptyList()
+                else -> items.filter {
+                    it.type == NotificationType.ATTACHMENT_UPLOADED
+                }
             }
         }
     }

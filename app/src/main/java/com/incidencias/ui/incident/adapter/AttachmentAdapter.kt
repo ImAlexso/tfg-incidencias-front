@@ -5,6 +5,10 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.incidencias.data.remote.dto.attachment.AttachmentResponse
 import com.incidencias.databinding.ItemAttachmentBinding
+import java.time.LocalDateTime
+import java.time.OffsetDateTime
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 class AttachmentAdapter(
     private var items: List<AttachmentResponse>,
@@ -31,6 +35,7 @@ class AttachmentAdapter(
         holder.binding.tvFileName.text = item.originalFileName
         holder.binding.tvType.text = "Tipo: ${item.attachmentType}"
         holder.binding.tvUploadedBy.text = "Subido por: ${item.uploadedByEmail}"
+        holder.binding.tvCreatedAt.text = formatDate(item.createdAt)
 
         holder.binding.root.setOnClickListener {
             onClick(item)
@@ -40,5 +45,19 @@ class AttachmentAdapter(
     fun updateData(newItems: List<AttachmentResponse>) {
         items = newItems
         notifyDataSetChanged()
+    }
+
+    private fun formatDate(dateString: String): String {
+        val formatter = DateTimeFormatter.ofPattern("dd MMM yyyy · HH:mm", Locale("es"))
+
+        return try {
+            OffsetDateTime.parse(dateString).format(formatter)
+        } catch (_: Exception) {
+            try {
+                LocalDateTime.parse(dateString).format(formatter)
+            } catch (_: Exception) {
+                dateString
+            }
+        }
     }
 }

@@ -63,18 +63,19 @@
                 android:text="Estado" />
 
             <com.google.android.material.chip.Chip
+                android:id="@+id/chipAssigned"
+                style="@style/Widget.Material3.Chip.Filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Asignadas"
+                android:visibility="gone" />
+
+            <com.google.android.material.chip.Chip
                 android:id="@+id/chipMessages"
                 style="@style/Widget.Material3.Chip.Filter"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Mensajes" />
-
-            <com.google.android.material.chip.Chip
-                android:id="@+id/chipMessagesInternal"
-                style="@style/Widget.Material3.Chip.Filter"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Internos" />
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/chipAttachments"

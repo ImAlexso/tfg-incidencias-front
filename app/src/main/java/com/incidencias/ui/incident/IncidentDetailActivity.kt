@@ -91,8 +91,10 @@ class IncidentDetailActivity : AppCompatActivity() {
 
                 launch {
                     viewModel.uiState.collect { state ->
+                        val showInitialLoading = state.isLoading && state.detail == null
+
                         binding.progressBar.visibility =
-                            if (state.isLoading || state.isActionLoading) View.VISIBLE else View.GONE
+                            if (showInitialLoading) View.VISIBLE else View.GONE
 
                         val detail = state.detail
                         if (detail != null) {
@@ -152,12 +154,7 @@ class IncidentDetailActivity : AppCompatActivity() {
     }
 
     private fun showContent(show: Boolean) {
-        binding.tabLayout.visibility = if (show) View.VISIBLE else View.GONE
-        binding.viewPager.visibility = if (show) View.VISIBLE else View.GONE
-        binding.layoutTechnicianActions.visibility =
-            if (show) binding.layoutTechnicianActions.visibility else View.GONE
-        binding.layoutManagerActions.visibility =
-            if (show) binding.layoutManagerActions.visibility else View.GONE
+        binding.detailContentContainer.visibility = if (show) View.VISIBLE else View.GONE
     }
 
     private fun bindHeader(detail: IncidentDetailResponse) {
@@ -168,6 +165,7 @@ class IncidentDetailActivity : AppCompatActivity() {
         binding.tvPriority.text = detail.priorityName ?: "-"
         binding.tvCategory.text = detail.categoryName ?: "-"
         binding.tvTeam.text = "Equipo: ${detail.currentTeamName ?: "-"}"
+        binding.tvTechnician.text = "Técnico: ${detail.assignedTechnicianName ?: "Sin asignar"}"
 
         when (detail.statusName.uppercase()) {
             "OPEN" -> binding.tvStatus.setBackgroundResource(R.drawable.bg_status_open)
@@ -225,7 +223,7 @@ class IncidentDetailActivity : AppCompatActivity() {
     private fun setupTabs(role: String) {
         val fragments = mutableListOf<Pair<String, androidx.fragment.app.Fragment>>()
 
-        fragments.add("Públicos" to PublicMessagesFragment())
+        fragments.add("Mensajes" to PublicMessagesFragment())
 
         if (role == "TECHNICIAN" || role == "MANAGER" || role == "ADMIN") {
             fragments.add("Internos" to InternalMessagesFragment())
