@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Filtrar incidencias"
+            android:textColor="@color/onSurface"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="Estado"
+            android:textColor="@color/onSurface"
+            android:textStyle="bold" />
+
+        <RadioGroup
+            android:id="@+id/rgStatus"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp">
+
+            <RadioButton
+                android:id="@+id/rbStatusAll"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Todas" />
+
+            <RadioButton
+                android:id="@+id/rbStatusOpen"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Abiertas" />
+
+            <RadioButton
+                android:id="@+id/rbStatusInProgress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="En curso" />
+
+            <RadioButton
+                android:id="@+id/rbStatusResolved"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Resueltas" />
+        </RadioGroup>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="Prioridad"
+            android:textColor="@color/onSurface"
+            android:textStyle="bold" />
+
+        <RadioGroup
+            android:id="@+id/rgPriority"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp">
+
+            <RadioButton
+                android:id="@+id/rbPriorityAll"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Todas" />
+
+            <RadioButton
+                android:id="@+id/rbPriorityLow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Baja" />
+
+            <RadioButton
+                android:id="@+id/rbPriorityMedium"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Media" />
+
+            <RadioButton
+                android:id="@+id/rbPriorityHigh"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Alta" />
+
+            <RadioButton
+                android:id="@+id/rbPriorityCritical"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Crítica" />
+        </RadioGroup>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:gravity="end"
+            android:orientation="horizontal">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnClearFilters"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Limpiar" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnApplyFilters"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="Aplicar" />
+        </LinearLayout>
+
+    </LinearLayout>
+</ScrollView>

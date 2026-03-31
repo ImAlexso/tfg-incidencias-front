@@ -37,8 +37,6 @@ class IncidentHistoryFragment : Fragment(R.layout.fragment_active_incidents) {
         setupRefresh()
         observeUiState()
 
-        binding.tvScreenTitle.text = IncidentListMode.HISTORY.screenTitle
-        binding.tvScreenSubtitle.text = IncidentListMode.HISTORY.screenSubtitle
 
         if (savedInstanceState == null) {
             viewModel.loadIncidents(IncidentListMode.HISTORY)

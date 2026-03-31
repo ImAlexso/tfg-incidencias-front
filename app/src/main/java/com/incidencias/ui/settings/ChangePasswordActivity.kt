@@ -1,6 +1,7 @@
 package com.incidencias.ui.settings
 
 import android.os.Bundle
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
@@ -19,6 +20,9 @@ class ChangePasswordActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         userRepository = UserRepository(applicationContext)
+
+        setSupportActionBar(binding.toolbar)
+        binding.toolbar.setNavigationOnClickListener { finish() }
 
         binding.btnSavePassword.setOnClickListener {
             changePassword()
@@ -41,13 +45,13 @@ class ChangePasswordActivity : AppCompatActivity() {
         }
 
         lifecycleScope.launch {
-            binding.progressBarChangePassword.visibility = android.view.View.VISIBLE
+            binding.progressBarChangePassword.visibility = View.VISIBLE
             binding.btnSavePassword.isEnabled = false
 
             try {
                 val response = userRepository.changePassword(currentPassword, newPassword)
 
-                binding.progressBarChangePassword.visibility = android.view.View.GONE
+                binding.progressBarChangePassword.visibility = View.GONE
                 binding.btnSavePassword.isEnabled = true
 
                 if (response.isSuccessful) {
@@ -65,7 +69,7 @@ class ChangePasswordActivity : AppCompatActivity() {
                     ).show()
                 }
             } catch (e: Exception) {
-                binding.progressBarChangePassword.visibility = android.view.View.GONE
+                binding.progressBarChangePassword.visibility = View.GONE
                 binding.btnSavePassword.isEnabled = true
                 Toast.makeText(
                     this@ChangePasswordActivity,

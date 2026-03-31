@@ -1,6 +1,7 @@
 package com.incidencias.ui.settings
 
 import android.os.Bundle
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
@@ -23,6 +24,9 @@ class EditProfileActivity : AppCompatActivity() {
 
         sessionManager = SessionManager(applicationContext)
         userRepository = UserRepository(applicationContext)
+
+        setSupportActionBar(binding.toolbar)
+        binding.toolbar.setNavigationOnClickListener { finish() }
 
         loadCurrentData()
 
@@ -48,13 +52,13 @@ class EditProfileActivity : AppCompatActivity() {
         }
 
         lifecycleScope.launch {
-            binding.progressBarEditProfile.visibility = android.view.View.VISIBLE
+            binding.progressBarEditProfile.visibility = View.VISIBLE
             binding.btnSaveProfile.isEnabled = false
 
             try {
                 val response = userRepository.updateProfile(firstName, lastName)
 
-                binding.progressBarEditProfile.visibility = android.view.View.GONE
+                binding.progressBarEditProfile.visibility = View.GONE
                 binding.btnSaveProfile.isEnabled = true
 
                 if (response.isSuccessful) {
@@ -80,7 +84,7 @@ class EditProfileActivity : AppCompatActivity() {
                     Toast.makeText(this@EditProfileActivity, "No se pudo actualizar el perfil", Toast.LENGTH_LONG).show()
                 }
             } catch (e: Exception) {
-                binding.progressBarEditProfile.visibility = android.view.View.GONE
+                binding.progressBarEditProfile.visibility = View.GONE
                 binding.btnSaveProfile.isEnabled = true
                 Toast.makeText(
                     this@EditProfileActivity,

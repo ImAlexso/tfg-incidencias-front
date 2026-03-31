@@ -32,8 +32,6 @@ class MyAssignedIncidentsFragment : Fragment(R.layout.fragment_active_incidents)
         setupRefresh()
         observeUiState()
 
-        binding.tvScreenTitle.text = TechnicianListMode.MY_ASSIGNED.screenTitle
-        binding.tvScreenSubtitle.text = TechnicianListMode.MY_ASSIGNED.screenSubtitle
 
         if (savedInstanceState == null) {
             viewModel.loadIncidents(TechnicianListMode.MY_ASSIGNED)

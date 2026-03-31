@@ -9,6 +9,7 @@ import com.incidencias.data.remote.dto.catalog.TeamResponse
 import com.incidencias.data.remote.dto.incident.CreateIncidentRequest
 import com.incidencias.data.repository.CatalogRepository
 import com.incidencias.data.repository.IncidentRepository
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -30,12 +31,20 @@ class CreateIncidentViewModel(application: Application) : AndroidViewModel(appli
     private val _teams = MutableStateFlow<List<TeamResponse>>(emptyList())
     val teams: StateFlow<List<TeamResponse>> = _teams
 
+    private var catalogsLoaded = false
+
     fun loadCatalogs() {
+        if (catalogsLoaded) return
+
         viewModelScope.launch {
             try {
-                val categoriesResponse = catalogRepository.getCategories()
-                val prioritiesResponse = catalogRepository.getPriorities()
-                val teamsResponse = catalogRepository.getTeams()
+                val categoriesDeferred = async { catalogRepository.getCategories() }
+                val prioritiesDeferred = async { catalogRepository.getPriorities() }
+                val teamsDeferred = async { catalogRepository.getTeams() }
+
+                val categoriesResponse = categoriesDeferred.await()
+                val prioritiesResponse = prioritiesDeferred.await()
+                val teamsResponse = teamsDeferred.await()
 
                 if (categoriesResponse.isSuccessful) {
                     _categories.value = categoriesResponse.body().orEmpty().filter { it.active }
@@ -48,6 +57,8 @@ class CreateIncidentViewModel(application: Application) : AndroidViewModel(appli
                 if (teamsResponse.isSuccessful) {
                     _teams.value = teamsResponse.body().orEmpty().filter { it.active }
                 }
+
+                catalogsLoaded = true
             } catch (e: Exception) {
                 _uiState.value = CreateIncidentUiState.Error(
                     e.message ?: "No se pudieron cargar los catálogos"

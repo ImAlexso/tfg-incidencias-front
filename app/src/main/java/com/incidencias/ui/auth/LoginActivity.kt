@@ -6,6 +6,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -36,31 +37,18 @@ class LoginActivity : AppCompatActivity() {
         applySavedTheme()
         setupListeners()
         observeUiState()
-        checkExistingSession()
     }
 
     private fun applySavedTheme() {
         lifecycleScope.launch {
             val darkMode = sessionManager.darkModeFlow.first()
-            androidx.appcompat.app.AppCompatDelegate.setDefaultNightMode(
+            AppCompatDelegate.setDefaultNightMode(
                 if (darkMode) {
-                    androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_YES
+                    AppCompatDelegate.MODE_NIGHT_YES
                 } else {
-                    androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_NO
+                    AppCompatDelegate.MODE_NIGHT_NO
                 }
             )
-        }
-    }
-
-    private fun checkExistingSession() {
-        lifecycleScope.launch {
-            val token = sessionManager.tokenFlow.first()
-
-            if (!token.isNullOrBlank()) {
-                binding.progressBar.visibility = View.VISIBLE
-                binding.btnLogin.isEnabled = false
-                viewModel.validateExistingSession()
-            }
         }
     }
 

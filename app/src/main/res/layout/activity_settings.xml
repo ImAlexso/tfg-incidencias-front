@@ -11,7 +11,7 @@
         android:layout_height="72dp"
         android:background="?attr/colorPrimary"
         android:paddingTop="12dp"
-        app:navigationIcon="@android:drawable/ic_media_previous"
+        app:navigationIcon="@android:drawable/ic_menu_close_clear_cancel"
         app:title="Ajustes"
         app:titleTextColor="@android:color/white" />
 

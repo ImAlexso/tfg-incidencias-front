@@ -35,8 +35,6 @@ class TeamUnassignedIncidentsFragment : Fragment(R.layout.fragment_active_incide
         setupRefresh()
         observeUiState()
 
-        binding.tvScreenTitle.text = TechnicianListMode.TEAM_UNASSIGNED.screenTitle
-        binding.tvScreenSubtitle.text = TechnicianListMode.TEAM_UNASSIGNED.screenSubtitle
 
         if (savedInstanceState == null) {
             viewModel.loadIncidents(TechnicianListMode.TEAM_UNASSIGNED)
