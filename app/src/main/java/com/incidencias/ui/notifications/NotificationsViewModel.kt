@@ -156,6 +156,7 @@ class NotificationsViewModel(application: Application) : AndroidViewModel(applic
                     NotificationFilter.INCIDENT_CREATED -> "INCIDENT_CREATED"
                     NotificationFilter.STATUS_CHANGED -> "STATUS_CHANGED"
                     NotificationFilter.MESSAGE_PUBLIC -> "MESSAGE_PUBLIC"
+                    NotificationFilter.MESSAGE_INTERNAL -> "MESSAGE_INTERNAL"
                     NotificationFilter.ATTACHMENT_UPLOADED -> "ATTACHMENT_UPLOADED"
                     else -> null
                 }

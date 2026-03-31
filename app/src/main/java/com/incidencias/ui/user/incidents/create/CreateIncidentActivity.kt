@@ -29,6 +29,9 @@ class CreateIncidentActivity : AppCompatActivity() {
         binding = ActivityCreateIncidentBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        setSupportActionBar(binding.toolbar)
+        binding.toolbar.setNavigationOnClickListener { finish() }
+
         setupModeSelector()
         setupListeners()
         observeViewModel()

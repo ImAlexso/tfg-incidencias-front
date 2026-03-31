@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.incidencias.R
 import com.incidencias.databinding.FragmentNotificationsBinding
 import com.incidencias.ui.incident.IncidentDetailActivity
+import com.incidencias.ui.user.UserMainActivity
 import kotlinx.coroutines.launch
 
 class NotificationsFragment : Fragment(R.layout.fragment_notifications) {
@@ -29,6 +30,8 @@ class NotificationsFragment : Fragment(R.layout.fragment_notifications) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentNotificationsBinding.bind(view)
+
+        (requireActivity() as? UserMainActivity)?.setToolbarTitle("Notificaciones")
 
         setupRecycler()
         setupFilters()
@@ -125,6 +128,9 @@ class NotificationsFragment : Fragment(R.layout.fragment_notifications) {
         binding.chipMessages.setOnClickListener {
             viewModel.setFilter(NotificationFilter.MESSAGE_PUBLIC)
         }
+        binding.chipMessagesInternal.setOnClickListener {
+            viewModel.setFilter(NotificationFilter.MESSAGE_INTERNAL)
+        }
 
         binding.chipAttachments.setOnClickListener {
             viewModel.setFilter(NotificationFilter.ATTACHMENT_UPLOADED)
@@ -185,6 +191,7 @@ class NotificationsFragment : Fragment(R.layout.fragment_notifications) {
                         NotificationFilter.INCIDENT_CREATED -> binding.chipGroup.check(binding.chipCreated.id)
                         NotificationFilter.STATUS_CHANGED -> binding.chipGroup.check(binding.chipStatus.id)
                         NotificationFilter.MESSAGE_PUBLIC -> binding.chipGroup.check(binding.chipMessages.id)
+                        NotificationFilter.MESSAGE_INTERNAL -> binding.chipGroup.check(binding.chipMessagesInternal.id)
                         NotificationFilter.ATTACHMENT_UPLOADED -> binding.chipGroup.check(binding.chipAttachments.id)
                     }
 

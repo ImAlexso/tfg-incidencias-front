@@ -6,5 +6,6 @@ enum class NotificationFilter {
     INCIDENT_CREATED,
     STATUS_CHANGED,
     MESSAGE_PUBLIC,
+    MESSAGE_INTERNAL,
     ATTACHMENT_UPLOADED
 }

@@ -15,6 +15,7 @@ import com.incidencias.R
 import com.incidencias.databinding.FragmentActiveIncidentsBinding
 import com.incidencias.ui.common.adapter.IncidentAdapter
 import com.incidencias.ui.incident.IncidentDetailActivity
+import com.incidencias.ui.user.UserMainActivity
 import kotlinx.coroutines.launch
 
 class ActiveIncidentsFragment : Fragment(R.layout.fragment_active_incidents) {
@@ -29,6 +30,8 @@ class ActiveIncidentsFragment : Fragment(R.layout.fragment_active_incidents) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentActiveIncidentsBinding.bind(view)
+
+        (requireActivity() as? UserMainActivity)?.setToolbarTitle("Incidencias activas")
 
         setupRecycler()
         setupRefresh()
@@ -92,7 +95,7 @@ class ActiveIncidentsFragment : Fragment(R.layout.fragment_active_incidents) {
                 viewModel.uiState.collect { state ->
 
                     binding.progressBar.visibility =
-                        if (state.isLoading) View.VISIBLE else View.GONE
+                        if (state.isLoading && state.incidents.isEmpty()) View.VISIBLE else View.GONE
 
                     binding.swipeRefresh.isRefreshing = state.isRefreshing
 

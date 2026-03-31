@@ -24,6 +24,9 @@ class SettingsActivity : AppCompatActivity() {
 
         sessionManager = SessionManager(applicationContext)
 
+        setSupportActionBar(binding.toolbar)
+        binding.toolbar.setNavigationOnClickListener { finish() }
+
         loadUserData()
         setupListeners()
     }
@@ -38,13 +41,9 @@ class SettingsActivity : AppCompatActivity() {
             val firstName = sessionManager.firstNameFlow.first().orEmpty()
             val lastName = sessionManager.lastNameFlow.first().orEmpty()
             val email = sessionManager.emailFlow.first().orEmpty()
-            val role = sessionManager.roleFlow.first().orEmpty()
-            val teamName = sessionManager.teamNameFlow.first()
 
             binding.tvFullName.text = "$firstName $lastName".trim()
             binding.tvEmail.text = email
-            binding.tvRole.text = role
-            binding.tvTeam.text = "Equipo: ${teamName ?: "-"}"
             binding.switchDarkMode.isChecked = sessionManager.darkModeFlow.first()
         }
     }
