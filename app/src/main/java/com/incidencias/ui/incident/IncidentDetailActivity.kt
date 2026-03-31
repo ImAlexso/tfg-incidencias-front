@@ -8,10 +8,10 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.google.android.material.tabs.TabLayoutMediator
 import com.incidencias.R
 import com.incidencias.data.remote.dto.catalog.PriorityResponse
@@ -58,6 +58,10 @@ class IncidentDetailActivity : AppCompatActivity() {
     private fun setupActions() {
         binding.btnAssignToMe.setOnClickListener {
             viewModel.assignToMe()
+        }
+
+        binding.btnStartProgress.setOnClickListener {
+            viewModel.startProgress()
         }
 
         binding.btnResolveIncident.setOnClickListener {
@@ -169,6 +173,7 @@ class IncidentDetailActivity : AppCompatActivity() {
 
         when (detail.statusName.uppercase()) {
             "OPEN" -> binding.tvStatus.setBackgroundResource(R.drawable.bg_status_open)
+            "IN_PROGRESS" -> binding.tvStatus.setBackgroundResource(R.drawable.bg_status_in_progress)
             "RESOLVED" -> binding.tvStatus.setBackgroundResource(R.drawable.bg_status_resolved)
             "CLOSED" -> binding.tvStatus.setBackgroundResource(R.drawable.bg_status_closed)
             else -> binding.tvStatus.setBackgroundResource(R.drawable.bg_status_open)
@@ -182,11 +187,16 @@ class IncidentDetailActivity : AppCompatActivity() {
             else -> binding.tvPriority.setBackgroundResource(R.drawable.bg_priority_low)
         }
     }
+
     private fun bindRoleActions(state: IncidentDetailUiState) {
         val detail = state.detail ?: return
 
+        val canStartProgress = viewModel.canStartProgress()
+        val isTechnicianInProgress = detail.statusName.equals("IN_PROGRESS", ignoreCase = true)
+
         val showTechnicianLayout =
-            state.role == "TECHNICIAN" && (detail.canAssignToMe || detail.canResolve)
+            state.role == "TECHNICIAN" &&
+                    (detail.canAssignToMe || canStartProgress || (detail.canResolve && isTechnicianInProgress))
 
         binding.layoutTechnicianActions.visibility =
             if (showTechnicianLayout) View.VISIBLE else View.GONE
@@ -194,12 +204,23 @@ class IncidentDetailActivity : AppCompatActivity() {
         binding.btnAssignToMe.visibility =
             if (detail.canAssignToMe) View.VISIBLE else View.GONE
 
+        binding.btnStartProgress.visibility =
+            if (canStartProgress) View.VISIBLE else View.GONE
+
         binding.btnResolveIncident.visibility =
-            if (detail.canResolve && state.role == "TECHNICIAN") View.VISIBLE else View.GONE
+            if (detail.canResolve && state.role == "TECHNICIAN" && isTechnicianInProgress) {
+                View.VISIBLE
+            } else {
+                View.GONE
+            }
 
         val showManagerLayout =
             (state.role == "MANAGER" || state.role == "ADMIN") &&
-                    (detail.canChangePriority || detail.canChangeTeam || detail.canAssignTechnician || detail.canResolve || detail.canClose)
+                    (detail.canChangePriority ||
+                            detail.canChangeTeam ||
+                            detail.canAssignTechnician ||
+                            detail.canResolve ||
+                            detail.canClose)
 
         binding.layoutManagerActions.visibility =
             if (showManagerLayout) View.VISIBLE else View.GONE
@@ -214,7 +235,11 @@ class IncidentDetailActivity : AppCompatActivity() {
             if (detail.canAssignTechnician) View.VISIBLE else View.GONE
 
         binding.btnResolveIncidentManager.visibility =
-            if (detail.canResolve && (state.role == "MANAGER" || state.role == "ADMIN")) View.VISIBLE else View.GONE
+            if (detail.canResolve && (state.role == "MANAGER" || state.role == "ADMIN")) {
+                View.VISIBLE
+            } else {
+                View.GONE
+            }
 
         binding.btnCloseIncident.visibility =
             if (detail.canClose) View.VISIBLE else View.GONE

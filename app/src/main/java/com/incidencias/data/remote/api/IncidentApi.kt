@@ -1,20 +1,21 @@
 package com.incidencias.data.remote.api
 
 import com.incidencias.data.remote.dto.incident.AssignTechnicianRequest
+import com.incidencias.data.remote.dto.incident.AssignableTechnicianResponse
 import com.incidencias.data.remote.dto.incident.CreateIncidentRequest
+import com.incidencias.data.remote.dto.incident.IncidentDetailResponse
 import com.incidencias.data.remote.dto.incident.IncidentResponse
 import com.incidencias.data.remote.dto.incident.PagedIncidentResponse
+import com.incidencias.data.remote.dto.incident.UpdateIncidentPriorityRequest
+import com.incidencias.data.remote.dto.incident.UpdateIncidentStatusRequest
+import com.incidencias.data.remote.dto.incident.UpdateIncidentTeamRequest
 import retrofit2.Response
 import retrofit2.http.Body
-import retrofit2.http.POST
 import retrofit2.http.GET
-import retrofit2.http.Query
-import com.incidencias.data.remote.dto.incident.IncidentDetailResponse
 import retrofit2.http.PATCH
+import retrofit2.http.POST
 import retrofit2.http.Path
-import com.incidencias.data.remote.dto.incident.AssignableTechnicianResponse
-import com.incidencias.data.remote.dto.incident.UpdateIncidentPriorityRequest
-import com.incidencias.data.remote.dto.incident.UpdateIncidentTeamRequest
+import retrofit2.http.Query
 
 interface IncidentApi {
 
@@ -32,9 +33,14 @@ interface IncidentApi {
 
     @GET("incidents/{id}/detail")
     suspend fun getIncidentDetail(
-        @retrofit2.http.Path("id") id: Long
-    ): retrofit2.Response<IncidentDetailResponse>
+        @Path("id") id: Long
+    ): Response<IncidentDetailResponse>
 
+    @PATCH("incidents/{id}/status")
+    suspend fun updateIncidentStatus(
+        @Path("id") id: Long,
+        @Body request: UpdateIncidentStatusRequest
+    ): Response<Unit>
 
     @POST("incidents/{id}/resolve")
     suspend fun resolveIncident(

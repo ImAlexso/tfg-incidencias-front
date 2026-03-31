@@ -25,6 +25,10 @@ import java.io.IOException
 
 class IncidentDetailViewModel(application: Application) : AndroidViewModel(application) {
 
+    companion object {
+        private const val IN_PROGRESS_STATUS_ID = 2L
+    }
+
     private val appContext = application.applicationContext
 
     private val incidentRepository = IncidentRepository(appContext)
@@ -103,6 +107,16 @@ class IncidentDetailViewModel(application: Application) : AndroidViewModel(appli
         }
     }
 
+    fun canStartProgress(): Boolean {
+        val state = _uiState.value
+        val detail = state.detail ?: return false
+
+        return state.role == "TECHNICIAN" &&
+                detail.statusName.equals("OPEN", ignoreCase = true) &&
+                detail.assignedTechnicianId != null &&
+                detail.assignedTechnicianId == state.userId
+    }
+
     fun assignToMe() {
         val state = _uiState.value
         val incidentId = state.incidentId
@@ -152,6 +166,56 @@ class IncidentDetailViewModel(application: Application) : AndroidViewModel(appli
             }
         }
     }
+
+    fun startProgress() {
+        val state = _uiState.value
+        val incidentId = state.incidentId
+        val detail = state.detail ?: run {
+            emitMessage("No hay detalle cargado")
+            return
+        }
+
+        if (!canStartProgress()) {
+            emitMessage("No puedes iniciar esta incidencia")
+            return
+        }
+
+        viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(isActionLoading = true)
+
+            try {
+                val response = incidentRepository.updateIncidentStatus(
+                    id = incidentId,
+                    statusId = IN_PROGRESS_STATUS_ID
+                )
+
+                _uiState.value = _uiState.value.copy(isActionLoading = false)
+
+                if (response.isSuccessful) {
+                    _events.emit(IncidentDetailEvent.ShowMessage("Incidencia en progreso"))
+                    loadDetail()
+                } else {
+                    _events.emit(
+                        IncidentDetailEvent.ShowMessage(
+                            when (response.code()) {
+                                400, 409 -> "No se puede iniciar la incidencia en su estado actual"
+                                403 -> "No tienes permiso para iniciar esta incidencia"
+                                404 -> "La incidencia no existe"
+                                else -> "No se pudo iniciar la incidencia"
+                            }
+                        )
+                    )
+                }
+            } catch (e: IOException) {
+                _uiState.value = _uiState.value.copy(isActionLoading = false)
+                _events.emit(IncidentDetailEvent.ShowMessage("No se pudo conectar con el servidor"))
+            } catch (e: Exception) {
+                _uiState.value = _uiState.value.copy(isActionLoading = false)
+                _events.emit(IncidentDetailEvent.ShowMessage(e.message ?: "Error al iniciar la incidencia"))
+            }
+        }
+    }
+
     fun resolveIncident() {
         val state = _uiState.value
         val incidentId = state.incidentId
@@ -196,6 +260,7 @@ class IncidentDetailViewModel(application: Application) : AndroidViewModel(appli
             }
         }
     }
+
     fun closeIncident() {
         val state = _uiState.value
         val incidentId = state.incidentId
@@ -240,6 +305,7 @@ class IncidentDetailViewModel(application: Application) : AndroidViewModel(appli
             }
         }
     }
+
     fun requestPriorityOptions() {
         val detail = _uiState.value.detail ?: run {
             emitMessage("No hay detalle cargado")
@@ -267,6 +333,7 @@ class IncidentDetailViewModel(application: Application) : AndroidViewModel(appli
             }
         }
     }
+
     fun updatePriority(priorityId: Long) {
         val state = _uiState.value
         val incidentId = state.incidentId
@@ -311,6 +378,7 @@ class IncidentDetailViewModel(application: Application) : AndroidViewModel(appli
             }
         }
     }
+
     fun requestTeamOptions() {
         val detail = _uiState.value.detail ?: run {
             emitMessage("No hay detalle cargado")
@@ -338,6 +406,7 @@ class IncidentDetailViewModel(application: Application) : AndroidViewModel(appli
             }
         }
     }
+
     fun updateTeam(teamId: Long) {
         val state = _uiState.value
         val incidentId = state.incidentId
@@ -382,6 +451,7 @@ class IncidentDetailViewModel(application: Application) : AndroidViewModel(appli
             }
         }
     }
+
     fun requestAssignableTechnicians() {
         val detail = _uiState.value.detail ?: run {
             emitMessage("No hay detalle cargado")
@@ -408,6 +478,7 @@ class IncidentDetailViewModel(application: Application) : AndroidViewModel(appli
             }
         }
     }
+
     fun assignTechnician(technicianId: Long) {
         val state = _uiState.value
         val incidentId = state.incidentId
@@ -536,6 +607,7 @@ class IncidentDetailViewModel(application: Application) : AndroidViewModel(appli
             }
         }
     }
+
     fun uploadAttachment(uri: Uri, fileName: String?) {
         val incidentId = _uiState.value.incidentId
         if (incidentId == -1L) return

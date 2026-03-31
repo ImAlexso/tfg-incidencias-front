@@ -9,6 +9,7 @@ import com.incidencias.data.remote.dto.incident.IncidentDetailResponse
 import com.incidencias.data.remote.dto.incident.IncidentResponse
 import com.incidencias.data.remote.dto.incident.PagedIncidentResponse
 import com.incidencias.data.remote.dto.incident.UpdateIncidentPriorityRequest
+import com.incidencias.data.remote.dto.incident.UpdateIncidentStatusRequest
 import com.incidencias.data.remote.dto.incident.UpdateIncidentTeamRequest
 import com.incidencias.data.remote.retrofit.RetrofitClient
 import retrofit2.Response
@@ -21,6 +22,7 @@ class IncidentRepository(context: Context) {
     suspend fun createIncident(request: CreateIncidentRequest): Response<IncidentResponse> {
         return incidentApi.createIncident(request)
     }
+
     suspend fun getIncidents(
         status: String?,
         page: Int,
@@ -28,8 +30,13 @@ class IncidentRepository(context: Context) {
     ): Response<PagedIncidentResponse> {
         return incidentApi.getIncidents(status, page, size)
     }
+
     suspend fun getIncidentDetail(id: Long): Response<IncidentDetailResponse> {
         return incidentApi.getIncidentDetail(id)
+    }
+
+    suspend fun updateIncidentStatus(id: Long, statusId: Long): Response<Unit> {
+        return incidentApi.updateIncidentStatus(id, UpdateIncidentStatusRequest(statusId))
     }
 
     suspend fun resolveIncident(id: Long): Response<Unit> {
@@ -55,5 +62,4 @@ class IncidentRepository(context: Context) {
     suspend fun getAssignableTechnicians(id: Long): Response<List<AssignableTechnicianResponse>> {
         return incidentApi.getAssignableTechnicians(id)
     }
-
 }

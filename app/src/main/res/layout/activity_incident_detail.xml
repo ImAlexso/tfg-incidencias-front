@@ -201,26 +201,32 @@
                         </LinearLayout>
                     </com.google.android.material.card.MaterialCardView>
 
-                    <!-- Se mantienen ocultas para no romper código -->
                     <LinearLayout
                         android:id="@+id/layoutTechnicianActions"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:visibility="gone"
-                        android:orientation="horizontal">
+                        android:layout_marginTop="14dp"
+                        android:orientation="vertical"
+                        android:visibility="gone">
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btnAssignToMe"
-                            android:layout_width="0dp"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1"
                             android:text="Asignarme" />
 
                         <com.google.android.material.button.MaterialButton
-                            android:id="@+id/btnResolveIncident"
-                            android:layout_width="0dp"
+                            android:id="@+id/btnStartProgress"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1"
+                            android:layout_marginTop="10dp"
+                            android:text="Empezar incidencia" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnResolveIncident"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
                             android:text="Resolver" />
                     </LinearLayout>
 
@@ -228,8 +234,9 @@
                         android:id="@+id/layoutManagerActions"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:visibility="gone"
-                        android:orientation="vertical">
+                        android:layout_marginTop="14dp"
+                        android:orientation="vertical"
+                        android:visibility="gone">
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btnChangePriority"
@@ -241,24 +248,28 @@
                             android:id="@+id/btnChangeTeam"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
                             android:text="Cambiar equipo" />
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btnAssignTechnicianManager"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
                             android:text="Asignar técnico" />
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btnResolveIncidentManager"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
                             android:text="Resolver" />
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btnCloseIncident"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
                             android:text="Cerrar incidencia" />
                     </LinearLayout>
 

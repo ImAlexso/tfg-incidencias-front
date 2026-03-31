@@ -68,7 +68,7 @@ class IncidentAdapter(
 
         when (item.statusName.uppercase()) {
             "OPEN" -> holder.binding.tvStatus.setBackgroundResource(R.drawable.bg_status_open)
-            "IN_PROGRESS" -> holder.binding.tvStatus.setBackgroundResource(R.drawable.bg_neutral_chip)
+            "IN_PROGRESS" -> holder.binding.tvStatus.setBackgroundResource(R.drawable.bg_status_in_progress)
             "RESOLVED" -> holder.binding.tvStatus.setBackgroundResource(R.drawable.bg_status_resolved)
             "CLOSED" -> holder.binding.tvStatus.setBackgroundResource(R.drawable.bg_status_closed)
             else -> holder.binding.tvStatus.setBackgroundResource(R.drawable.bg_status_open)
