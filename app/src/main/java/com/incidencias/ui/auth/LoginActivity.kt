@@ -2,25 +2,27 @@ package com.incidencias.ui.auth
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.incidencias.databinding.ActivityLoginBinding
+import com.incidencias.session.SessionManager
 import com.incidencias.ui.admin.AdminMainActivity
 import com.incidencias.ui.manager.ManagerMainActivity
 import com.incidencias.ui.technician.TechnicianMainActivity
 import com.incidencias.ui.user.UserMainActivity
-import kotlinx.coroutines.launch
-import androidx.lifecycle.lifecycleScope
-import com.incidencias.session.SessionManager
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 
 class LoginActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityLoginBinding
-
     private lateinit var sessionManager: SessionManager
+
     private val viewModel: LoginViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -32,10 +34,11 @@ class LoginActivity : AppCompatActivity() {
         sessionManager = SessionManager(applicationContext)
 
         applySavedTheme()
-        checkExistingSession()
         setupListeners()
         observeUiState()
+        checkExistingSession()
     }
+
     private fun applySavedTheme() {
         lifecycleScope.launch {
             val darkMode = sessionManager.darkModeFlow.first()
@@ -48,13 +51,15 @@ class LoginActivity : AppCompatActivity() {
             )
         }
     }
+
     private fun checkExistingSession() {
         lifecycleScope.launch {
             val token = sessionManager.tokenFlow.first()
-            val role = sessionManager.roleFlow.first()
 
-            if (!token.isNullOrBlank() && !role.isNullOrBlank()) {
-                navigateByRole(role)
+            if (!token.isNullOrBlank()) {
+                binding.progressBar.visibility = View.VISIBLE
+                binding.btnLogin.isEnabled = false
+                viewModel.validateExistingSession()
             }
         }
     }
@@ -63,36 +68,41 @@ class LoginActivity : AppCompatActivity() {
         binding.btnLogin.setOnClickListener {
             val email = binding.etEmail.text?.toString()?.trim().orEmpty()
             val password = binding.etPassword.text?.toString()?.trim().orEmpty()
-
             viewModel.login(email, password)
         }
     }
 
     private fun observeUiState() {
         lifecycleScope.launch {
-            viewModel.uiState.collect { state ->
-                when (state) {
-                    is LoginUiState.Idle -> {
-                        binding.progressBar.visibility = android.view.View.GONE
-                        binding.btnLogin.isEnabled = true
-                    }
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.uiState.collect { state ->
+                    when (state) {
+                        is LoginUiState.Idle -> {
+                            binding.progressBar.visibility = View.GONE
+                            binding.btnLogin.isEnabled = true
+                        }
 
-                    is LoginUiState.Loading -> {
-                        binding.progressBar.visibility = android.view.View.VISIBLE
-                        binding.btnLogin.isEnabled = false
-                    }
+                        is LoginUiState.Loading -> {
+                            binding.progressBar.visibility = View.VISIBLE
+                            binding.btnLogin.isEnabled = false
+                        }
 
-                    is LoginUiState.Success -> {
-                        binding.progressBar.visibility = android.view.View.GONE
-                        binding.btnLogin.isEnabled = true
-                        navigateByRole(state.role)
-                    }
+                        is LoginUiState.Success -> {
+                            binding.progressBar.visibility = View.GONE
+                            binding.btnLogin.isEnabled = true
+                            navigateByRole(state.role)
+                        }
 
-                    is LoginUiState.Error -> {
-                        binding.progressBar.visibility = android.view.View.GONE
-                        binding.btnLogin.isEnabled = true
-                        Toast.makeText(this@LoginActivity, state.message, Toast.LENGTH_LONG).show()
-                        viewModel.resetState()
+                        is LoginUiState.Error -> {
+                            binding.progressBar.visibility = View.GONE
+                            binding.btnLogin.isEnabled = true
+                            Toast.makeText(
+                                this@LoginActivity,
+                                state.message,
+                                Toast.LENGTH_LONG
+                            ).show()
+                            viewModel.resetState()
+                        }
                     }
                 }
             }

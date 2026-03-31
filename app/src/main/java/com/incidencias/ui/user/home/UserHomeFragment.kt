@@ -6,10 +6,12 @@ import android.view.View
 import androidx.fragment.app.Fragment
 import com.incidencias.R
 import com.incidencias.databinding.FragmentUserHomeBinding
+import com.incidencias.ui.notifications.NotificationsFragment
 import com.incidencias.ui.settings.SettingsActivity
 import com.incidencias.ui.user.incidents.ActiveIncidentsFragment
-import com.incidencias.ui.user.incidents.create.CreateIncidentActivity
 import com.incidencias.ui.user.incidents.IncidentHistoryFragment
+import com.incidencias.ui.user.incidents.create.CreateIncidentActivity
+
 class UserHomeFragment : Fragment(R.layout.fragment_user_home) {
 
     private var _binding: FragmentUserHomeBinding? = null
@@ -17,9 +19,7 @@ class UserHomeFragment : Fragment(R.layout.fragment_user_home) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         _binding = FragmentUserHomeBinding.bind(view)
-
         setupClicks()
     }
 
@@ -38,6 +38,13 @@ class UserHomeFragment : Fragment(R.layout.fragment_user_home) {
         binding.cardHistory.setOnClickListener {
             parentFragmentManager.beginTransaction()
                 .replace(R.id.userFragmentContainer, IncidentHistoryFragment())
+                .addToBackStack(null)
+                .commit()
+        }
+
+        binding.cardNotifications.setOnClickListener {
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.userFragmentContainer, NotificationsFragment())
                 .addToBackStack(null)
                 .commit()
         }

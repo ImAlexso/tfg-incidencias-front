@@ -48,7 +48,10 @@ class CreateIncidentViewModel(application: Application) : AndroidViewModel(appli
                 if (teamsResponse.isSuccessful) {
                     _teams.value = teamsResponse.body().orEmpty().filter { it.active }
                 }
-            } catch (_: Exception) {
+            } catch (e: Exception) {
+                _uiState.value = CreateIncidentUiState.Error(
+                    e.message ?: "No se pudieron cargar los catálogos"
+                )
             }
         }
     }

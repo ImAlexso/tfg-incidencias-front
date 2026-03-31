@@ -1,5 +1,26 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
+
+    <!-- Primary -->
+    <color name="primary">#1E3A8A</color>
+    <color name="onPrimary">#FFFFFF</color>
+
+    <!-- Background -->
+    <color name="background">#F5F7FA</color>
+    <color name="surface">#FFFFFF</color>
+
+    <!-- Text -->
+    <color name="onSurface">#111827</color>
+    <color name="secondaryText">#6B7280</color>
+
+    <!-- States -->
+    <color name="status_open">#2563EB</color>
+    <color name="status_resolved">#059669</color>
+    <color name="status_closed">#6B7280</color>
+
+    <!-- Priority -->
+    <color name="priority_high">#DC2626</color>
+    <color name="priority_medium">#F59E0B</color>
+    <color name="priority_low">#10B981</color>
+    <color name="priority_critical">#7F1D1D</color>
+
 </resources>

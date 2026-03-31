@@ -33,11 +33,11 @@ class PendingClosureFragment : Fragment(R.layout.fragment_active_incidents) {
 
             if (response.isSuccessful) {
                 val items = response.body()?.content.orEmpty()
-                binding.recyclerView.adapter = IncidentAdapter(items) { incident ->
+                /*binding.recyclerView.adapter = IncidentAdapter(items) { incident ->
                     val intent = Intent(requireContext(), IncidentDetailActivity::class.java)
                     intent.putExtra(IncidentDetailActivity.EXTRA_INCIDENT_ID, incident.id)
                     startActivity(intent)
-                }
+                }*/
             }
         }
     }

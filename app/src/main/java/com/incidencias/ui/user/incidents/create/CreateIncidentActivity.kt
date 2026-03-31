@@ -6,7 +6,9 @@ import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.incidencias.data.remote.dto.catalog.CategoryResponse
 import com.incidencias.data.remote.dto.catalog.PriorityResponse
 import com.incidencias.data.remote.dto.catalog.TeamResponse
@@ -48,15 +50,21 @@ class CreateIncidentActivity : AppCompatActivity() {
 
             val selectedCategoryId = if (!useAi && categories.isNotEmpty()) {
                 categories.getOrNull(binding.spCategory.selectedItemPosition)?.id
-            } else null
+            } else {
+                null
+            }
 
             val selectedPriorityId = if (!useAi && priorities.isNotEmpty()) {
                 priorities.getOrNull(binding.spPriority.selectedItemPosition)?.id
-            } else null
+            } else {
+                null
+            }
 
             val selectedTeamId = if (!useAi && teams.isNotEmpty()) {
                 teams.getOrNull(binding.spTeam.selectedItemPosition)?.id
-            } else null
+            } else {
+                null
+            }
 
             viewModel.createIncident(
                 useAi = useAi,
@@ -71,80 +79,77 @@ class CreateIncidentActivity : AppCompatActivity() {
 
     private fun observeViewModel() {
         lifecycleScope.launch {
-            viewModel.categories.collect { list ->
-                categories = list
-                val adapter = ArrayAdapter(
-                    this@CreateIncidentActivity,
-                    android.R.layout.simple_spinner_item,
-                    list.map { it.name }
-                )
-                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-                binding.spCategory.adapter = adapter
-            }
-        }
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
 
-        lifecycleScope.launch {
-            viewModel.priorities.collect { list ->
-                priorities = list
-                val adapter = ArrayAdapter(
-                    this@CreateIncidentActivity,
-                    android.R.layout.simple_spinner_item,
-                    list.map { it.name }
-                )
-                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-                binding.spPriority.adapter = adapter
-            }
-        }
-
-        lifecycleScope.launch {
-            viewModel.teams.collect { list ->
-                teams = list
-                val adapter = ArrayAdapter(
-                    this@CreateIncidentActivity,
-                    android.R.layout.simple_spinner_item,
-                    list.map { it.name }
-                )
-                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-                binding.spTeam.adapter = adapter
-            }
-        }
-
-        lifecycleScope.launch {
-            viewModel.uiState.collect { state ->
-                when (state) {
-                    is CreateIncidentUiState.Idle -> {
-                        binding.progressBar.visibility = View.GONE
-                        binding.btnCreateIncident.isEnabled = true
+                launch {
+                    viewModel.categories.collect { list ->
+                        categories = list
+                        binding.spCategory.adapter = createSpinnerAdapter(list.map { it.name })
                     }
+                }
 
-                    is CreateIncidentUiState.Loading -> {
-                        binding.progressBar.visibility = View.VISIBLE
-                        binding.btnCreateIncident.isEnabled = false
+                launch {
+                    viewModel.priorities.collect { list ->
+                        priorities = list
+                        binding.spPriority.adapter = createSpinnerAdapter(list.map { it.name })
                     }
+                }
 
-                    is CreateIncidentUiState.Success -> {
-                        binding.progressBar.visibility = View.GONE
-                        binding.btnCreateIncident.isEnabled = true
-                        Toast.makeText(
-                            this@CreateIncidentActivity,
-                            "Incidencia creada: ${state.referenceCode}",
-                            Toast.LENGTH_LONG
-                        ).show()
-                        finish()
+                launch {
+                    viewModel.teams.collect { list ->
+                        teams = list
+                        binding.spTeam.adapter = createSpinnerAdapter(list.map { it.name })
                     }
+                }
 
-                    is CreateIncidentUiState.Error -> {
-                        binding.progressBar.visibility = View.GONE
-                        binding.btnCreateIncident.isEnabled = true
-                        Toast.makeText(
-                            this@CreateIncidentActivity,
-                            state.message,
-                            Toast.LENGTH_LONG
-                        ).show()
-                        viewModel.resetState()
+                launch {
+                    viewModel.uiState.collect { state ->
+                        when (state) {
+                            is CreateIncidentUiState.Idle -> {
+                                binding.progressBar.visibility = View.GONE
+                                binding.btnCreateIncident.isEnabled = true
+                            }
+
+                            is CreateIncidentUiState.Loading -> {
+                                binding.progressBar.visibility = View.VISIBLE
+                                binding.btnCreateIncident.isEnabled = false
+                            }
+
+                            is CreateIncidentUiState.Success -> {
+                                binding.progressBar.visibility = View.GONE
+                                binding.btnCreateIncident.isEnabled = true
+                                Toast.makeText(
+                                    this@CreateIncidentActivity,
+                                    "Incidencia creada: ${state.referenceCode}",
+                                    Toast.LENGTH_LONG
+                                ).show()
+                                finish()
+                            }
+
+                            is CreateIncidentUiState.Error -> {
+                                binding.progressBar.visibility = View.GONE
+                                binding.btnCreateIncident.isEnabled = true
+                                Toast.makeText(
+                                    this@CreateIncidentActivity,
+                                    state.message,
+                                    Toast.LENGTH_LONG
+                                ).show()
+                                viewModel.resetState()
+                            }
+                        }
                     }
                 }
             }
+        }
+    }
+
+    private fun createSpinnerAdapter(items: List<String>): ArrayAdapter<String> {
+        return ArrayAdapter(
+            this,
+            android.R.layout.simple_spinner_item,
+            items
+        ).apply {
+            setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         }
     }
 }

@@ -1,23 +1,29 @@
 package com.incidencias.ui.incident
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.view.View
 import android.widget.Toast
+import androidx.activity.viewModels
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.google.android.material.tabs.TabLayoutMediator
+import com.incidencias.R
+import com.incidencias.data.remote.dto.catalog.PriorityResponse
+import com.incidencias.data.remote.dto.catalog.TeamResponse
+import com.incidencias.data.remote.dto.incident.AssignableTechnicianResponse
 import com.incidencias.data.remote.dto.incident.IncidentDetailResponse
-import com.incidencias.data.repository.IncidentRepository
 import com.incidencias.databinding.ActivityIncidentDetailBinding
-import com.incidencias.session.SessionManager
 import com.incidencias.ui.incident.tabs.AttachmentsFragment
 import com.incidencias.ui.incident.tabs.HistoryFragment
 import com.incidencias.ui.incident.tabs.InternalMessagesFragment
 import com.incidencias.ui.incident.tabs.PublicMessagesFragment
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import androidx.appcompat.app.AlertDialog
-import com.incidencias.data.repository.CatalogRepository
 
 class IncidentDetailActivity : AppCompatActivity() {
 
@@ -26,8 +32,9 @@ class IncidentDetailActivity : AppCompatActivity() {
     }
 
     private lateinit var binding: ActivityIncidentDetailBinding
-    private lateinit var sessionManager: SessionManager
-    private var currentDetail: IncidentDetailResponse? = null
+    private val viewModel: IncidentDetailViewModel by viewModels()
+
+    private var tabsInitialized = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,8 +43,6 @@ class IncidentDetailActivity : AppCompatActivity() {
         setContentView(binding.root)
         setSupportActionBar(binding.toolbar)
 
-        sessionManager = SessionManager(applicationContext)
-
         val incidentId = intent.getLongExtra(EXTRA_INCIDENT_ID, -1L)
         if (incidentId == -1L) {
             Toast.makeText(this, "Incidencia no válida", Toast.LENGTH_LONG).show()
@@ -45,263 +50,247 @@ class IncidentDetailActivity : AppCompatActivity() {
             return
         }
 
-        loadIncidentDetail(incidentId)
+        setupActions()
+        observeViewModel()
+        viewModel.initialize(incidentId)
     }
 
-    private fun loadIncidentDetail(incidentId: Long) {
+    private fun setupActions() {
+        binding.btnAssignToMe.setOnClickListener {
+            viewModel.assignToMe()
+        }
+
+        binding.btnResolveIncident.setOnClickListener {
+            viewModel.resolveIncident()
+        }
+
+        binding.btnChangePriority.setOnClickListener {
+            viewModel.requestPriorityOptions()
+        }
+
+        binding.btnChangeTeam.setOnClickListener {
+            viewModel.requestTeamOptions()
+        }
+
+        binding.btnAssignTechnicianManager.setOnClickListener {
+            viewModel.requestAssignableTechnicians()
+        }
+
+        binding.btnResolveIncidentManager.setOnClickListener {
+            viewModel.resolveIncident()
+        }
+
+        binding.btnCloseIncident.setOnClickListener {
+            viewModel.closeIncident()
+        }
+    }
+
+    private fun observeViewModel() {
         lifecycleScope.launch {
-            binding.progressBar.visibility = android.view.View.VISIBLE
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
 
-            try {
-                val repository = IncidentRepository(this@IncidentDetailActivity)
-                val response = repository.getIncidentDetail(incidentId)
+                launch {
+                    viewModel.uiState.collect { state ->
+                        binding.progressBar.visibility =
+                            if (state.isLoading || state.isActionLoading) View.VISIBLE else View.GONE
 
-                binding.progressBar.visibility = android.view.View.GONE
+                        val detail = state.detail
+                        if (detail != null) {
+                            bindHeader(detail)
+                            bindRoleActions(state)
+                            showContent(true)
 
-                if (response.isSuccessful && response.body() != null) {
-                    val detail = response.body()!!
-                    currentDetail = detail
-                    bindHeader(detail)
-                    setupTabs(detail)
-                    setupTechnicianActions(detail)
-                    setupManagerActions(detail)
-                } else {
-                    Toast.makeText(
-                        this@IncidentDetailActivity,
-                        "No se pudo cargar el detalle",
-                        Toast.LENGTH_LONG
-                    ).show()
-                    finish()
+                            if (!tabsInitialized) {
+                                setupTabs(state.role)
+                                tabsInitialized = true
+                            }
+                        } else {
+                            showContent(false)
+                        }
+
+                        state.errorMessage?.let { message ->
+                            Toast.makeText(this@IncidentDetailActivity, message, Toast.LENGTH_LONG).show()
+                        }
+                    }
                 }
-            } catch (e: Exception) {
-                binding.progressBar.visibility = android.view.View.GONE
-                Toast.makeText(
-                    this@IncidentDetailActivity,
-                    e.message ?: "Error al cargar el detalle",
-                    Toast.LENGTH_LONG
-                ).show()
-                finish()
+
+                launch {
+                    viewModel.events.collect { event ->
+                        when (event) {
+                            is IncidentDetailEvent.ShowMessage -> {
+                                Toast.makeText(
+                                    this@IncidentDetailActivity,
+                                    event.message,
+                                    Toast.LENGTH_LONG
+                                ).show()
+                            }
+
+                            is IncidentDetailEvent.CloseScreen -> {
+                                finish()
+                            }
+
+                            is IncidentDetailEvent.ShowPriorityPicker -> {
+                                showPriorityDialog(event.priorities)
+                            }
+
+                            is IncidentDetailEvent.ShowTeamPicker -> {
+                                showTeamDialog(event.teams)
+                            }
+
+                            is IncidentDetailEvent.ShowTechnicianPicker -> {
+                                showTechnicianDialog(event.technicians)
+                            }
+
+                            is IncidentDetailEvent.OpenDownloadUrl -> {
+                                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(event.url)))
+                            }
+                        }
+                    }
+                }
             }
         }
+    }
+
+    private fun showContent(show: Boolean) {
+        binding.tabLayout.visibility = if (show) View.VISIBLE else View.GONE
+        binding.viewPager.visibility = if (show) View.VISIBLE else View.GONE
+        binding.layoutTechnicianActions.visibility =
+            if (show) binding.layoutTechnicianActions.visibility else View.GONE
+        binding.layoutManagerActions.visibility =
+            if (show) binding.layoutManagerActions.visibility else View.GONE
     }
 
     private fun bindHeader(detail: IncidentDetailResponse) {
         binding.tvReference.text = detail.referenceCode
         binding.tvTitle.text = detail.title
         binding.tvDescription.text = detail.description
-        binding.tvStatus.text = "Estado: ${detail.statusName}"
-        binding.tvPriority.text = "Prioridad: ${detail.priorityName ?: "-"}"
-        binding.tvCategory.text = "Categoría: ${detail.categoryName ?: "-"}"
+        binding.tvStatus.text = detail.statusName
+        binding.tvPriority.text = detail.priorityName ?: "-"
+        binding.tvCategory.text = detail.categoryName ?: "-"
         binding.tvTeam.text = "Equipo: ${detail.currentTeamName ?: "-"}"
-    }
 
-    private fun setupTabs(detail: IncidentDetailResponse) {
-        lifecycleScope.launch {
-            val role = sessionManager.roleFlow.first().orEmpty().uppercase()
+        when (detail.statusName.uppercase()) {
+            "OPEN" -> binding.tvStatus.setBackgroundResource(R.drawable.bg_status_open)
+            "RESOLVED" -> binding.tvStatus.setBackgroundResource(R.drawable.bg_status_resolved)
+            "CLOSED" -> binding.tvStatus.setBackgroundResource(R.drawable.bg_status_closed)
+            else -> binding.tvStatus.setBackgroundResource(R.drawable.bg_status_open)
+        }
 
-            val fragments = mutableListOf<Pair<String, androidx.fragment.app.Fragment>>()
-
-            fragments.add("Públicos" to PublicMessagesFragment.newInstance(detail.id, detail.messages))
-
-            if (role == "TECHNICIAN" || role == "MANAGER" || role == "ADMIN") {
-                fragments.add("Internos" to InternalMessagesFragment.newInstance(detail.id, detail.messages))
-            }
-
-            fragments.add("Adjuntos" to AttachmentsFragment.newInstance(detail.id, detail.attachments))
-            fragments.add("Historial" to HistoryFragment.newInstance(detail.events))
-
-            binding.viewPager.adapter = object : FragmentStateAdapter(this@IncidentDetailActivity) {
-                override fun getItemCount(): Int = fragments.size
-                override fun createFragment(position: Int) = fragments[position].second
-            }
-
-            TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
-                tab.text = fragments[position].first
-            }.attach()
+        when (detail.priorityName?.uppercase()) {
+            "CRITICAL" -> binding.tvPriority.setBackgroundResource(R.drawable.bg_priority_critical)
+            "HIGH" -> binding.tvPriority.setBackgroundResource(R.drawable.bg_priority_high)
+            "MEDIUM" -> binding.tvPriority.setBackgroundResource(R.drawable.bg_priority_medium)
+            "LOW" -> binding.tvPriority.setBackgroundResource(R.drawable.bg_priority_low)
+            else -> binding.tvPriority.setBackgroundResource(R.drawable.bg_priority_low)
         }
     }
+    private fun bindRoleActions(state: IncidentDetailUiState) {
+        val detail = state.detail ?: return
 
-    private fun setupTechnicianActions(detail: IncidentDetailResponse) {
-        lifecycleScope.launch {
-            val role = sessionManager.roleFlow.first().orEmpty().uppercase()
-            val userId = sessionManager.userIdFlow.first()
+        val showTechnicianLayout =
+            state.role == "TECHNICIAN" && (detail.canAssignToMe || detail.canResolve)
 
-            if (role == "TECHNICIAN") {
-                binding.layoutTechnicianActions.visibility = android.view.View.VISIBLE
+        binding.layoutTechnicianActions.visibility =
+            if (showTechnicianLayout) View.VISIBLE else View.GONE
 
-                binding.btnAssignToMe.setOnClickListener {
-                    if (userId != null) {
-                        lifecycleScope.launch {
-                            val repository = IncidentRepository(this@IncidentDetailActivity)
-                            val response = repository.assignTechnician(detail.id, userId)
+        binding.btnAssignToMe.visibility =
+            if (detail.canAssignToMe) View.VISIBLE else View.GONE
 
-                            if (response.isSuccessful) {
-                                Toast.makeText(
-                                    this@IncidentDetailActivity,
-                                    "Incidencia asignada",
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                                recreate()
-                            } else {
-                                Toast.makeText(
-                                    this@IncidentDetailActivity,
-                                    "No se pudo asignar",
-                                    Toast.LENGTH_LONG
-                                ).show()
-                            }
-                        }
-                    }
-                }
+        binding.btnResolveIncident.visibility =
+            if (detail.canResolve && state.role == "TECHNICIAN") View.VISIBLE else View.GONE
 
-                binding.btnResolveIncident.setOnClickListener {
-                    lifecycleScope.launch {
-                        val repository = IncidentRepository(this@IncidentDetailActivity)
-                        val response = repository.resolveIncident(detail.id)
+        val showManagerLayout =
+            (state.role == "MANAGER" || state.role == "ADMIN") &&
+                    (detail.canChangePriority || detail.canChangeTeam || detail.canAssignTechnician || detail.canResolve || detail.canClose)
 
-                        if (response.isSuccessful) {
-                            Toast.makeText(
-                                this@IncidentDetailActivity,
-                                "Incidencia resuelta",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                            recreate()
-                        } else {
-                            Toast.makeText(
-                                this@IncidentDetailActivity,
-                                "No se pudo resolver",
-                                Toast.LENGTH_LONG
-                            ).show()
-                        }
-                    }
-                }
-            } else {
-                binding.layoutTechnicianActions.visibility = android.view.View.GONE
-            }
-        }
+        binding.layoutManagerActions.visibility =
+            if (showManagerLayout) View.VISIBLE else View.GONE
+
+        binding.btnChangePriority.visibility =
+            if (detail.canChangePriority) View.VISIBLE else View.GONE
+
+        binding.btnChangeTeam.visibility =
+            if (detail.canChangeTeam) View.VISIBLE else View.GONE
+
+        binding.btnAssignTechnicianManager.visibility =
+            if (detail.canAssignTechnician) View.VISIBLE else View.GONE
+
+        binding.btnResolveIncidentManager.visibility =
+            if (detail.canResolve && (state.role == "MANAGER" || state.role == "ADMIN")) View.VISIBLE else View.GONE
+
+        binding.btnCloseIncident.visibility =
+            if (detail.canClose) View.VISIBLE else View.GONE
     }
-    private fun setupManagerActions(detail: IncidentDetailResponse) {
-        lifecycleScope.launch {
-            val role = sessionManager.roleFlow.first().orEmpty().uppercase()
 
-            if (role == "MANAGER" || role == "ADMIN") {
-                binding.layoutManagerActions.visibility = android.view.View.VISIBLE
+    private fun setupTabs(role: String) {
+        val fragments = mutableListOf<Pair<String, androidx.fragment.app.Fragment>>()
 
-                binding.btnChangePriority.setOnClickListener {
-                    lifecycleScope.launch {
-                        val catalogRepository = CatalogRepository(this@IncidentDetailActivity)
-                        val incidentRepository = IncidentRepository(this@IncidentDetailActivity)
-                        val prioritiesResponse = catalogRepository.getPriorities()
+        fragments.add("Públicos" to PublicMessagesFragment())
 
-                        if (prioritiesResponse.isSuccessful) {
-                            val priorities = prioritiesResponse.body().orEmpty().filter { it.active }
-                            val names = priorities.map { it.name }.toTypedArray()
-
-                            AlertDialog.Builder(this@IncidentDetailActivity)
-                                .setTitle("Selecciona prioridad")
-                                .setItems(names) { _, which ->
-                                    lifecycleScope.launch {
-                                        val selected = priorities[which]
-                                        val response = incidentRepository.updateIncidentPriority(detail.id, selected.id)
-                                        if (response.isSuccessful) {
-                                            Toast.makeText(this@IncidentDetailActivity, "Prioridad actualizada", Toast.LENGTH_SHORT).show()
-                                            recreate()
-                                        } else {
-                                            Toast.makeText(this@IncidentDetailActivity, "No se pudo actualizar", Toast.LENGTH_LONG).show()
-                                        }
-                                    }
-                                }
-                                .show()
-                        }
-                    }
-                }
-
-                binding.btnChangeTeam.setOnClickListener {
-                    lifecycleScope.launch {
-                        val catalogRepository = CatalogRepository(this@IncidentDetailActivity)
-                        val incidentRepository = IncidentRepository(this@IncidentDetailActivity)
-                        val teamsResponse = catalogRepository.getTeams()
-
-                        if (teamsResponse.isSuccessful) {
-                            val teams = teamsResponse.body().orEmpty().filter { it.active }
-                            val names = teams.map { it.name }.toTypedArray()
-
-                            AlertDialog.Builder(this@IncidentDetailActivity)
-                                .setTitle("Selecciona equipo")
-                                .setItems(names) { _, which ->
-                                    lifecycleScope.launch {
-                                        val selected = teams[which]
-                                        val response = incidentRepository.updateIncidentTeam(detail.id, selected.id)
-                                        if (response.isSuccessful) {
-                                            Toast.makeText(this@IncidentDetailActivity, "Equipo actualizado", Toast.LENGTH_SHORT).show()
-                                            recreate()
-                                        } else {
-                                            Toast.makeText(this@IncidentDetailActivity, "No se pudo actualizar", Toast.LENGTH_LONG).show()
-                                        }
-                                    }
-                                }
-                                .show()
-                        }
-                    }
-                }
-
-                binding.btnAssignTechnicianManager.setOnClickListener {
-                    lifecycleScope.launch {
-                        val incidentRepository = IncidentRepository(this@IncidentDetailActivity)
-                        val response = incidentRepository.getAssignableTechnicians(detail.id)
-
-                        if (response.isSuccessful) {
-                            val technicians = response.body().orEmpty()
-                            val names = technicians.map { "${it.firstName} ${it.lastName} (${it.email})" }.toTypedArray()
-
-                            AlertDialog.Builder(this@IncidentDetailActivity)
-                                .setTitle("Asignar técnico")
-                                .setItems(names) { _, which ->
-                                    lifecycleScope.launch {
-                                        val selected = technicians[which]
-                                        val assignResponse = incidentRepository.assignTechnician(detail.id, selected.id)
-                                        if (assignResponse.isSuccessful) {
-                                            Toast.makeText(this@IncidentDetailActivity, "Técnico asignado", Toast.LENGTH_SHORT).show()
-                                            recreate()
-                                        } else {
-                                            Toast.makeText(this@IncidentDetailActivity, "No se pudo asignar", Toast.LENGTH_LONG).show()
-                                        }
-                                    }
-                                }
-                                .show()
-                        }
-                    }
-                }
-
-                binding.btnResolveIncidentManager.setOnClickListener {
-                    lifecycleScope.launch {
-                        val incidentRepository = IncidentRepository(this@IncidentDetailActivity)
-                        val response = incidentRepository.resolveIncident(detail.id)
-
-                        if (response.isSuccessful) {
-                            Toast.makeText(this@IncidentDetailActivity, "Incidencia resuelta", Toast.LENGTH_SHORT).show()
-                            recreate()
-                        } else {
-                            Toast.makeText(this@IncidentDetailActivity, "No se pudo resolver", Toast.LENGTH_LONG).show()
-                        }
-                    }
-                }
-
-                binding.btnCloseIncident.setOnClickListener {
-                    lifecycleScope.launch {
-                        val incidentRepository = IncidentRepository(this@IncidentDetailActivity)
-                        val response = incidentRepository.closeIncident(detail.id)
-
-                        if (response.isSuccessful) {
-                            Toast.makeText(this@IncidentDetailActivity, "Incidencia cerrada", Toast.LENGTH_SHORT).show()
-                            recreate()
-                        } else {
-                            Toast.makeText(this@IncidentDetailActivity, "No se pudo cerrar", Toast.LENGTH_LONG).show()
-                        }
-                    }
-                }
-            } else {
-                binding.layoutManagerActions.visibility = android.view.View.GONE
-            }
+        if (role == "TECHNICIAN" || role == "MANAGER" || role == "ADMIN") {
+            fragments.add("Internos" to InternalMessagesFragment())
         }
+
+        fragments.add("Adjuntos" to AttachmentsFragment())
+        fragments.add("Historial" to HistoryFragment())
+
+        binding.viewPager.adapter = object : FragmentStateAdapter(this) {
+            override fun getItemCount(): Int = fragments.size
+            override fun createFragment(position: Int) = fragments[position].second
+        }
+
+        TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
+            tab.text = fragments[position].first
+        }.attach()
+    }
+
+    private fun showPriorityDialog(priorities: List<PriorityResponse>) {
+        if (priorities.isEmpty()) {
+            Toast.makeText(this, "No hay prioridades disponibles", Toast.LENGTH_LONG).show()
+            return
+        }
+
+        val names = priorities.map { it.name }.toTypedArray()
+
+        AlertDialog.Builder(this)
+            .setTitle("Selecciona prioridad")
+            .setItems(names) { _, which ->
+                viewModel.updatePriority(priorities[which].id)
+            }
+            .show()
+    }
+
+    private fun showTeamDialog(teams: List<TeamResponse>) {
+        if (teams.isEmpty()) {
+            Toast.makeText(this, "No hay equipos disponibles", Toast.LENGTH_LONG).show()
+            return
+        }
+
+        val names = teams.map { it.name }.toTypedArray()
+
+        AlertDialog.Builder(this)
+            .setTitle("Selecciona equipo")
+            .setItems(names) { _, which ->
+                viewModel.updateTeam(teams[which].id)
+            }
+            .show()
+    }
+
+    private fun showTechnicianDialog(technicians: List<AssignableTechnicianResponse>) {
+        if (technicians.isEmpty()) {
+            Toast.makeText(this, "No hay técnicos disponibles", Toast.LENGTH_LONG).show()
+            return
+        }
+
+        val names = technicians.map {
+            "${it.firstName} ${it.lastName} (${it.email})"
+        }.toTypedArray()
+
+        AlertDialog.Builder(this)
+            .setTitle("Asignar técnico")
+            .setItems(names) { _, which ->
+                viewModel.assignTechnician(technicians[which].id)
+            }
+            .show()
     }
 }

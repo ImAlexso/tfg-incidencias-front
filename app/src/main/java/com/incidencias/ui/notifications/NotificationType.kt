@@ -1,0 +1,16 @@
+package com.incidencias.ui.notifications
+
+enum class NotificationType {
+    INCIDENT_CREATED,
+    STATUS_CHANGED,
+    MESSAGE_PUBLIC,
+    MESSAGE_INTERNAL,
+    ATTACHMENT_UPLOADED,
+    PRIORITY_CHANGED,
+    TEAM_CHANGED,
+    TECHNICIAN_ASSIGNED,
+    ASSIGNEE_REMOVED,
+    INCIDENT_RESOLVED,
+    INCIDENT_CLOSED,
+    UNKNOWN
+}

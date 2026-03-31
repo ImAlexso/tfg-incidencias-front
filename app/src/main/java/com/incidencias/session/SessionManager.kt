@@ -1,13 +1,13 @@
 package com.incidencias.session
 
 import android.content.Context
+import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import androidx.datastore.preferences.core.booleanPreferencesKey
 
 private val Context.dataStore by preferencesDataStore(name = "session_prefs")
 
@@ -22,18 +22,13 @@ class SessionManager(private val context: Context) {
         private val EMAIL_KEY = stringPreferencesKey("email")
         private val TEAM_ID_KEY = longPreferencesKey("team_id")
         private val TEAM_NAME_KEY = stringPreferencesKey("team_name")
-
         private val DARK_MODE_KEY = booleanPreferencesKey("dark_mode")
     }
+
     val darkModeFlow: Flow<Boolean> = context.dataStore.data.map { preferences ->
         preferences[DARK_MODE_KEY] ?: false
     }
 
-    suspend fun saveDarkMode(enabled: Boolean) {
-        context.dataStore.edit { preferences ->
-            preferences[DARK_MODE_KEY] = enabled
-        }
-    }
     val tokenFlow: Flow<String?> = context.dataStore.data.map { preferences ->
         preferences[TOKEN_KEY]
     }
@@ -64,6 +59,12 @@ class SessionManager(private val context: Context) {
 
     val teamNameFlow: Flow<String?> = context.dataStore.data.map { preferences ->
         preferences[TEAM_NAME_KEY]
+    }
+
+    suspend fun saveDarkMode(enabled: Boolean) {
+        context.dataStore.edit { preferences ->
+            preferences[DARK_MODE_KEY] = enabled
+        }
     }
 
     suspend fun saveToken(token: String) {
@@ -104,7 +105,14 @@ class SessionManager(private val context: Context) {
 
     suspend fun clearSession() {
         context.dataStore.edit { preferences ->
-            preferences.clear()
+            preferences.remove(TOKEN_KEY)
+            preferences.remove(ROLE_KEY)
+            preferences.remove(USER_ID_KEY)
+            preferences.remove(FIRST_NAME_KEY)
+            preferences.remove(LAST_NAME_KEY)
+            preferences.remove(EMAIL_KEY)
+            preferences.remove(TEAM_ID_KEY)
+            preferences.remove(TEAM_NAME_KEY)
         }
     }
 }

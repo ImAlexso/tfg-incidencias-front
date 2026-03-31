@@ -37,11 +37,11 @@ class AdminResolvedFragment : Fragment(R.layout.fragment_active_incidents) {
             if (resolvedResponse.isSuccessful) items.addAll(resolvedResponse.body()?.content.orEmpty())
             if (closedResponse.isSuccessful) items.addAll(closedResponse.body()?.content.orEmpty())
 
-            binding.recyclerView.adapter = IncidentAdapter(items) { incident ->
+           /* binding.recyclerView.adapter = IncidentAdapter(items) { incident ->
                 val intent = Intent(requireContext(), IncidentDetailActivity::class.java)
                 intent.putExtra(IncidentDetailActivity.EXTRA_INCIDENT_ID, incident.id)
                 startActivity(intent)
-            }
+            }*/
         }
     }
 
