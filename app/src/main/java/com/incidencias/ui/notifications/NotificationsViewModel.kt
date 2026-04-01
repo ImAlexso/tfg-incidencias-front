@@ -246,44 +246,52 @@ class NotificationsViewModel(application: Application) : AndroidViewModel(applic
         filter: NotificationFilter,
         role: String
     ): List<NotificationUiModel> {
+        val baseItems = if (role == "MANAGER") {
+            items.filter { isRelevantForManager(it.type) }
+        } else {
+            items
+        }
+
         return when (filter) {
-            NotificationFilter.ALL -> items
+            NotificationFilter.ALL -> baseItems
 
-            NotificationFilter.UNREAD -> items.filter { !it.read }
+            NotificationFilter.UNREAD -> baseItems.filter { !it.read }
 
-            NotificationFilter.INCIDENT_CREATED -> items.filter {
+            NotificationFilter.INCIDENT_CREATED -> baseItems.filter {
                 it.type == NotificationType.INCIDENT_CREATED
             }
 
             NotificationFilter.STATUS_CHANGED -> when (role) {
-                "USER", "MANAGER" -> items.filter {
+                "USER" -> baseItems.filter {
                     it.type == NotificationType.STATUS_CHANGED ||
                             it.type == NotificationType.INCIDENT_RESOLVED ||
                             it.type == NotificationType.INCIDENT_CLOSED ||
                             it.type == NotificationType.TECHNICIAN_ASSIGNED ||
                             it.type == NotificationType.ASSIGNEE_REMOVED
                 }
-
                 else -> emptyList()
             }
 
             NotificationFilter.ASSIGNED -> when (role) {
-                "TECHNICIAN" -> items.filter {
+                "TECHNICIAN" -> baseItems.filter {
                     it.type == NotificationType.TECHNICIAN_ASSIGNED ||
                             it.type == NotificationType.ASSIGNEE_REMOVED
                 }
-
                 else -> emptyList()
             }
 
             NotificationFilter.MESSAGES -> when (role) {
-                "USER" -> items.filter {
+                "USER" -> baseItems.filter {
                     it.type == NotificationType.MESSAGE_PUBLIC
                 }
 
-                "TECHNICIAN", "MANAGER" -> items.filter {
+                "TECHNICIAN" -> baseItems.filter {
                     it.type == NotificationType.MESSAGE_PUBLIC ||
                             it.type == NotificationType.MESSAGE_INTERNAL
+                }
+
+                "MANAGER" -> baseItems.filter {
+                    it.type == NotificationType.MESSAGE_INTERNAL
                 }
 
                 else -> emptyList()
@@ -291,7 +299,7 @@ class NotificationsViewModel(application: Application) : AndroidViewModel(applic
 
             NotificationFilter.ATTACHMENT_UPLOADED -> when (role) {
                 "MANAGER" -> emptyList()
-                else -> items.filter {
+                else -> baseItems.filter {
                     it.type == NotificationType.ATTACHMENT_UPLOADED
                 }
             }
@@ -320,5 +328,9 @@ class NotificationsViewModel(application: Application) : AndroidViewModel(applic
         } catch (_: Exception) {
             NotificationType.UNKNOWN
         }
+    }
+    private fun isRelevantForManager(type: NotificationType): Boolean {
+        return type == NotificationType.INCIDENT_CREATED ||
+                type == NotificationType.MESSAGE_INTERNAL
     }
 }

@@ -2,7 +2,6 @@ package com.incidencias.ui.manager
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.incidencias.R
 import com.incidencias.databinding.ActivityManagerMainBinding
 import com.incidencias.ui.manager.home.ManagerHomeFragment
 
@@ -19,8 +18,12 @@ class ManagerMainActivity : AppCompatActivity() {
 
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()
-                .replace(R.id.managerFragmentContainer, ManagerHomeFragment())
+                .replace(binding.managerFragmentContainer.id, ManagerHomeFragment())
                 .commit()
         }
+    }
+
+    fun setToolbarTitle(title: String) {
+        binding.toolbar.title = title
     }
 }

@@ -1,9 +1,9 @@
-package com.incidencias.ui.manager.incidents
+package com.incidencias.ui.manager.team
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -11,66 +11,67 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.incidencias.R
-import com.incidencias.databinding.FragmentActiveIncidentsBinding
-import com.incidencias.ui.common.adapter.IncidentAdapter
-import com.incidencias.ui.incident.IncidentDetailActivity
+import com.incidencias.databinding.FragmentManagerTeamBinding
 import com.incidencias.ui.manager.ManagerMainActivity
+import com.incidencias.ui.manager.incidents.ManagerIncidentsFragment
 import kotlinx.coroutines.launch
 
-class PendingClosureFragment : Fragment(R.layout.fragment_active_incidents) {
+class ManagerTeamFragment : Fragment(R.layout.fragment_manager_team) {
 
-    private var _binding: FragmentActiveIncidentsBinding? = null
+    private var _binding: FragmentManagerTeamBinding? = null
     private val binding get() = _binding!!
 
-    private val viewModel: ManagerPendingClosureViewModel by viewModels()
-    private lateinit var incidentAdapter: IncidentAdapter
+    private val viewModel: ManagerTeamViewModel by viewModels()
+    private lateinit var adapter: ManagerTeamAdapter
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        _binding = FragmentActiveIncidentsBinding.bind(view)
+        _binding = FragmentManagerTeamBinding.bind(view)
 
-        (requireActivity() as? ManagerMainActivity)?.setToolbarTitle("Resueltas")
+        (requireActivity() as? ManagerMainActivity)?.setToolbarTitle("Técnicos del equipo")
 
         setupRecycler()
         setupRefresh()
         observeUiState()
 
-        binding.btnOpenFilters.visibility = View.GONE
-
         if (savedInstanceState == null) {
-            viewModel.loadPendingClosure()
+            viewModel.loadTeam()
         }
     }
 
     override fun onResume() {
         super.onResume()
         if (_binding != null) {
-            viewModel.loadPendingClosure(forceRefresh = true)
+            viewModel.loadTeam(forceRefresh = true)
         }
     }
 
     private fun setupRecycler() {
-        incidentAdapter = IncidentAdapter(
-            showAssignedTechnician = true,
-            showAssignToMeAction = false,
-            onItemClick = { incident ->
-                val intent = Intent(requireContext(), IncidentDetailActivity::class.java)
-                intent.putExtra(IncidentDetailActivity.EXTRA_INCIDENT_ID, incident.id)
-                startActivity(intent)
+        adapter = ManagerTeamAdapter { technician ->
+            val fragment = ManagerIncidentsFragment().apply {
+                arguments = bundleOf(
+                    ManagerIncidentsFragment.ARG_TECHNICIAN_ID to technician.technicianId,
+                    ManagerIncidentsFragment.ARG_TECHNICIAN_NAME to technician.technicianName
+                )
             }
-        )
+
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.managerFragmentContainer, fragment)
+                .addToBackStack(null)
+                .commit()
+        }
 
         binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
-        binding.recyclerView.adapter = incidentAdapter
+        binding.recyclerView.adapter = adapter
 
         binding.btnRetry.setOnClickListener {
-            viewModel.loadPendingClosure()
+            viewModel.loadTeam()
         }
     }
 
     private fun setupRefresh() {
         binding.swipeRefresh.setOnRefreshListener {
-            viewModel.loadPendingClosure(forceRefresh = true)
+            viewModel.loadTeam(forceRefresh = true)
         }
     }
 
@@ -79,12 +80,12 @@ class PendingClosureFragment : Fragment(R.layout.fragment_active_incidents) {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.uiState.collect { state ->
                     binding.progressBar.visibility =
-                        if (state.isLoading && state.incidents.isEmpty()) View.VISIBLE else View.GONE
+                        if (state.isLoading && state.items.isEmpty()) View.VISIBLE else View.GONE
 
                     binding.swipeRefresh.isRefreshing = state.isRefreshing
 
                     binding.layoutError.visibility =
-                        if (state.errorMessage != null && !state.isLoading && state.incidents.isEmpty()) {
+                        if (state.errorMessage != null && !state.isLoading && state.items.isEmpty()) {
                             View.VISIBLE
                         } else {
                             View.GONE
@@ -92,22 +93,21 @@ class PendingClosureFragment : Fragment(R.layout.fragment_active_incidents) {
 
                     binding.tvError.text = state.errorMessage.orEmpty()
 
-                    incidentAdapter.submitList(state.incidents)
+                    adapter.submitList(state.items)
 
                     binding.recyclerView.visibility =
-                        if (state.incidents.isNotEmpty()) View.VISIBLE else View.GONE
+                        if (state.items.isNotEmpty()) View.VISIBLE else View.GONE
 
                     binding.layoutEmpty.visibility =
-                        if (state.incidents.isEmpty() && !state.isLoading && state.errorMessage == null) {
+                        if (state.items.isEmpty() && !state.isLoading && state.errorMessage == null) {
                             View.VISIBLE
                         } else {
                             View.GONE
                         }
 
-                    binding.tvEmpty.text =
-                        state.emptyMessage ?: "No hay incidencias resueltas"
+                    binding.tvEmpty.text = state.emptyMessage
 
-                    if (state.errorMessage != null && state.incidents.isNotEmpty()) {
+                    if (state.errorMessage != null && state.items.isNotEmpty()) {
                         Toast.makeText(requireContext(), state.errorMessage, Toast.LENGTH_LONG).show()
                         viewModel.clearError()
                     }

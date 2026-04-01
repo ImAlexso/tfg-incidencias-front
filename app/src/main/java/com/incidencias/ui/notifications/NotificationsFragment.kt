@@ -16,6 +16,7 @@ import com.incidencias.R
 import com.incidencias.databinding.FragmentNotificationsBinding
 import com.incidencias.session.SessionManager
 import com.incidencias.ui.incident.IncidentDetailActivity
+import com.incidencias.ui.manager.ManagerMainActivity
 import com.incidencias.ui.technician.TechnicianMainActivity
 import com.incidencias.ui.user.UserMainActivity
 import kotlinx.coroutines.flow.first
@@ -39,6 +40,7 @@ class NotificationsFragment : Fragment(R.layout.fragment_notifications) {
         when (val activity = requireActivity()) {
             is UserMainActivity -> activity.setToolbarTitle("Notificaciones")
             is TechnicianMainActivity -> activity.setToolbarTitle("Notificaciones")
+            is ManagerMainActivity -> activity.setToolbarTitle("Notificaciones")
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
@@ -143,7 +145,7 @@ class NotificationsFragment : Fragment(R.layout.fragment_notifications) {
 
             "MANAGER" -> {
                 binding.chipCreated.visibility = View.VISIBLE
-                binding.chipStatus.visibility = View.VISIBLE
+                binding.chipStatus.visibility = View.GONE
                 binding.chipAssigned.visibility = View.GONE
                 binding.chipAttachments.visibility = View.GONE
             }
