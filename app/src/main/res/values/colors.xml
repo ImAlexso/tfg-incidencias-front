@@ -1,19 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <!-- Primary -->
+    <!-- Brand -->
     <color name="primary">#1E3A8A</color>
+    <color name="primary_dark">#172E6D</color>
+    <color name="primary_container">#E8EEF9</color>
     <color name="onPrimary">#FFFFFF</color>
 
     <!-- Background / Surface -->
     <color name="background">#E9EEF5</color>
     <color name="surface">#FFFFFF</color>
     <color name="surfaceVariant">#F7F9FC</color>
+    <color name="surfaceSoft">#F4F7FB</color>
     <color name="divider">#D6DEE8</color>
+    <color name="stroke_soft">#E2E8F0</color>
 
     <!-- Text -->
     <color name="onSurface">#111827</color>
     <color name="secondaryText">#6B7280</color>
+    <color name="text_muted">#94A3B8</color>
+
+    <!-- Neutral -->
+    <color name="neutral_chip">#EEF2F7</color>
+    <color name="neutral_badge">#E8EEF9</color>
 
     <!-- States -->
     <color name="status_open">#2563EB</color>
@@ -21,11 +30,36 @@
     <color name="status_resolved">#059669</color>
     <color name="status_closed">#6B7280</color>
 
+    <!-- Semantic -->
+    <color name="success">#059669</color>
+    <color name="warning">#D97706</color>
+    <color name="danger">#DC2626</color>
+    <color name="info">#2563EB</color>
+
     <!-- Priority -->
     <color name="priority_high">#DC2626</color>
     <color name="priority_medium">#F59E0B</color>
     <color name="priority_low">#10B981</color>
     <color name="priority_critical">#7F1D1D</color>
 
+    <!-- Notification / badges -->
+    <color name="badge_attachment">#6B7280</color>
+    <color name="badge_assigned">#F59E0B</color>
+    <color name="badge_created">#8B5CF6</color>
+    <color name="badge_status">#3B82F6</color>
+    <color name="badge_internal">#6D5BA6</color>
+    <color name="badge_message">#14B8A6</color>
+    <color name="badge_status_in_progress">#7C3AED</color>
+
+    <color name="badge_status_soft">#E8F1FE</color>
+    <color name="badge_message_soft">#E8F8F3</color>
+    <color name="badge_internal_soft">#FFF4E5</color>
+    <color name="badge_attachment_soft">#F3F4F6</color>
+    <color name="badge_assignment_soft">#FEF3E8</color>
+
+    <color name="surface_elevated">#FCFDFE</color>
+    <color name="stroke_card">#D9E2EC</color>
+    <color name="chip_checked_bg">#E8EEF9</color>
+    <color name="chip_checked_text">#1E3A8A</color>
 
 </resources>

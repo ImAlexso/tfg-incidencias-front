@@ -1,22 +1,31 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- Tema base -->
     <style name="Base.Theme.Tfgincidenciasfront" parent="Theme.Material3.DayNight.NoActionBar">
-
-        <!-- Colores principales -->
+        <!-- Brand -->
         <item name="colorPrimary">@color/primary</item>
         <item name="colorOnPrimary">@color/onPrimary</item>
+        <item name="colorPrimaryContainer">@color/primary_container</item>
 
-        <!-- Fondo -->
+        <!-- Background -->
         <item name="android:colorBackground">@color/background</item>
 
-        <!-- Superficies -->
+        <!-- Surface -->
         <item name="colorSurface">@color/surface</item>
+        <item name="colorSurfaceVariant">@color/surfaceVariant</item>
         <item name="colorOnSurface">@color/onSurface</item>
 
+        <!-- Secondary / outline -->
+        <item name="colorSecondary">@color/secondaryText</item>
+        <item name="colorOutline">@color/stroke_soft</item>
+
+        <!-- Status bar -->
+        <item name="android:statusBarColor">@color/primary</item>
+        <item name="android:navigationBarColor">@color/background</item>
+
+        <!-- Material components default tinting -->
+        <item name="materialCardViewStyle">@style/AppCard</item>
     </style>
 
-    <!-- Tema final de la app -->
     <style name="Theme.Tfgincidenciasfront" parent="Base.Theme.Tfgincidenciasfront" />
 
 </resources>

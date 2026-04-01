@@ -54,24 +54,16 @@ class ManagerHomeFragment : Fragment(R.layout.fragment_manager_home) {
             openIncidents()
         }
 
+        binding.cardAssignmentBoard.setOnClickListener {
+            openManagerFragment(ManagerAssignmentBoardFragment())
+        }
+
         binding.cardTeamMembers.setOnClickListener {
             openManagerFragment(ManagerTeamFragment())
         }
 
-        binding.cardUnassigned.setOnClickListener {
-            openIncidents(onlyUnassigned = true)
-        }
-
-        binding.cardResolved.setOnClickListener {
+        binding.cardPendingClosure.setOnClickListener {
             openManagerFragment(PendingClosureFragment())
-        }
-
-        binding.cardCritical.setOnClickListener {
-            openIncidents(priority = "CRITICAL")
-        }
-
-        binding.cardAssignmentBoard.setOnClickListener {
-            openManagerFragment(ManagerAssignmentBoardFragment())
         }
 
         binding.cardNotifications.setOnClickListener {
@@ -114,20 +106,24 @@ class ManagerHomeFragment : Fragment(R.layout.fragment_manager_home) {
 
                     binding.tvWelcome.text = "Bienvenido, $firstName"
                     binding.tvSubtitle.text =
-                        "Supervisa la carga del equipo y entra rápido a las incidencias que necesitan acción"
+                        "Supervisa la carga del equipo y accede rápido a lo que necesita acción"
 
+                    binding.tvTeamIncidentsCount.text = state.activeIncidentsCount.toString()
                     binding.tvUnassignedCount.text = state.unassignedCount.toString()
-                    binding.tvResolvedCount.text = state.resolvedCount.toString()
-                    binding.tvCriticalCount.text = state.criticalCount.toString()
-                    binding.tvActiveIncidentsCount.text = state.activeIncidentsCount.toString()
-                    binding.tvTeamMembersCount.text = state.teamMembersCount.toString()
+                    binding.tvPendingClosureCount.text = state.resolvedCount.toString()
+
+                    binding.tvTeamIncidentsCount.visibility =
+                        if (state.activeIncidentsCount > 0) View.VISIBLE else View.GONE
+
+                    binding.tvUnassignedCount.visibility =
+                        if (state.unassignedCount > 0) View.VISIBLE else View.VISIBLE
+
+                    binding.tvPendingClosureCount.visibility =
+                        if (state.resolvedCount > 0) View.VISIBLE else View.GONE
 
                     binding.tvNotificationsCount.text = state.unreadNotificationsCount.toString()
                     binding.tvNotificationsCount.visibility =
                         if (state.unreadNotificationsCount > 0) View.VISIBLE else View.GONE
-
-                    binding.progressBar.visibility =
-                        if (state.isLoading) View.VISIBLE else View.GONE
 
                     state.errorMessage?.let {
                         Toast.makeText(requireContext(), it, Toast.LENGTH_LONG).show()

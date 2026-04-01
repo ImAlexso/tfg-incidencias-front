@@ -3,55 +3,56 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true">
+    android:fillViewport="true"
+    android:background="@color/background">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="20dp">
+        android:paddingStart="@dimen/padding_screen_horizontal"
+        android:paddingTop="@dimen/padding_section"
+        android:paddingEnd="@dimen/padding_screen_horizontal"
+        android:paddingBottom="@dimen/padding_section">
 
         <TextView
             android:id="@+id/tvWelcome"
+            style="@style/TextScreenTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Bienvenido, usuario"
-            android:textColor="@color/onSurface"
-            android:textSize="24sp"
-            android:textStyle="bold" />
+            android:text="Bienvenido, usuario" />
 
         <TextView
             android:id="@+id/tvSubtitle"
+            style="@style/TextSecondary"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
-            android:text="Consulta tus incidencias y notificaciones"
-            android:textColor="@color/secondaryText"
-            android:textSize="16sp" />
+            android:layout_marginTop="@dimen/spacing_sm"
+            android:lineSpacingExtra="2dp"
+            android:text="Consulta tus incidencias y notificaciones" />
 
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/cardCreateIncident"
+            style="@style/AppCard"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="@dimen/spacing_xxl"
             android:clickable="true"
             android:focusable="true"
             android:stateListAnimator="@animator/card_press_state_animator"
-            app:cardBackgroundColor="@color/surface"
-            app:cardCornerRadius="20dp"
-            app:cardElevation="6dp"
             app:rippleColor="@color/card_ripple">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
+                android:minHeight="92dp"
                 android:orientation="horizontal"
-                android:padding="20dp">
+                android:padding="@dimen/card_padding_lg">
 
                 <ImageView
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
+                    android:layout_width="@dimen/icon_size_xl"
+                    android:layout_height="@dimen/icon_size_xl"
                     android:contentDescription="@null"
                     android:src="@android:drawable/ic_input_add"
                     android:tint="@color/primary" />
@@ -59,24 +60,22 @@
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
+                    android:layout_marginStart="@dimen/spacing_lg"
                     android:layout_weight="1"
                     android:orientation="vertical">
 
                     <TextView
+                        style="@style/TextTitle"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Crear incidencia"
-                        android:textColor="@color/onSurface"
-                        android:textSize="18sp"
-                        android:textStyle="bold" />
+                        android:text="Crear incidencia" />
 
                     <TextView
+                        style="@style/TextSecondary"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="6dp"
-                        android:text="Crea una nueva incidencia"
-                        android:textColor="@color/secondaryText" />
+                        android:layout_marginTop="@dimen/spacing_xs"
+                        android:text="Crea una nueva incidencia" />
                 </LinearLayout>
 
             </LinearLayout>
@@ -84,27 +83,26 @@
 
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/cardActiveIncidents"
+            style="@style/AppCard"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="@dimen/spacing_lg"
             android:clickable="true"
             android:focusable="true"
             android:stateListAnimator="@animator/card_press_state_animator"
-            app:cardBackgroundColor="@color/surface"
-            app:cardCornerRadius="20dp"
-            app:cardElevation="6dp"
             app:rippleColor="@color/card_ripple">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
+                android:minHeight="92dp"
                 android:orientation="horizontal"
-                android:padding="20dp">
+                android:padding="@dimen/card_padding_lg">
 
                 <ImageView
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
+                    android:layout_width="@dimen/icon_size_xl"
+                    android:layout_height="@dimen/icon_size_xl"
                     android:contentDescription="@null"
                     android:src="@android:drawable/ic_menu_agenda"
                     android:tint="@color/primary" />
@@ -112,63 +110,62 @@
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
+                    android:layout_marginStart="@dimen/spacing_lg"
                     android:layout_weight="1"
                     android:orientation="vertical">
 
                     <TextView
+                        style="@style/TextTitle"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Incidencias activas"
-                        android:textColor="@color/onSurface"
-                        android:textSize="18sp"
-                        android:textStyle="bold" />
+                        android:text="Incidencias activas" />
 
                     <TextView
+                        style="@style/TextSecondary"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="6dp"
-                        android:text="Consulta tus incidencias en curso"
-                        android:textColor="@color/secondaryText" />
+                        android:layout_marginTop="@dimen/spacing_xs"
+                        android:text="Consulta tus incidencias en curso" />
                 </LinearLayout>
 
                 <TextView
                     android:id="@+id/tvActiveCount"
+                    style="@style/BadgeText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@drawable/bg_home_counter"
-                    android:paddingHorizontal="12dp"
-                    android:paddingVertical="6dp"
+                    android:minWidth="@dimen/badge_size"
+                    android:paddingStart="@dimen/chip_padding_horizontal"
+                    android:paddingTop="@dimen/chip_padding_vertical"
+                    android:paddingEnd="@dimen/chip_padding_horizontal"
+                    android:paddingBottom="@dimen/chip_padding_vertical"
                     android:text="0"
-                    android:textColor="@color/primary"
-                    android:textStyle="bold"
                     android:visibility="gone" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/cardNotifications"
+            style="@style/AppCard"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="@dimen/spacing_lg"
             android:clickable="true"
             android:focusable="true"
             android:stateListAnimator="@animator/card_press_state_animator"
-            app:cardBackgroundColor="@color/surface"
-            app:cardCornerRadius="20dp"
-            app:cardElevation="6dp"
             app:rippleColor="@color/card_ripple">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
+                android:minHeight="92dp"
                 android:orientation="horizontal"
-                android:padding="20dp">
+                android:padding="@dimen/card_padding_lg">
 
                 <ImageView
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
+                    android:layout_width="@dimen/icon_size_xl"
+                    android:layout_height="@dimen/icon_size_xl"
                     android:contentDescription="@null"
                     android:src="@android:drawable/ic_dialog_email"
                     android:tint="@color/primary" />
@@ -176,63 +173,62 @@
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
+                    android:layout_marginStart="@dimen/spacing_lg"
                     android:layout_weight="1"
                     android:orientation="vertical">
 
                     <TextView
+                        style="@style/TextTitle"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Notificaciones"
-                        android:textColor="@color/onSurface"
-                        android:textSize="18sp"
-                        android:textStyle="bold" />
+                        android:text="Notificaciones" />
 
                     <TextView
+                        style="@style/TextSecondary"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="6dp"
-                        android:text="Consulta mensajes, cambios de estado y adjuntos recientes"
-                        android:textColor="@color/secondaryText" />
+                        android:layout_marginTop="@dimen/spacing_xs"
+                        android:text="Consulta mensajes, cambios de estado y adjuntos recientes" />
                 </LinearLayout>
 
                 <TextView
                     android:id="@+id/tvNotificationsCount"
+                    style="@style/BadgeText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@drawable/bg_home_counter"
-                    android:paddingHorizontal="12dp"
-                    android:paddingVertical="6dp"
+                    android:minWidth="@dimen/badge_size"
+                    android:paddingStart="@dimen/chip_padding_horizontal"
+                    android:paddingTop="@dimen/chip_padding_vertical"
+                    android:paddingEnd="@dimen/chip_padding_horizontal"
+                    android:paddingBottom="@dimen/chip_padding_vertical"
                     android:text="0"
-                    android:textColor="@color/primary"
-                    android:textStyle="bold"
                     android:visibility="gone" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/cardHistory"
+            style="@style/AppCard"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="@dimen/spacing_lg"
             android:clickable="true"
             android:focusable="true"
             android:stateListAnimator="@animator/card_press_state_animator"
-            app:cardBackgroundColor="@color/surface"
-            app:cardCornerRadius="20dp"
-            app:cardElevation="6dp"
             app:rippleColor="@color/card_ripple">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
+                android:minHeight="92dp"
                 android:orientation="horizontal"
-                android:padding="20dp">
+                android:padding="@dimen/card_padding_lg">
 
                 <ImageView
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
+                    android:layout_width="@dimen/icon_size_xl"
+                    android:layout_height="@dimen/icon_size_xl"
                     android:contentDescription="@null"
                     android:src="@android:drawable/ic_menu_recent_history"
                     android:tint="@color/primary" />
@@ -240,52 +236,48 @@
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
+                    android:layout_marginStart="@dimen/spacing_lg"
                     android:layout_weight="1"
                     android:orientation="vertical">
 
                     <TextView
+                        style="@style/TextTitle"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Histórico"
-                        android:textColor="@color/onSurface"
-                        android:textSize="18sp"
-                        android:textStyle="bold" />
+                        android:text="Histórico" />
 
                     <TextView
+                        style="@style/TextSecondary"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="6dp"
-                        android:text="Revisa tus incidencias cerradas"
-                        android:textColor="@color/secondaryText" />
+                        android:layout_marginTop="@dimen/spacing_xs"
+                        android:text="Consulta incidencias cerradas y resueltas" />
                 </LinearLayout>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/cardSettings"
+            style="@style/AppCard"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="16dp"
+            android:layout_marginTop="@dimen/spacing_lg"
             android:clickable="true"
             android:focusable="true"
             android:stateListAnimator="@animator/card_press_state_animator"
-            app:cardBackgroundColor="@color/surface"
-            app:cardCornerRadius="20dp"
-            app:cardElevation="6dp"
             app:rippleColor="@color/card_ripple">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
+                android:minHeight="92dp"
                 android:orientation="horizontal"
-                android:padding="20dp">
+                android:padding="@dimen/card_padding_lg">
 
                 <ImageView
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
+                    android:layout_width="@dimen/icon_size_xl"
+                    android:layout_height="@dimen/icon_size_xl"
                     android:contentDescription="@null"
                     android:src="@android:drawable/ic_menu_manage"
                     android:tint="@color/primary" />
@@ -293,24 +285,22 @@
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
+                    android:layout_marginStart="@dimen/spacing_lg"
                     android:layout_weight="1"
                     android:orientation="vertical">
 
                     <TextView
+                        style="@style/TextTitle"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Perfil y ajustes"
-                        android:textColor="@color/onSurface"
-                        android:textSize="18sp"
-                        android:textStyle="bold" />
+                        android:text="Perfil y ajustes" />
 
                     <TextView
+                        style="@style/TextSecondary"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="6dp"
-                        android:text="Edita tus datos y preferencias"
-                        android:textColor="@color/secondaryText" />
+                        android:layout_marginTop="@dimen/spacing_xs"
+                        android:text="Edita tus datos y revisa la sesión actual" />
                 </LinearLayout>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>

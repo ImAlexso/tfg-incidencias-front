@@ -2,94 +2,131 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/background">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:padding="16dp">
+        android:paddingStart="@dimen/padding_screen_horizontal"
+        android:paddingTop="@dimen/padding_section"
+        android:paddingEnd="@dimen/padding_screen_horizontal"
+        android:paddingBottom="0dp">
 
-        <TextView
-            android:id="@+id/tvUnreadCount"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="No leídas: 0"
-            android:textStyle="bold" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnMarkAllRead"
-            style="@style/Widget.Material3.Button.OutlinedButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:text="Marcar todo como leído" />
-
-        <com.google.android.material.chip.ChipGroup
-            android:id="@+id/chipGroup"
+        <!-- Cabecera ligera -->
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            app:singleSelection="true">
+            android:orientation="vertical">
 
-            <com.google.android.material.chip.Chip
-                android:id="@+id/chipAll"
-                style="@style/Widget.Material3.Chip.Filter"
-                android:layout_width="wrap_content"
+            <!-- Línea resumen -->
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:checked="true"
-                android:text="Todas" />
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
 
-            <com.google.android.material.chip.Chip
-                android:id="@+id/chipUnread"
-                style="@style/Widget.Material3.Chip.Filter"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="No leídas" />
+                <TextView
+                    android:id="@+id/tvUnreadCount"
+                    style="@style/TextSecondary"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="No leídas: 0" />
 
-            <com.google.android.material.chip.Chip
-                android:id="@+id/chipCreated"
-                style="@style/Widget.Material3.Chip.Filter"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Creadas" />
+                <TextView
+                    android:id="@+id/btnMarkAllRead"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?attr/selectableItemBackgroundBorderless"
+                    android:paddingStart="@dimen/spacing_sm"
+                    android:paddingTop="@dimen/spacing_xs"
+                    android:paddingEnd="@dimen/spacing_sm"
+                    android:paddingBottom="@dimen/spacing_xs"
+                    android:text="Marcar todas"
+                    android:textColor="@color/primary"
+                    android:textStyle="bold" />
+            </LinearLayout>
 
-            <com.google.android.material.chip.Chip
-                android:id="@+id/chipStatus"
-                style="@style/Widget.Material3.Chip.Filter"
-                android:layout_width="wrap_content"
+            <!-- Chips -->
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/chipGroup"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Estado" />
+                android:layout_marginTop="@dimen/spacing_md"
+                app:chipSpacingHorizontal="@dimen/spacing_sm"
+                app:chipSpacingVertical="@dimen/spacing_sm"
+                app:singleLine="false"
+                app:singleSelection="true">
 
-            <com.google.android.material.chip.Chip
-                android:id="@+id/chipAssigned"
-                style="@style/Widget.Material3.Chip.Filter"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Asignadas"
-                android:visibility="gone" />
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipAll"
+                    style="@style/AppFilterChip"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:text="Todas"
+                    app:checkedIconVisible="false" />
 
-            <com.google.android.material.chip.Chip
-                android:id="@+id/chipMessages"
-                style="@style/Widget.Material3.Chip.Filter"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Mensajes" />
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipUnread"
+                    style="@style/AppFilterChip"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="No leídas"
+                    app:checkedIconVisible="false" />
 
-            <com.google.android.material.chip.Chip
-                android:id="@+id/chipAttachments"
-                style="@style/Widget.Material3.Chip.Filter"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Adjuntos" />
-        </com.google.android.material.chip.ChipGroup>
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipCreated"
+                    style="@style/AppFilterChip"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Creadas"
+                    app:checkedIconVisible="false" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipStatus"
+                    style="@style/AppFilterChip"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Estado"
+                    app:checkedIconVisible="false" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipAssigned"
+                    style="@style/AppFilterChip"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Asignadas"
+                    android:visibility="gone"
+                    app:checkedIconVisible="false" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipMessages"
+                    style="@style/AppFilterChip"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Mensajes"
+                    app:checkedIconVisible="false" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipAttachments"
+                    style="@style/AppFilterChip"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Adjuntos"
+                    app:checkedIconVisible="false" />
+            </com.google.android.material.chip.ChipGroup>
+        </LinearLayout>
 
         <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
             android:id="@+id/swipeRefresh"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="@dimen/spacing_xl"
             android:layout_weight="1">
 
             <androidx.recyclerview.widget.RecyclerView
@@ -97,9 +134,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:clipToPadding="false"
-                android:paddingBottom="16dp" />
+                android:paddingBottom="@dimen/padding_section" />
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
-
     </LinearLayout>
 
     <ProgressBar
@@ -115,15 +151,22 @@
         android:layout_height="match_parent"
         android:gravity="center"
         android:orientation="vertical"
-        android:padding="24dp"
+        android:padding="@dimen/padding_section"
         android:visibility="gone">
 
         <TextView
+            style="@style/TextTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="No hay notificaciones por mostrar."
-            android:textColor="@color/secondaryText"
-            android:textSize="16sp" />
+            android:text="Nada por aquí" />
+
+        <TextView
+            style="@style/TextSecondary"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_sm"
+            android:gravity="center"
+            android:text="No hay notificaciones para el filtro seleccionado." />
     </LinearLayout>
 
     <LinearLayout
@@ -132,23 +175,31 @@
         android:layout_height="match_parent"
         android:gravity="center"
         android:orientation="vertical"
-        android:padding="24dp"
+        android:padding="@dimen/padding_section"
         android:visibility="gone">
 
         <TextView
-            android:id="@+id/tvError"
+            style="@style/TextTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Error"
-            android:textColor="@color/secondaryText"
-            android:textSize="16sp" />
+            android:text="No se han podido cargar" />
+
+        <TextView
+            android:id="@+id/tvError"
+            style="@style/TextSecondary"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_sm"
+            android:gravity="center"
+            android:text="Error" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnRetry"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:text="Reintentar" />
+            android:layout_height="@dimen/button_height"
+            android:layout_marginTop="@dimen/spacing_lg"
+            android:text="Reintentar"
+            android:textAllCaps="false" />
     </LinearLayout>
 
 </FrameLayout>
