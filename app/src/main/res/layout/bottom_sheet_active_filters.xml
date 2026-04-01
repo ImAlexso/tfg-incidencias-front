@@ -1,129 +1,186 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:background="@color/surface"
+    android:orientation="vertical"
+    android:paddingStart="@dimen/padding_screen_horizontal"
+    android:paddingTop="@dimen/spacing_md"
+    android:paddingEnd="@dimen/padding_screen_horizontal"
+    android:paddingBottom="@dimen/spacing_xl">
 
+    <!-- Handle -->
+    <View
+        android:layout_width="40dp"
+        android:layout_height="4dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="@dimen/spacing_lg"
+        android:background="@drawable/bg_bottom_sheet_handle" />
+
+    <!-- Cabecera -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Filtrar incidencias"
+        android:textColor="@color/onSurface"
+        android:textSize="@dimen/text_sheet_title"
+        android:textStyle="bold" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_xs"
+        android:text="Ajusta estado y prioridad para ver solo lo que te interesa."
+        android:textColor="@color/secondaryText"
+        android:textSize="@dimen/text_small" />
+
+    <!-- Estado -->
+    <TextView
+        android:id="@+id/tvStatusLabel"
+        style="@style/TextSheetSection"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_xl"
+        android:text="Estado" />
+
+    <RadioGroup
+        android:id="@+id/rgStatus"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_sm">
+
+        <RadioButton
+            android:id="@+id/rbStatusAll"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:buttonTint="@color/primary"
+            android:minHeight="44dp"
+            android:text="Todas"
+            android:textColor="@color/onSurface"
+            android:textSize="@dimen/text_body" />
+
+        <RadioButton
+            android:id="@+id/rbStatusOpen"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:buttonTint="@color/primary"
+            android:minHeight="44dp"
+            android:text="Abiertas"
+            android:textColor="@color/onSurface"
+            android:textSize="@dimen/text_body" />
+
+        <RadioButton
+            android:id="@+id/rbStatusInProgress"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:buttonTint="@color/primary"
+            android:minHeight="44dp"
+            android:text="En curso"
+            android:textColor="@color/onSurface"
+            android:textSize="@dimen/text_body" />
+
+        <RadioButton
+            android:id="@+id/rbStatusResolved"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:buttonTint="@color/primary"
+            android:minHeight="44dp"
+            android:text="Resueltas"
+            android:textColor="@color/onSurface"
+            android:textSize="@dimen/text_body" />
+    </RadioGroup>
+
+    <!-- Prioridad -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_lg"
+        android:text="Prioridad"
+        android:textColor="@color/onSurface"
+        android:textSize="@dimen/text_body"
+        android:textStyle="bold" />
+
+    <RadioGroup
+        android:id="@+id/rgPriority"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_sm">
+
+        <RadioButton
+            android:id="@+id/rbPriorityAll"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:buttonTint="@color/primary"
+            android:minHeight="44dp"
+            android:text="Todas"
+            android:textColor="@color/onSurface"
+            android:textSize="@dimen/text_body" />
+
+        <RadioButton
+            android:id="@+id/rbPriorityLow"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:buttonTint="@color/primary"
+            android:minHeight="44dp"
+            android:text="Baja"
+            android:textColor="@color/onSurface"
+            android:textSize="@dimen/text_body" />
+
+        <RadioButton
+            android:id="@+id/rbPriorityMedium"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:buttonTint="@color/primary"
+            android:minHeight="44dp"
+            android:text="Media"
+            android:textColor="@color/onSurface"
+            android:textSize="@dimen/text_body" />
+
+        <RadioButton
+            android:id="@+id/rbPriorityHigh"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:buttonTint="@color/primary"
+            android:minHeight="44dp"
+            android:text="Alta"
+            android:textColor="@color/onSurface"
+            android:textSize="@dimen/text_body" />
+
+        <RadioButton
+            android:id="@+id/rbPriorityCritical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:buttonTint="@color/primary"
+            android:minHeight="44dp"
+            android:text="Crítica"
+            android:textColor="@color/onSurface"
+            android:textSize="@dimen/text_body" />
+    </RadioGroup>
+
+    <!-- Acciones -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="20dp">
+        android:layout_marginTop="@dimen/spacing_xl"
+        android:gravity="center_vertical|end"
+        android:orientation="horizontal">
 
-        <TextView
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnClearFilters"
+            style="@style/ButtonGhost"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Filtrar incidencias"
-            android:textColor="@color/onSurface"
-            android:textSize="20sp"
-            android:textStyle="bold" />
+            android:text="Limpiar" />
 
-        <TextView
-            android:id="@+id/tvStatusLabel"
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnApplyFilters"
+            style="@style/ButtonPrimary"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:text="Estado"
-            android:textColor="@color/onSurface"
-            android:textStyle="bold" />
-
-        <RadioGroup
-            android:id="@+id/rgStatus"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp">
-
-            <RadioButton
-                android:id="@+id/rbStatusAll"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Todas" />
-
-            <RadioButton
-                android:id="@+id/rbStatusOpen"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Abiertas" />
-
-            <RadioButton
-                android:id="@+id/rbStatusInProgress"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="En curso" />
-
-            <RadioButton
-                android:id="@+id/rbStatusResolved"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Resueltas" />
-        </RadioGroup>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:text="Prioridad"
-            android:textColor="@color/onSurface"
-            android:textStyle="bold" />
-
-        <RadioGroup
-            android:id="@+id/rgPriority"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp">
-
-            <RadioButton
-                android:id="@+id/rbPriorityAll"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Todas" />
-
-            <RadioButton
-                android:id="@+id/rbPriorityLow"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Baja" />
-
-            <RadioButton
-                android:id="@+id/rbPriorityMedium"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Media" />
-
-            <RadioButton
-                android:id="@+id/rbPriorityHigh"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Alta" />
-
-            <RadioButton
-                android:id="@+id/rbPriorityCritical"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Crítica" />
-        </RadioGroup>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:gravity="end"
-            android:orientation="horizontal">
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnClearFilters"
-                style="@style/Widget.Material3.Button.TextButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Limpiar" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnApplyFilters"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:text="Aplicar" />
-        </LinearLayout>
+            android:layout_marginStart="@dimen/spacing_sm"
+            android:text="Aplicar" />
 
     </LinearLayout>
-</ScrollView>
+
+</LinearLayout>

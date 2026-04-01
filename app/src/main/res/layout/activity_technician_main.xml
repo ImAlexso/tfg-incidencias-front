@@ -7,14 +7,15 @@
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar"
         android:layout_width="0dp"
-        android:layout_height="72dp"
+        android:layout_height="@dimen/toolbar_height"
         android:background="?attr/colorPrimary"
-        android:paddingTop="12dp"
+        android:paddingTop="@dimen/toolbar_top_padding"
         android:theme="@style/ThemeOverlay.Material3.ActionBar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:title="Portal técnico"
+        app:titleCentered="false"
         app:titleTextColor="@android:color/white" />
 
     <FrameLayout

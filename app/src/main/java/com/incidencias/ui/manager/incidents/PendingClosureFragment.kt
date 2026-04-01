@@ -35,7 +35,7 @@ class PendingClosureFragment : Fragment(R.layout.fragment_active_incidents) {
         setupRefresh()
         observeUiState()
 
-        binding.btnOpenFilters.visibility = View.GONE
+        /*binding.btnOpenFilters.visibility = View.GONE*/
 
         if (savedInstanceState == null) {
             viewModel.loadPendingClosure()

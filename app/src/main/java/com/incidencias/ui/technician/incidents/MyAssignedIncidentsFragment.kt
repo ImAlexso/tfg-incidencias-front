@@ -83,9 +83,9 @@ class MyAssignedIncidentsFragment : Fragment(R.layout.fragment_active_incidents)
     }
 
     private fun setupFilters() {
-        binding.btnOpenFilters.setOnClickListener {
+        /*binding.btnOpenFilters.setOnClickListener {
             showFiltersBottomSheet()
-        }
+        }*/
         updateFilterButtonText()
     }
 
@@ -142,11 +142,11 @@ class MyAssignedIncidentsFragment : Fragment(R.layout.fragment_active_incidents)
     private fun updateFilterButtonText() {
         val hasFilters = selectedStatus != null || selectedPriority != null
 
-        binding.btnOpenFilters.text = if (hasFilters) {
+        /*binding.btnOpenFilters.text = if (hasFilters) {
             "Filtrar · $filteredCount resultados"
         } else {
             "Filtrar"
-        }
+        }*/
     }
 
     private fun applyFilters() {

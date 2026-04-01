@@ -1,12 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
 
     <!-- Primary -->
     <color name="primary">#1E3A8A</color>
     <color name="onPrimary">#FFFFFF</color>
 
-    <!-- Background -->
-    <color name="background">#F5F7FA</color>
+    <!-- Background / Surface -->
+    <color name="background">#E9EEF5</color>
     <color name="surface">#FFFFFF</color>
+    <color name="surfaceVariant">#F7F9FC</color>
+    <color name="divider">#D6DEE8</color>
 
     <!-- Text -->
     <color name="onSurface">#111827</color>
@@ -14,6 +17,7 @@
 
     <!-- States -->
     <color name="status_open">#2563EB</color>
+    <color name="status_in_progress">#D97706</color>
     <color name="status_resolved">#059669</color>
     <color name="status_closed">#6B7280</color>
 
@@ -23,6 +27,5 @@
     <color name="priority_low">#10B981</color>
     <color name="priority_critical">#7F1D1D</color>
 
-    <color name="divider">#E0E0E0</color>
 
 </resources>

@@ -35,7 +35,6 @@ class IncidentAdapter(
         val item = getItem(position)
 
         holder.binding.tvReference.text = item.referenceCode
-        holder.binding.tvTitle.text = item.title
         holder.binding.tvStatus.text = item.statusName
         holder.binding.tvPriority.text = item.priorityName ?: "-"
         val createdAtText = formatCreatedAt(item.createdAt)

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="TextTitle">
+        <item name="android:textSize">@dimen/text_title</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/onSurface</item>
+    </style>
+
+    <style name="TextBody">
+        <item name="android:textSize">@dimen/text_body</item>
+        <item name="android:textColor">@color/onSurface</item>
+    </style>
+
+    <style name="TextSecondary">
+        <item name="android:textSize">@dimen/text_body</item>
+        <item name="android:textColor">@color/secondaryText</item>
+    </style>
+
+    <style name="TextSmall">
+        <item name="android:textSize">@dimen/text_small</item>
+        <item name="android:textColor">@color/secondaryText</item>
+    </style>
+
+    <style name="TextSheetSection">
+        <item name="android:textSize">@dimen/text_body</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/onSurface</item>
+    </style>
+
+    <style name="AppCard">
+        <item name="cardCornerRadius">@dimen/card_radius</item>
+        <item name="cardElevation">@dimen/card_elevation</item>
+    </style>
+
+    <style name="ChipBase">
+        <item name="android:paddingStart">@dimen/chip_padding_horizontal</item>
+        <item name="android:paddingEnd">@dimen/chip_padding_horizontal</item>
+        <item name="android:paddingTop">@dimen/chip_padding_vertical</item>
+        <item name="android:paddingBottom">@dimen/chip_padding_vertical</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">@dimen/text_small</item>
+    </style>
+
+    <style name="ButtonPrimary">
+        <item name="android:layout_height">@dimen/button_height</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textColor">@color/onPrimary</item>
+        <item name="backgroundTint">@color/primary</item>
+        <item name="cornerRadius">@dimen/button_radius</item>
+    </style>
+
+    <style name="ButtonGhost">
+        <item name="android:layout_height">@dimen/button_height</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textColor">@color/primary</item>
+        <item name="backgroundTint">@android:color/transparent</item>
+        <item name="rippleColor">@color/divider</item>
+    </style>
+
+</resources>

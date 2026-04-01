@@ -74,7 +74,7 @@ class ManagerIncidentsFragment : Fragment(R.layout.fragment_active_incidents) {
 
         setupRecycler()
         setupRefresh()
-        setupFilters()
+        /*setupFilters()*/
         observeUiState()
 
         if (savedInstanceState == null) {
@@ -113,12 +113,12 @@ class ManagerIncidentsFragment : Fragment(R.layout.fragment_active_incidents) {
             viewModel.loadActiveIncidents(forceRefresh = true)
         }
     }
-
+/*
     private fun setupFilters() {
         binding.btnOpenFilters.setOnClickListener {
             showFiltersBottomSheet()
         }
-    }
+    }*/
 
     private fun showFiltersBottomSheet() {
         val state = viewModel.uiState.value
@@ -201,11 +201,11 @@ class ManagerIncidentsFragment : Fragment(R.layout.fragment_active_incidents) {
                     state.selectedTechnicianId != null ||
                     state.onlyUnassigned
 
-        binding.btnOpenFilters.text = if (hasFilters) {
+        /*binding.btnOpenFilters.text = if (hasFilters) {
             "Filtrar · ${filteredItems.size} resultados"
         } else {
             "Filtrar"
-        }
+        }*/
     }
 
     private fun renderFilteredList() {

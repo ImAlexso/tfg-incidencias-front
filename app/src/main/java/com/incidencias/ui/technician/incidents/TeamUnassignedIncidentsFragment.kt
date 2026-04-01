@@ -86,9 +86,9 @@ class TeamUnassignedIncidentsFragment : Fragment(R.layout.fragment_active_incide
     }
 
     private fun setupFilters() {
-        binding.btnOpenFilters.setOnClickListener {
+        /*binding.btnOpenFilters.setOnClickListener {
             showFiltersBottomSheet()
-        }
+        }*/
         updateFilterButtonText()
     }
 
@@ -132,11 +132,11 @@ class TeamUnassignedIncidentsFragment : Fragment(R.layout.fragment_active_incide
     private fun updateFilterButtonText() {
         val hasFilters = selectedPriority != null
 
-        binding.btnOpenFilters.text = if (hasFilters) {
+       /* binding.btnOpenFilters.text = if (hasFilters) {
             "Filtrar · $filteredCount resultados"
         } else {
             "Filtrar"
-        }
+        }*/
     }
 
     private fun applyFilters() {

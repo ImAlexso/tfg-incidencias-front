@@ -3,6 +3,9 @@ package com.incidencias.ui.user.incidents
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import androidx.fragment.app.Fragment
@@ -36,6 +39,26 @@ class ActiveIncidentsFragment : Fragment(R.layout.fragment_active_incidents) {
     private var selectedPriority: String? = null
     private var filteredCount: Int = 0
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.menu_incidents, menu)
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_filter -> {
+                showFiltersBottomSheet()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentActiveIncidentsBinding.bind(view)
@@ -44,7 +67,6 @@ class ActiveIncidentsFragment : Fragment(R.layout.fragment_active_incidents) {
 
         setupRecycler()
         setupRefresh()
-        setupFilters()
         observeUiState()
 
         if (savedInstanceState == null) {
@@ -60,11 +82,13 @@ class ActiveIncidentsFragment : Fragment(R.layout.fragment_active_incidents) {
     }
 
     private fun setupRecycler() {
-        incidentAdapter = IncidentAdapter(onItemClick = { incident ->
-            val intent = Intent(requireContext(), IncidentDetailActivity::class.java)
-            intent.putExtra(IncidentDetailActivity.EXTRA_INCIDENT_ID, incident.id)
-            startActivity(intent)
-        })
+        incidentAdapter = IncidentAdapter(
+            onItemClick = { incident ->
+                val intent = Intent(requireContext(), IncidentDetailActivity::class.java)
+                intent.putExtra(IncidentDetailActivity.EXTRA_INCIDENT_ID, incident.id)
+                startActivity(intent)
+            }
+        )
 
         layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerView.layoutManager = layoutManager
@@ -96,16 +120,10 @@ class ActiveIncidentsFragment : Fragment(R.layout.fragment_active_incidents) {
         }
     }
 
-    private fun setupFilters() {
-        binding.btnOpenFilters.setOnClickListener {
-            showFiltersBottomSheet()
-        }
-        updateFilterButtonText()
-    }
-
     private fun showFiltersBottomSheet() {
         val dialog = BottomSheetDialog(requireContext())
-        val sheetBinding = BottomSheetActiveFiltersBinding.inflate(LayoutInflater.from(requireContext()))
+        val sheetBinding =
+            BottomSheetActiveFiltersBinding.inflate(LayoutInflater.from(requireContext()))
         dialog.setContentView(sheetBinding.root)
 
         when (selectedStatus) {
@@ -153,16 +171,6 @@ class ActiveIncidentsFragment : Fragment(R.layout.fragment_active_incidents) {
         dialog.show()
     }
 
-    private fun updateFilterButtonText() {
-        val hasFilters = selectedStatus != null || selectedPriority != null
-
-        binding.btnOpenFilters.text = if (hasFilters) {
-            "Filtrar · $filteredCount resultados"
-        } else {
-            "Filtrar"
-        }
-    }
-
     private fun applyFilters() {
         val filtered = allIncidents.filter { incident ->
             val statusMatch = selectedStatus == null ||
@@ -175,13 +183,14 @@ class ActiveIncidentsFragment : Fragment(R.layout.fragment_active_incidents) {
         }
 
         filteredCount = filtered.size
-        updateFilterButtonText()
-
         incidentAdapter.submitList(filtered)
 
         binding.recyclerView.visibility = if (filtered.isNotEmpty()) View.VISIBLE else View.GONE
         binding.layoutEmpty.visibility =
-            if (filtered.isEmpty() && !viewModel.uiState.value.isLoading && viewModel.uiState.value.errorMessage == null) {
+            if (filtered.isEmpty() &&
+                !viewModel.uiState.value.isLoading &&
+                viewModel.uiState.value.errorMessage == null
+            ) {
                 View.VISIBLE
             } else {
                 View.GONE

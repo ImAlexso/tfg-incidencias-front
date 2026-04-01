@@ -96,9 +96,9 @@ class IncidentHistoryFragment : Fragment(R.layout.fragment_active_incidents) {
     }
 
     private fun setupFilters() {
-        binding.btnOpenFilters.setOnClickListener {
+        /*binding.btnOpenFilters.setOnClickListener {
             showFiltersBottomSheet()
-        }
+        }*/
         updateFilterButtonText()
     }
 
@@ -138,11 +138,11 @@ class IncidentHistoryFragment : Fragment(R.layout.fragment_active_incidents) {
     }
 
     private fun updateFilterButtonText() {
-        binding.btnOpenFilters.text = if (selectedPriority != null) {
+        /*binding.btnOpenFilters.text = if (selectedPriority != null) {
             "Filtrar · $filteredCount resultados"
         } else {
             "Filtrar"
-        }
+        }*/
     }
 
     private fun applyFilters() {
