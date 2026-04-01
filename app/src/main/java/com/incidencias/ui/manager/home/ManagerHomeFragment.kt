@@ -1,5 +1,6 @@
 package com.incidencias.ui.manager.home
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
@@ -12,11 +13,13 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.incidencias.R
 import com.incidencias.databinding.FragmentManagerHomeBinding
 import com.incidencias.ui.manager.ManagerMainActivity
+import com.incidencias.ui.manager.assignment.ManagerAssignmentBoardFragment
 import com.incidencias.ui.manager.incidents.ManagerIncidentsFragment
 import com.incidencias.ui.manager.incidents.PendingClosureFragment
 import com.incidencias.ui.manager.team.ManagerTeamFragment
-import kotlinx.coroutines.launch
 import com.incidencias.ui.notifications.NotificationsFragment
+import com.incidencias.ui.settings.SettingsActivity
+import kotlinx.coroutines.launch
 
 class ManagerHomeFragment : Fragment(R.layout.fragment_manager_home) {
 
@@ -52,10 +55,7 @@ class ManagerHomeFragment : Fragment(R.layout.fragment_manager_home) {
         }
 
         binding.cardTeamMembers.setOnClickListener {
-            parentFragmentManager.beginTransaction()
-                .replace(R.id.managerFragmentContainer, ManagerTeamFragment())
-                .addToBackStack(null)
-                .commit()
+            openManagerFragment(ManagerTeamFragment())
         }
 
         binding.cardUnassigned.setOnClickListener {
@@ -63,20 +63,23 @@ class ManagerHomeFragment : Fragment(R.layout.fragment_manager_home) {
         }
 
         binding.cardResolved.setOnClickListener {
-            parentFragmentManager.beginTransaction()
-                .replace(R.id.managerFragmentContainer, PendingClosureFragment())
-                .addToBackStack(null)
-                .commit()
+            openManagerFragment(PendingClosureFragment())
         }
 
         binding.cardCritical.setOnClickListener {
             openIncidents(priority = "CRITICAL")
         }
+
+        binding.cardAssignmentBoard.setOnClickListener {
+            openManagerFragment(ManagerAssignmentBoardFragment())
+        }
+
         binding.cardNotifications.setOnClickListener {
-            parentFragmentManager.beginTransaction()
-                .replace(R.id.managerFragmentContainer, NotificationsFragment())
-                .addToBackStack(null)
-                .commit()
+            openManagerFragment(NotificationsFragment())
+        }
+
+        binding.cardSettings.setOnClickListener {
+            startActivity(Intent(requireContext(), SettingsActivity::class.java))
         }
     }
 
@@ -93,7 +96,11 @@ class ManagerHomeFragment : Fragment(R.layout.fragment_manager_home) {
             )
         }
 
-        parentFragmentManager.beginTransaction()
+        openManagerFragment(fragment)
+    }
+
+    private fun openManagerFragment(fragment: Fragment) {
+        requireActivity().supportFragmentManager.beginTransaction()
             .replace(R.id.managerFragmentContainer, fragment)
             .addToBackStack(null)
             .commit()
@@ -115,7 +122,12 @@ class ManagerHomeFragment : Fragment(R.layout.fragment_manager_home) {
                     binding.tvActiveIncidentsCount.text = state.activeIncidentsCount.toString()
                     binding.tvTeamMembersCount.text = state.teamMembersCount.toString()
 
-                    binding.progressBar.visibility = if (state.isLoading) View.VISIBLE else View.GONE
+                    binding.tvNotificationsCount.text = state.unreadNotificationsCount.toString()
+                    binding.tvNotificationsCount.visibility =
+                        if (state.unreadNotificationsCount > 0) View.VISIBLE else View.GONE
+
+                    binding.progressBar.visibility =
+                        if (state.isLoading) View.VISIBLE else View.GONE
 
                     state.errorMessage?.let {
                         Toast.makeText(requireContext(), it, Toast.LENGTH_LONG).show()

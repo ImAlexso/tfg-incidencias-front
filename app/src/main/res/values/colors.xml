@@ -23,4 +23,6 @@
     <color name="priority_low">#10B981</color>
     <color name="priority_critical">#7F1D1D</color>
 
+    <color name="divider">#E0E0E0</color>
+
 </resources>
