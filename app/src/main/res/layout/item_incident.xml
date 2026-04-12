@@ -5,18 +5,19 @@
     style="@style/AppCard"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginHorizontal="@dimen/padding_screen_horizontal"
+    android:layout_marginStart="@dimen/padding_screen_horizontal"
     android:layout_marginTop="@dimen/spacing_sm"
+    android:layout_marginEnd="@dimen/padding_screen_horizontal"
     android:layout_marginBottom="@dimen/spacing_xs"
-    app:cardBackgroundColor="@color/surface"
-    app:strokeColor="@color/divider"
-    app:strokeWidth="1dp">
+    app:cardBackgroundColor="@color/surface_elevated"
+    app:strokeColor="@color/stroke_card"
+    app:strokeWidth="@dimen/card_stroke_width">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="@dimen/card_padding">
+        android:padding="@dimen/card_padding_lg">
 
         <!-- Línea superior -->
         <LinearLayout
@@ -27,11 +28,12 @@
 
             <TextView
                 android:id="@+id/tvReference"
-                style="@style/TextSecondary"
+                style="@style/TextSmall"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="INC-123"
+                android:textColor="@color/secondaryText"
                 android:textStyle="bold" />
 
             <TextView
@@ -39,9 +41,9 @@
                 style="@style/ChipBase"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/bg_status_chip"
+                android:background="@drawable/bg_status_chip_soft"
                 android:text="OPEN"
-                android:textColor="@android:color/white" />
+                android:textColor="@color/onSurface" />
         </LinearLayout>
 
         <!-- Título -->
@@ -54,22 +56,20 @@
             android:maxLines="2"
             android:text="No funciona Outlook" />
 
-        <!-- Subtítulo -->
+        <!-- Metadatos -->
         <TextView
             android:id="@+id/tvSubtitle"
-            style="@style/TextBody"
+            style="@style/TextSecondary"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_xs"
+            android:layout_marginTop="@dimen/spacing_sm"
             android:ellipsize="end"
             android:maxLines="2"
-            android:text="IT_SUPPORT · Sin técnico asignado"
-            android:textColor="@color/secondaryText" />
+            android:text="IT_SUPPORT · Sin técnico asignado" />
 
-        <!-- Fecha -->
         <TextView
             android:id="@+id/tvCreatedAt"
-            style="@style/TextSecondary"
+            style="@style/TextSmall"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/spacing_xs"
@@ -79,7 +79,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_md"
+            android:layout_marginTop="@dimen/spacing_lg"
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
@@ -88,9 +88,9 @@
                 style="@style/ChipBase"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/bg_priority_chip"
+                android:background="@drawable/bg_priority_chip_soft"
                 android:text="HIGH"
-                android:textColor="@android:color/white" />
+                android:textColor="@color/onSurface" />
 
             <Space
                 android:layout_width="0dp"
@@ -102,8 +102,14 @@
                 style="@style/Widget.Material3.Button.TextButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                android:minHeight="0dp"
+                android:paddingStart="@dimen/spacing_sm"
+                android:paddingEnd="@dimen/spacing_sm"
                 android:text="Asignarme"
                 android:textAllCaps="false"
+                android:textColor="@color/primary"
                 android:visibility="gone" />
         </LinearLayout>
 

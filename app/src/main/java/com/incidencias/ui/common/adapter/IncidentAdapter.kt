@@ -3,6 +3,7 @@ package com.incidencias.ui.common.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -33,18 +34,25 @@ class IncidentAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = getItem(position)
+        val context = holder.binding.root.context
+
+        val statusRaw = item.statusName.uppercase()
+        val priorityRaw = item.priorityName?.uppercase()
 
         holder.binding.tvReference.text = item.referenceCode
-        holder.binding.tvStatus.text = item.statusName
-        holder.binding.tvPriority.text = item.priorityName ?: "-"
+        holder.binding.tvTitle.text = item.title
+        holder.binding.tvStatus.text = mapStatusLabel(statusRaw)
+        holder.binding.tvPriority.text = mapPriorityLabel(priorityRaw)
+
         val createdAtText = formatCreatedAt(item.createdAt)
         holder.binding.tvCreatedAt.text = createdAtText
-        holder.binding.tvCreatedAt.visibility = if (createdAtText.isBlank()) View.GONE else View.VISIBLE
+        holder.binding.tvCreatedAt.visibility =
+            if (createdAtText.isBlank()) View.GONE else View.VISIBLE
 
         val subtitleParts = buildList {
             add(
                 if (!item.currentTeamName.isNullOrBlank()) {
-                    "Equipo: ${item.currentTeamName}"
+                    item.currentTeamName
                 } else {
                     "Equipo sin asignar"
                 }
@@ -65,29 +73,114 @@ class IncidentAdapter(
 
         holder.binding.tvSubtitle.text = subtitleParts.joinToString(separator = " · ")
 
-        when (item.statusName.uppercase()) {
-            "OPEN" -> holder.binding.tvStatus.setBackgroundResource(R.drawable.bg_status_open)
-            "IN_PROGRESS" -> holder.binding.tvStatus.setBackgroundResource(R.drawable.bg_status_in_progress)
-            "RESOLVED" -> holder.binding.tvStatus.setBackgroundResource(R.drawable.bg_status_resolved)
-            "CLOSED" -> holder.binding.tvStatus.setBackgroundResource(R.drawable.bg_status_closed)
-            else -> holder.binding.tvStatus.setBackgroundResource(R.drawable.bg_status_open)
+        when (statusRaw) {
+            "OPEN" -> {
+                holder.binding.tvStatus.setBackgroundResource(R.drawable.bg_status_open)
+                holder.binding.tvStatus.setTextColor(
+                    ContextCompat.getColor(context, R.color.status_open_text)
+                )
+            }
+
+            "IN_PROGRESS" -> {
+                holder.binding.tvStatus.setBackgroundResource(R.drawable.bg_status_in_progress)
+                holder.binding.tvStatus.setTextColor(
+                    ContextCompat.getColor(context, R.color.status_in_progress_text)
+                )
+            }
+
+            "RESOLVED" -> {
+                holder.binding.tvStatus.setBackgroundResource(R.drawable.bg_status_resolved)
+                holder.binding.tvStatus.setTextColor(
+                    ContextCompat.getColor(context, R.color.status_resolved_text)
+                )
+            }
+
+            "CLOSED" -> {
+                holder.binding.tvStatus.setBackgroundResource(R.drawable.bg_status_closed)
+                holder.binding.tvStatus.setTextColor(
+                    ContextCompat.getColor(context, R.color.status_closed_text)
+                )
+            }
+
+            else -> {
+                holder.binding.tvStatus.setBackgroundResource(R.drawable.bg_status_open)
+                holder.binding.tvStatus.setTextColor(
+                    ContextCompat.getColor(context, R.color.status_open_text)
+                )
+            }
         }
 
-        when (item.priorityName?.uppercase()) {
-            "CRITICAL" -> holder.binding.tvPriority.setBackgroundResource(R.drawable.bg_priority_critical)
-            "HIGH" -> holder.binding.tvPriority.setBackgroundResource(R.drawable.bg_priority_high)
-            "MEDIUM" -> holder.binding.tvPriority.setBackgroundResource(R.drawable.bg_priority_medium)
-            "LOW" -> holder.binding.tvPriority.setBackgroundResource(R.drawable.bg_priority_low)
-            else -> holder.binding.tvPriority.setBackgroundResource(R.drawable.bg_priority_low)
+        when (priorityRaw) {
+            "CRITICAL" -> {
+                holder.binding.tvPriority.setBackgroundResource(R.drawable.bg_priority_critical)
+                holder.binding.tvPriority.setTextColor(
+                    ContextCompat.getColor(context, R.color.priority_critical_text)
+                )
+            }
+
+            "HIGH" -> {
+                holder.binding.tvPriority.setBackgroundResource(R.drawable.bg_priority_high)
+                holder.binding.tvPriority.setTextColor(
+                    ContextCompat.getColor(context, R.color.priority_high_text)
+                )
+            }
+
+            "MEDIUM" -> {
+                holder.binding.tvPriority.setBackgroundResource(R.drawable.bg_priority_medium)
+                holder.binding.tvPriority.setTextColor(
+                    ContextCompat.getColor(context, R.color.priority_medium_text)
+                )
+            }
+
+            "LOW" -> {
+                holder.binding.tvPriority.setBackgroundResource(R.drawable.bg_priority_low)
+                holder.binding.tvPriority.setTextColor(
+                    ContextCompat.getColor(context, R.color.priority_low_text)
+                )
+            }
+
+            else -> {
+                holder.binding.tvPriority.setBackgroundResource(R.drawable.bg_priority_low)
+                holder.binding.tvPriority.setTextColor(
+                    ContextCompat.getColor(context, R.color.priority_low_text)
+                )
+            }
         }
 
-        val showAssignButton = showAssignToMeAction && item.canAssignToMe && item.assignedTechnicianId == null
-        holder.binding.btnAssignToMe.visibility = if (showAssignButton) View.VISIBLE else View.GONE
+        val showAssignButton =
+            showAssignToMeAction && item.canAssignToMe && item.assignedTechnicianId == null
+
+        holder.binding.btnAssignToMe.visibility =
+            if (showAssignButton) View.VISIBLE else View.GONE
+
         holder.binding.btnAssignToMe.setOnClickListener {
             onAssignToMeClick?.invoke(item)
         }
 
-        holder.binding.root.setOnClickListener { onItemClick(item) }
+        holder.binding.root.setOnClickListener {
+            onItemClick(item)
+        }
+    }
+
+    private fun mapStatusLabel(status: String): String {
+        return when (status) {
+            "OPEN" -> "Abierta"
+            "IN_PROGRESS" -> "En progreso"
+            "RESOLVED" -> "Resuelta"
+            "CLOSED" -> "Cerrada"
+            else -> status
+        }
+    }
+
+    private fun mapPriorityLabel(priority: String?): String {
+        return when (priority) {
+            "CRITICAL" -> "Crítica"
+            "HIGH" -> "Alta"
+            "MEDIUM" -> "Media"
+            "LOW" -> "Baja"
+            null -> "-"
+            else -> priority
+        }
     }
 
     private fun formatCreatedAt(value: String?): String {

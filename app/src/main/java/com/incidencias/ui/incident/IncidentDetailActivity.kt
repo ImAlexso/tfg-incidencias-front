@@ -165,26 +165,74 @@ class IncidentDetailActivity : AppCompatActivity() {
         binding.tvReference.text = detail.referenceCode
         binding.tvTitle.text = detail.title
         binding.tvDescription.text = detail.description
-        binding.tvStatus.text = detail.statusName
-        binding.tvPriority.text = detail.priorityName ?: "-"
+
+        val statusRaw = detail.statusName.uppercase()
+        val priorityRaw = detail.priorityName?.uppercase()
+
+        binding.tvStatus.text = when (statusRaw) {
+            "OPEN" -> "Abierta"
+            "IN_PROGRESS" -> "En progreso"
+            "RESOLVED" -> "Resuelta"
+            "CLOSED" -> "Cerrada"
+            else -> detail.statusName
+        }
+
+        binding.tvPriority.text = when (priorityRaw) {
+            "CRITICAL" -> "Crítica"
+            "HIGH" -> "Alta"
+            "MEDIUM" -> "Media"
+            "LOW" -> "Baja"
+            else -> detail.priorityName ?: "-"
+        }
+
         binding.tvCategory.text = detail.categoryName ?: "-"
         binding.tvTeam.text = "Equipo: ${detail.currentTeamName ?: "-"}"
         binding.tvTechnician.text = "Técnico: ${detail.assignedTechnicianName ?: "Sin asignar"}"
 
-        when (detail.statusName.uppercase()) {
-            "OPEN" -> binding.tvStatus.setBackgroundResource(R.drawable.bg_status_open)
-            "IN_PROGRESS" -> binding.tvStatus.setBackgroundResource(R.drawable.bg_status_in_progress)
-            "RESOLVED" -> binding.tvStatus.setBackgroundResource(R.drawable.bg_status_resolved)
-            "CLOSED" -> binding.tvStatus.setBackgroundResource(R.drawable.bg_status_closed)
-            else -> binding.tvStatus.setBackgroundResource(R.drawable.bg_status_open)
+        when (statusRaw) {
+            "OPEN" -> {
+                binding.tvStatus.setBackgroundResource(R.drawable.bg_status_open)
+                binding.tvStatus.setTextColor(getColor(R.color.status_open_text))
+            }
+            "IN_PROGRESS" -> {
+                binding.tvStatus.setBackgroundResource(R.drawable.bg_status_in_progress)
+                binding.tvStatus.setTextColor(getColor(R.color.status_in_progress_text))
+            }
+            "RESOLVED" -> {
+                binding.tvStatus.setBackgroundResource(R.drawable.bg_status_resolved)
+                binding.tvStatus.setTextColor(getColor(R.color.status_resolved_text))
+            }
+            "CLOSED" -> {
+                binding.tvStatus.setBackgroundResource(R.drawable.bg_status_closed)
+                binding.tvStatus.setTextColor(getColor(R.color.status_closed_text))
+            }
+            else -> {
+                binding.tvStatus.setBackgroundResource(R.drawable.bg_status_open)
+                binding.tvStatus.setTextColor(getColor(R.color.status_open_text))
+            }
         }
 
-        when (detail.priorityName?.uppercase()) {
-            "CRITICAL" -> binding.tvPriority.setBackgroundResource(R.drawable.bg_priority_critical)
-            "HIGH" -> binding.tvPriority.setBackgroundResource(R.drawable.bg_priority_high)
-            "MEDIUM" -> binding.tvPriority.setBackgroundResource(R.drawable.bg_priority_medium)
-            "LOW" -> binding.tvPriority.setBackgroundResource(R.drawable.bg_priority_low)
-            else -> binding.tvPriority.setBackgroundResource(R.drawable.bg_priority_low)
+        when (priorityRaw) {
+            "CRITICAL" -> {
+                binding.tvPriority.setBackgroundResource(R.drawable.bg_priority_critical)
+                binding.tvPriority.setTextColor(getColor(R.color.priority_critical_text))
+            }
+            "HIGH" -> {
+                binding.tvPriority.setBackgroundResource(R.drawable.bg_priority_high)
+                binding.tvPriority.setTextColor(getColor(R.color.priority_high_text))
+            }
+            "MEDIUM" -> {
+                binding.tvPriority.setBackgroundResource(R.drawable.bg_priority_medium)
+                binding.tvPriority.setTextColor(getColor(R.color.priority_medium_text))
+            }
+            "LOW" -> {
+                binding.tvPriority.setBackgroundResource(R.drawable.bg_priority_low)
+                binding.tvPriority.setTextColor(getColor(R.color.priority_low_text))
+            }
+            else -> {
+                binding.tvPriority.setBackgroundResource(R.drawable.bg_priority_low)
+                binding.tvPriority.setTextColor(getColor(R.color.priority_low_text))
+            }
         }
     }
 

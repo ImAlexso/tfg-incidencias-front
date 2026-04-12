@@ -62,4 +62,33 @@
     <color name="chip_checked_bg">#E8EEF9</color>
     <color name="chip_checked_text">#1E3A8A</color>
 
+    <color name="status_chip_soft">#EEF3FB</color>
+    <color name="priority_chip_soft">#F8F1E8</color>
+
+    <!-- Incident status soft -->
+    <color name="status_open_bg">#E8F1FE</color>
+    <color name="status_open_text">#1D4ED8</color>
+
+    <color name="status_in_progress_bg">#F3E8FF</color>
+    <color name="status_in_progress_text">#7C3AED</color>
+
+    <color name="status_resolved_bg">#E8F8F3</color>
+    <color name="status_resolved_text">#047857</color>
+
+    <color name="status_closed_bg">#EEF2F7</color>
+    <color name="status_closed_text">#475569</color>
+
+    <!-- Incident priority soft -->
+    <color name="priority_critical_bg">#FEE2E2</color>
+    <color name="priority_critical_text">#B91C1C</color>
+
+    <color name="priority_high_bg">#FEE2E2</color>
+    <color name="priority_high_text">#DC2626</color>
+
+    <color name="priority_medium_bg">#FEF3C7</color>
+    <color name="priority_medium_text">#D97706</color>
+
+    <color name="priority_low_bg">#E8F8F3</color>
+    <color name="priority_low_text">#059669</color>
+
 </resources>
