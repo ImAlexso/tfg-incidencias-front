@@ -1,74 +1,185 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:background="@color/background">
 
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="72dp"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/toolbar_height"
         android:background="?attr/colorPrimary"
-        android:paddingTop="12dp"
-        app:navigationIcon="@android:drawable/ic_menu_close_clear_cancel"
+        android:paddingTop="@dimen/toolbar_top_padding"
+        android:theme="@style/ThemeOverlay.Material3.ActionBar"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:navigationIcon="@drawable/ic_close_white"
         app:title="Ajustes"
+        app:titleCentered="false"
         app:titleTextColor="@android:color/white" />
 
     <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        app:layout_constraintTop_toBottomOf="@id/toolbar"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="20dp">
+            android:paddingStart="@dimen/padding_screen_horizontal"
+            android:paddingTop="@dimen/padding_section"
+            android:paddingEnd="@dimen/padding_screen_horizontal"
+            android:paddingBottom="@dimen/padding_section">
 
-            <TextView
-                android:id="@+id/tvFullName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Nombre Apellido"
-                android:textSize="22sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/tvEmail"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="email@incidencias.com"
-                android:textColor="@color/secondaryText" />
-
-            <com.google.android.material.switchmaterial.SwitchMaterial
-                android:id="@+id/switchDarkMode"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                android:text="Modo oscuro" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnEditProfile"
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardUserInfo"
+                style="@style/AppCard"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                android:text="Editar perfil" />
+                app:cardBackgroundColor="@color/surface_elevated"
+                app:strokeColor="@color/stroke_card"
+                app:strokeWidth="@dimen/card_stroke_width">
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnChangePassword"
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:padding="@dimen/card_padding_lg">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/tvFullName"
+                            style="@style/TextHeading"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Alejandro User" />
+
+                        <TextView
+                            android:id="@+id/tvEmail"
+                            style="@style/TextSecondary"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/spacing_sm"
+                            android:text="user1@incidencias.com" />
+                    </LinearLayout>
+
+                    <ImageView
+                        android:id="@+id/ivThemeToggle"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:clickable="true"
+                        android:contentDescription="Cambiar tema"
+                        android:focusable="true"
+                        android:padding="2dp"
+                        android:src="@drawable/ic_dark_mode"
+                        android:tint="@color/onSurface" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardAccountActions"
+                style="@style/AppCard"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:text="Cambiar contraseña" />
+                android:layout_marginTop="@dimen/spacing_xxl"
+                app:cardBackgroundColor="@color/surface_elevated"
+                app:strokeColor="@color/stroke_card"
+                app:strokeWidth="@dimen/card_stroke_width">
 
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnEditProfile"
+                        style="@style/ButtonGhost"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="start|center_vertical"
+                        android:insetTop="0dp"
+                        android:insetBottom="0dp"
+                        android:minHeight="56dp"
+                        android:paddingStart="@dimen/card_padding_lg"
+                        android:paddingEnd="@dimen/card_padding_lg"
+                        android:text="Editar perfil"
+                        android:textAlignment="viewStart"
+                        android:textColor="@color/onSurface"
+                        app:icon="@drawable/ic_chevron_right"
+                        app:iconGravity="textEnd"
+                        app:iconPadding="0dp"
+                        app:iconTint="@color/secondaryText"
+                        app:rippleColor="@color/card_ripple" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginStart="@dimen/card_padding_lg"
+                        android:layout_marginEnd="@dimen/card_padding_lg"
+                        android:background="@color/divider" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnChangePassword"
+                        style="@style/ButtonGhost"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="start|center_vertical"
+                        android:insetTop="0dp"
+                        android:insetBottom="0dp"
+                        android:minHeight="56dp"
+                        android:paddingStart="@dimen/card_padding_lg"
+                        android:paddingEnd="@dimen/card_padding_lg"
+                        android:text="Cambiar contraseña"
+                        android:textAlignment="viewStart"
+                        android:textColor="@color/onSurface"
+                        app:icon="@drawable/ic_chevron_right"
+                        app:iconGravity="textEnd"
+                        app:iconPadding="0dp"
+                        app:iconTint="@color/secondaryText"
+                        app:rippleColor="@color/card_ripple" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnLogout"
-                android:layout_width="match_parent"
+                style="@style/ButtonGhost"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="32dp"
-                android:text="Cerrar sesión" />
+                android:layout_marginTop="@dimen/spacing_3xl"
+                android:layout_gravity="center_horizontal"
+                android:gravity="center"
+                android:minHeight="0dp"
+                android:paddingStart="@dimen/spacing_lg"
+                android:paddingEnd="@dimen/spacing_lg"
+                android:paddingTop="@dimen/spacing_md"
+                android:paddingBottom="@dimen/spacing_md"
+                android:text="Cerrar sesión"
+                android:textAllCaps="false"
+                android:textStyle="bold"
+                android:textColor="@color/onSurface"
+                android:alpha="0.85"
+                app:icon="@drawable/ic_logout"
+                app:iconSize="20dp"
+                app:iconPadding="@dimen/spacing_sm"
+                app:iconTint="@color/onSurface"
+                app:iconGravity="textStart"
+                app:rippleColor="@color/card_ripple"/>
+
+
         </LinearLayout>
     </ScrollView>
 
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

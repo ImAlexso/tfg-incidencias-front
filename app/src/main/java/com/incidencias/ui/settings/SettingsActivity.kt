@@ -1,10 +1,12 @@
 package com.incidencias.ui.settings
 
 import android.content.Intent
+import android.content.res.Configuration
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.lifecycleScope
+import com.incidencias.R
 import com.incidencias.databinding.ActivitySettingsBinding
 import com.incidencias.session.SessionManager
 import com.incidencias.ui.auth.LoginActivity
@@ -15,6 +17,8 @@ class SettingsActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivitySettingsBinding
     private lateinit var sessionManager: SessionManager
+
+    private var isDarkModeEnabled: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,20 +48,24 @@ class SettingsActivity : AppCompatActivity() {
 
             binding.tvFullName.text = "$firstName $lastName".trim()
             binding.tvEmail.text = email
-            binding.switchDarkMode.isChecked = sessionManager.darkModeFlow.first()
+
+            isDarkModeEnabled = isCurrentlyDarkMode()
+            updateThemeIcon(isDarkModeEnabled)
         }
     }
 
     private fun setupListeners() {
-        binding.switchDarkMode.setOnCheckedChangeListener { _, isChecked ->
-            lifecycleScope.launch {
-                sessionManager.saveDarkMode(isChecked)
-            }
+        binding.ivThemeToggle.setOnClickListener {
+            val newDarkModeValue = !isCurrentlyDarkMode()
 
-            AppCompatDelegate.setDefaultNightMode(
-                if (isChecked) AppCompatDelegate.MODE_NIGHT_YES
-                else AppCompatDelegate.MODE_NIGHT_NO
-            )
+            lifecycleScope.launch {
+                sessionManager.saveDarkMode(newDarkModeValue)
+
+                AppCompatDelegate.setDefaultNightMode(
+                    if (newDarkModeValue) AppCompatDelegate.MODE_NIGHT_YES
+                    else AppCompatDelegate.MODE_NIGHT_NO
+                )
+            }
         }
 
         binding.btnEditProfile.setOnClickListener {
@@ -78,5 +86,16 @@ class SettingsActivity : AppCompatActivity() {
                 finish()
             }
         }
+    }
+
+    private fun isCurrentlyDarkMode(): Boolean {
+        val nightModeFlags = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
+        return nightModeFlags == Configuration.UI_MODE_NIGHT_YES
+    }
+
+    private fun updateThemeIcon(isDarkMode: Boolean) {
+        binding.ivThemeToggle.setImageResource(
+            if (isDarkMode) R.drawable.ic_light_mode else R.drawable.ic_dark_mode
+        )
     }
 }

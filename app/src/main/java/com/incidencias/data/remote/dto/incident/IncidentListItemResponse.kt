@@ -9,6 +9,7 @@ data class IncidentListItemResponse(
     val currentTeamName: String?,
     val assignedTechnicianId: Long?,
     val assignedTechnicianEmail: String?,
+    val assignedTechnicianName: String?,
     val isAssignedToCurrentUser: Boolean,
     val canAssignToMe: Boolean,
     val createdAt: String

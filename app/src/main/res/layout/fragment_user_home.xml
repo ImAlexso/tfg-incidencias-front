@@ -3,8 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true"
-    android:background="@color/background">
+    android:background="@color/background"
+    android:fillViewport="true">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -39,22 +39,24 @@
             android:layout_marginTop="@dimen/spacing_xxl"
             android:clickable="true"
             android:focusable="true"
-            android:stateListAnimator="@animator/card_press_state_animator"
-            app:rippleColor="@color/card_ripple">
+            app:cardBackgroundColor="@color/surface_elevated"
+            app:rippleColor="@color/card_ripple"
+            app:strokeColor="@color/stroke_card"
+            app:strokeWidth="@dimen/card_stroke_width">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
-                android:minHeight="92dp"
+                android:minHeight="104dp"
                 android:orientation="horizontal"
-                android:padding="@dimen/card_padding_lg">
+                android:padding="@dimen/card_padding_xl">
 
                 <ImageView
                     android:layout_width="@dimen/icon_size_xl"
                     android:layout_height="@dimen/icon_size_xl"
                     android:contentDescription="@null"
-                    android:src="@android:drawable/ic_input_add"
+                    android:src="@drawable/ic_home_add"
                     android:tint="@color/primary" />
 
                 <LinearLayout
@@ -75,9 +77,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/spacing_xs"
-                        android:text="Crea una nueva incidencia" />
+                        android:text="Abre una nueva solicitud" />
                 </LinearLayout>
-
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
@@ -89,8 +90,10 @@
             android:layout_marginTop="@dimen/spacing_lg"
             android:clickable="true"
             android:focusable="true"
-            android:stateListAnimator="@animator/card_press_state_animator"
-            app:rippleColor="@color/card_ripple">
+            app:cardBackgroundColor="@color/surface_elevated"
+            app:rippleColor="@color/card_ripple"
+            app:strokeColor="@color/stroke_card"
+            app:strokeWidth="@dimen/card_stroke_width">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -104,7 +107,7 @@
                     android:layout_width="@dimen/icon_size_xl"
                     android:layout_height="@dimen/icon_size_xl"
                     android:contentDescription="@null"
-                    android:src="@android:drawable/ic_menu_agenda"
+                    android:src="@drawable/ic_home_incidents"
                     android:tint="@color/primary" />
 
                 <LinearLayout
@@ -121,11 +124,12 @@
                         android:text="Incidencias activas" />
 
                     <TextView
+                        android:id="@+id/tvActiveSubtitle"
                         style="@style/TextSecondary"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/spacing_xs"
-                        android:text="Consulta tus incidencias en curso" />
+                        android:text="Consulta el estado de tus incidencias" />
                 </LinearLayout>
 
                 <TextView
@@ -152,8 +156,10 @@
             android:layout_marginTop="@dimen/spacing_lg"
             android:clickable="true"
             android:focusable="true"
-            android:stateListAnimator="@animator/card_press_state_animator"
-            app:rippleColor="@color/card_ripple">
+            app:cardBackgroundColor="@color/surface_elevated"
+            app:rippleColor="@color/card_ripple"
+            app:strokeColor="@color/stroke_card"
+            app:strokeWidth="@dimen/card_stroke_width">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -167,7 +173,7 @@
                     android:layout_width="@dimen/icon_size_xl"
                     android:layout_height="@dimen/icon_size_xl"
                     android:contentDescription="@null"
-                    android:src="@android:drawable/ic_dialog_email"
+                    android:src="@drawable/ic_home_notifications"
                     android:tint="@color/primary" />
 
                 <LinearLayout
@@ -184,11 +190,12 @@
                         android:text="Notificaciones" />
 
                     <TextView
+                        android:id="@+id/tvNotificationsSubtitle"
                         style="@style/TextSecondary"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/spacing_xs"
-                        android:text="Consulta mensajes, cambios de estado y adjuntos recientes" />
+                        android:text="Revisa mensajes, cambios y novedades recientes" />
                 </LinearLayout>
 
                 <TextView
@@ -212,11 +219,13 @@
             style="@style/AppCard"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_lg"
+            android:layout_marginTop="@dimen/spacing_3xl"
             android:clickable="true"
             android:focusable="true"
-            android:stateListAnimator="@animator/card_press_state_animator"
-            app:rippleColor="@color/card_ripple">
+            app:cardBackgroundColor="@color/surface_elevated"
+            app:rippleColor="@color/card_ripple"
+            app:strokeColor="@color/stroke_card"
+            app:strokeWidth="@dimen/card_stroke_width">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -230,7 +239,7 @@
                     android:layout_width="@dimen/icon_size_xl"
                     android:layout_height="@dimen/icon_size_xl"
                     android:contentDescription="@null"
-                    android:src="@android:drawable/ic_menu_recent_history"
+                    android:src="@drawable/ic_home_history"
                     android:tint="@color/primary" />
 
                 <LinearLayout
@@ -251,56 +260,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/spacing_xs"
-                        android:text="Consulta incidencias cerradas y resueltas" />
-                </LinearLayout>
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
-
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/cardSettings"
-            style="@style/AppCard"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_lg"
-            android:clickable="true"
-            android:focusable="true"
-            android:stateListAnimator="@animator/card_press_state_animator"
-            app:rippleColor="@color/card_ripple">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:minHeight="92dp"
-                android:orientation="horizontal"
-                android:padding="@dimen/card_padding_lg">
-
-                <ImageView
-                    android:layout_width="@dimen/icon_size_xl"
-                    android:layout_height="@dimen/icon_size_xl"
-                    android:contentDescription="@null"
-                    android:src="@android:drawable/ic_menu_manage"
-                    android:tint="@color/primary" />
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/spacing_lg"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        style="@style/TextTitle"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Perfil y ajustes" />
-
-                    <TextView
-                        style="@style/TextSecondary"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/spacing_xs"
-                        android:text="Edita tus datos y revisa la sesión actual" />
+                        android:text="Consulta incidencias resueltas y cerradas" />
                 </LinearLayout>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>

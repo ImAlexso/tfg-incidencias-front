@@ -83,6 +83,7 @@ class ActiveIncidentsFragment : Fragment(R.layout.fragment_active_incidents) {
 
     private fun setupRecycler() {
         incidentAdapter = IncidentAdapter(
+            showAssignedTechnician = true,
             onItemClick = { incident ->
                 val intent = Intent(requireContext(), IncidentDetailActivity::class.java)
                 intent.putExtra(IncidentDetailActivity.EXTRA_INCIDENT_ID, incident.id)

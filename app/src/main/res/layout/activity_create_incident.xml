@@ -1,130 +1,270 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:background="@color/background">
 
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="72dp"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/toolbar_height"
         android:background="?attr/colorPrimary"
-        android:paddingTop="12dp"
-        app:navigationIcon="@android:drawable/ic_menu_close_clear_cancel"
+        android:paddingTop="@dimen/toolbar_top_padding"
+        android:theme="@style/ThemeOverlay.Material3.ActionBar"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:navigationIcon="@drawable/ic_close_white"
         app:title="Nueva incidencia"
+        app:titleCentered="false"
         app:titleTextColor="@android:color/white" />
 
     <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        app:layout_constraintTop_toBottomOf="@id/toolbar"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="20dp">
+            android:paddingStart="@dimen/padding_screen_horizontal"
+            android:paddingTop="@dimen/padding_section"
+            android:paddingEnd="@dimen/padding_screen_horizontal"
+            android:paddingBottom="@dimen/padding_section">
 
-            <RadioGroup
-                android:id="@+id/rgMode"
+            <TextView
+                style="@style/TextScreenTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Cuéntanos qué ocurre" />
+
+            <TextView
+                style="@style/TextSecondary"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_sm"
+                android:lineSpacingExtra="2dp"
+                android:text="Puedes crear la incidencia con ayuda de IA o rellenarla manualmente." />
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardMode"
+                style="@style/AppCard"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:orientation="horizontal">
+                android:layout_marginTop="@dimen/spacing_xxl"
+                app:cardBackgroundColor="@color/surface_elevated"
+                app:strokeColor="@color/stroke_card"
+                app:strokeWidth="@dimen/card_stroke_width">
 
-                <RadioButton
-                    android:id="@+id/rbWithAi"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:checked="true"
-                    android:text="Con IA" />
-
-                <RadioButton
-                    android:id="@+id/rbWithoutAi"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="20dp"
-                    android:text="Sin IA" />
-            </RadioGroup>
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/tilTitle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:hint="Título">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/etTitle"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/tilDescription"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:hint="Descripción">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/etDescription"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="top"
-                    android:inputType="textMultiLine"
-                    android:minLines="5" />
-            </com.google.android.material.textfield.TextInputLayout>
+                    android:orientation="vertical"
+                    android:padding="@dimen/card_padding_lg">
+
+                    <TextView
+                        style="@style/TextTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Modo de creación" />
+
+                    <TextView
+                        style="@style/TextSecondary"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_xs"
+                        android:text="Elige cómo quieres preparar la incidencia." />
+
+                    <RadioGroup
+                        android:id="@+id/rgMode"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_lg"
+                        android:orientation="horizontal">
+
+                        <RadioButton
+                            android:id="@+id/rbWithAi"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:checked="true"
+                            android:text="Con IA"
+                            android:textColor="@color/onSurface"
+                            android:textSize="@dimen/text_body" />
+
+                        <RadioButton
+                            android:id="@+id/rbWithoutAi"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/spacing_xl"
+                            android:text="Sin IA"
+                            android:textColor="@color/onSurface"
+                            android:textSize="@dimen/text_body" />
+                    </RadioGroup>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardContent"
+                style="@style/AppCard"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_lg"
+                app:cardBackgroundColor="@color/surface_elevated"
+                app:strokeColor="@color/stroke_card"
+                app:strokeWidth="@dimen/card_stroke_width">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/card_padding_lg">
+
+                    <TextView
+                        style="@style/TextTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Información de la incidencia" />
+
+                    <TextView
+                        style="@style/TextSecondary"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_xs"
+                        android:text="Añade un título claro y una breve descripción del problema." />
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/tilTitle"
+                        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_lg"
+                        android:hint="Título"
+                        app:boxStrokeColor="@color/stroke_card"
+                        app:hintTextColor="@color/secondaryText">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etTitle"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="textCapSentences"
+                            android:maxLines="1"
+                            android:textColor="@color/onSurface"
+                            android:textColorHint="@color/secondaryText" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/tilDescription"
+                        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_lg"
+                        android:hint="Descripción"
+                        app:boxStrokeColor="@color/stroke_card"
+                        app:hintTextColor="@color/secondaryText">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etDescription"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="top|start"
+                            android:inputType="textCapSentences|textMultiLine"
+                            android:minLines="5"
+                            android:textColor="@color/onSurface"
+                            android:textColorHint="@color/secondaryText" />
+                    </com.google.android.material.textfield.TextInputLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
 
             <LinearLayout
                 android:id="@+id/layoutManualFields"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="@dimen/spacing_lg"
                 android:orientation="vertical"
                 android:visibility="gone">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Categoría"
-                    android:textStyle="bold" />
-
-                <Spinner
-                    android:id="@+id/spCategory"
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cardManualFields"
+                    style="@style/AppCard"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-
-                <TextView
-                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:text="Prioridad"
-                    android:textStyle="bold" />
+                    app:cardBackgroundColor="@color/surface_elevated"
+                    app:strokeColor="@color/stroke_card"
+                    app:strokeWidth="@dimen/card_stroke_width">
 
-                <Spinner
-                    android:id="@+id/spPriority"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="@dimen/card_padding_lg">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:text="Equipo"
-                    android:textStyle="bold" />
+                        <TextView
+                            style="@style/TextTitle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Datos adicionales" />
 
-                <Spinner
-                    android:id="@+id/spTeam"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                        <TextView
+                            style="@style/TextSecondary"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/spacing_xs"
+                            android:text="Completa la categoría, prioridad y equipo si eliges crearla sin IA." />
+
+                        <TextView
+                            style="@style/TextSecondary"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/spacing_lg"
+                            android:text="Categoría" />
+
+                        <Spinner
+                            android:id="@+id/spCategory"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/spacing_xs" />
+
+                        <TextView
+                            style="@style/TextSecondary"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/spacing_lg"
+                            android:text="Prioridad" />
+
+                        <Spinner
+                            android:id="@+id/spPriority"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/spacing_xs" />
+
+                        <TextView
+                            style="@style/TextSecondary"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/spacing_lg"
+                            android:text="Equipo" />
+
+                        <Spinner
+                            android:id="@+id/spTeam"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/spacing_xs" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
             </LinearLayout>
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnCreateIncident"
+                style="@style/ButtonPrimary"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
+                android:layout_marginTop="@dimen/spacing_xxl"
                 android:text="Crear incidencia" />
 
             <ProgressBar
@@ -132,10 +272,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="@dimen/spacing_lg"
                 android:visibility="gone" />
 
         </LinearLayout>
     </ScrollView>
 
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

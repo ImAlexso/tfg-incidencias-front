@@ -1,58 +1,118 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:background="@color/background">
 
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="72dp"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/toolbar_height"
         android:background="?attr/colorPrimary"
-        android:paddingTop="12dp"
-        app:navigationIcon="@android:drawable/ic_menu_close_clear_cancel"
+        android:paddingTop="@dimen/toolbar_top_padding"
+        android:theme="@style/ThemeOverlay.Material3.ActionBar"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:navigationIcon="@drawable/ic_close_white"
         app:title="Editar perfil"
+        app:titleCentered="false"
         app:titleTextColor="@android:color/white" />
 
     <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        app:layout_constraintTop_toBottomOf="@id/toolbar"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="20dp">
+            android:paddingStart="@dimen/padding_screen_horizontal"
+            android:paddingTop="@dimen/padding_section"
+            android:paddingEnd="@dimen/padding_screen_horizontal"
+            android:paddingBottom="@dimen/padding_section">
 
-            <com.google.android.material.textfield.TextInputLayout
+            <TextView
+                style="@style/TextScreenTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Actualiza tus datos" />
+
+            <TextView
+                style="@style/TextSecondary"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_sm"
+                android:lineSpacingExtra="2dp"
+                android:text="Modifica tu nombre y apellido para mantener tu perfil al día." />
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardEditProfile"
+                style="@style/AppCard"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Nombre">
+                android:layout_marginTop="@dimen/spacing_xxl"
+                app:cardBackgroundColor="@color/surface_elevated"
+                app:strokeColor="@color/stroke_card"
+                app:strokeWidth="@dimen/card_stroke_width">
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/etFirstName"
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-            </com.google.android.material.textfield.TextInputLayout>
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/card_padding_lg">
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:hint="Apellido">
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Nombre"
+                        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                        app:boxStrokeColor="@color/stroke_card"
+                        app:hintTextColor="@color/secondaryText">
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/etLastName"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-            </com.google.android.material.textfield.TextInputLayout>
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etFirstName"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="textCapWords"
+                            android:maxLines="1"
+                            android:textColor="@color/onSurface"
+                            android:textColorHint="@color/secondaryText" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_lg"
+                        android:hint="Apellido"
+                        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                        app:boxStrokeColor="@color/stroke_card"
+                        app:hintTextColor="@color/secondaryText">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etLastName"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="textCapWords"
+                            android:maxLines="1"
+                            android:textColor="@color/onSurface"
+                            android:textColorHint="@color/secondaryText" />
+                    </com.google.android.material.textfield.TextInputLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnSaveProfile"
+                style="@style/ButtonPrimary"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
+                android:layout_marginTop="@dimen/spacing_xxl"
                 android:text="Guardar cambios" />
 
             <ProgressBar
@@ -60,10 +120,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="@dimen/spacing_lg"
                 android:visibility="gone" />
 
         </LinearLayout>
     </ScrollView>
 
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -12,7 +12,6 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.incidencias.R
 import com.incidencias.databinding.FragmentUserHomeBinding
 import com.incidencias.ui.notifications.NotificationsFragment
-import com.incidencias.ui.settings.SettingsActivity
 import com.incidencias.ui.user.UserMainActivity
 import com.incidencias.ui.user.incidents.ActiveIncidentsFragment
 import com.incidencias.ui.user.incidents.IncidentHistoryFragment
@@ -72,10 +71,6 @@ class UserHomeFragment : Fragment(R.layout.fragment_user_home) {
                 .addToBackStack(null)
                 .commit()
         }
-
-        binding.cardSettings.setOnClickListener {
-            startActivity(Intent(requireContext(), SettingsActivity::class.java))
-        }
     }
 
     private fun observeUiState() {
@@ -95,8 +90,20 @@ class UserHomeFragment : Fragment(R.layout.fragment_user_home) {
                     binding.tvNotificationsCount.visibility =
                         if (state.unreadNotificationsCount > 0) View.VISIBLE else View.GONE
 
-                    if (state.errorMessage != null) {
-                        Toast.makeText(requireContext(), state.errorMessage, Toast.LENGTH_LONG).show()
+                    binding.tvActiveSubtitle.text = when (state.activeIncidentsCount) {
+                        0 -> "No tienes incidencias activas"
+                        1 -> "Tienes 1 incidencia en curso"
+                        else -> "Tienes ${state.activeIncidentsCount} incidencias en curso"
+                    }
+
+                    binding.tvNotificationsSubtitle.text = when (state.unreadNotificationsCount) {
+                        0L -> "No tienes notificaciones pendientes"
+                        1L -> "Tienes 1 novedad pendiente"
+                        else -> "Tienes ${state.unreadNotificationsCount} novedades pendientes"
+                    }
+
+                    state.errorMessage?.let {
+                        Toast.makeText(requireContext(), it, Toast.LENGTH_LONG).show()
                     }
                 }
             }

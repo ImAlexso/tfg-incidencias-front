@@ -52,7 +52,7 @@ class IncidentAdapter(
         val subtitleParts = buildList {
             add(
                 if (!item.currentTeamName.isNullOrBlank()) {
-                    item.currentTeamName
+                    formatTeamName(item.currentTeamName)
                 } else {
                     "Equipo sin asignar"
                 }
@@ -60,12 +60,11 @@ class IncidentAdapter(
 
             if (showAssignedTechnician) {
                 add(
-                    if (item.isAssignedToCurrentUser) {
-                        "Asignada a ti"
-                    } else if (!item.assignedTechnicianEmail.isNullOrBlank()) {
-                        "Técnico: ${item.assignedTechnicianEmail}"
-                    } else {
-                        "Sin técnico asignado"
+                    when {
+                        item.isAssignedToCurrentUser -> "Asignada a ti"
+                        !item.assignedTechnicianName.isNullOrBlank() -> item.assignedTechnicianName
+                        !item.assignedTechnicianEmail.isNullOrBlank() -> "Técnico asignado"
+                        else -> "Sin técnico asignado"
                     }
                 )
             }
@@ -162,6 +161,14 @@ class IncidentAdapter(
         }
     }
 
+    private fun formatTeamName(raw: String?): String {
+        if (raw.isNullOrBlank()) return "Equipo sin asignar"
+
+        return raw.split("_").joinToString(" ") {
+            if (it.uppercase() == "IT") "IT"
+            else it.lowercase().replaceFirstChar { c -> c.uppercase() }
+        }
+    }
     private fun mapStatusLabel(status: String): String {
         return when (status) {
             "OPEN" -> "Abierta"

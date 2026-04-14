@@ -19,7 +19,6 @@
         android:orientation="vertical"
         android:padding="@dimen/card_padding_lg">
 
-        <!-- Línea superior -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -33,7 +32,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="INC-123"
-                android:textColor="@color/secondaryText"
+                android:textColor="@color/text_muted"
                 android:textStyle="bold" />
 
             <TextView
@@ -41,12 +40,11 @@
                 style="@style/ChipBase"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/bg_status_chip_soft"
-                android:text="OPEN"
+                android:background="@drawable/bg_neutral_chip"
+                android:text="Abierta"
                 android:textColor="@color/onSurface" />
         </LinearLayout>
 
-        <!-- Título -->
         <TextView
             android:id="@+id/tvTitle"
             style="@style/TextTitle"
@@ -56,7 +54,6 @@
             android:maxLines="2"
             android:text="No funciona Outlook" />
 
-        <!-- Metadatos -->
         <TextView
             android:id="@+id/tvSubtitle"
             style="@style/TextSecondary"
@@ -65,7 +62,7 @@
             android:layout_marginTop="@dimen/spacing_sm"
             android:ellipsize="end"
             android:maxLines="2"
-            android:text="IT_SUPPORT · Sin técnico asignado" />
+            android:text="IT Support · Sin técnico asignado" />
 
         <TextView
             android:id="@+id/tvCreatedAt"
@@ -75,7 +72,6 @@
             android:layout_marginTop="@dimen/spacing_xs"
             android:text="Creada: 30/03/2026 18:20" />
 
-        <!-- Línea inferior -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -88,8 +84,8 @@
                 style="@style/ChipBase"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/bg_priority_chip_soft"
-                android:text="HIGH"
+                android:background="@drawable/bg_neutral_chip"
+                android:text="Media"
                 android:textColor="@color/onSurface" />
 
             <Space
