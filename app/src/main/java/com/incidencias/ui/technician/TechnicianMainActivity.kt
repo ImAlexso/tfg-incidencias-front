@@ -1,9 +1,13 @@
 package com.incidencias.ui.technician
 
+import android.content.Intent
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import com.incidencias.R
 import com.incidencias.databinding.ActivityTechnicianMainBinding
+import com.incidencias.ui.settings.SettingsActivity
 import com.incidencias.ui.technician.home.TechnicianHomeFragment
 
 class TechnicianMainActivity : AppCompatActivity() {
@@ -24,7 +28,22 @@ class TechnicianMainActivity : AppCompatActivity() {
         }
     }
 
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.menu_technician_main, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_settings -> {
+                startActivity(Intent(this, SettingsActivity::class.java))
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
     fun setToolbarTitle(title: String) {
-        binding.toolbar.title = title
+        supportActionBar?.title = title
     }
 }

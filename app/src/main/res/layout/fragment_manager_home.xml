@@ -3,8 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true"
-    android:background="@color/background">
+    android:background="@color/background"
+    android:fillViewport="true">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -54,7 +54,7 @@
                     android:layout_width="@dimen/icon_size_xl"
                     android:layout_height="@dimen/icon_size_xl"
                     android:contentDescription="@null"
-                    android:src="@android:drawable/ic_menu_agenda"
+                    android:src="@drawable/ic_home_incidents"
                     android:tint="@color/primary" />
 
                 <LinearLayout
@@ -117,7 +117,7 @@
                     android:layout_width="@dimen/icon_size_xl"
                     android:layout_height="@dimen/icon_size_xl"
                     android:contentDescription="@null"
-                    android:src="@android:drawable/ic_menu_sort_by_size"
+                    android:src="@drawable/ic_home_assignment"
                     android:tint="@color/primary" />
 
                 <LinearLayout
@@ -180,7 +180,7 @@
                     android:layout_width="@dimen/icon_size_xl"
                     android:layout_height="@dimen/icon_size_xl"
                     android:contentDescription="@null"
-                    android:src="@android:drawable/ic_menu_myplaces"
+                    android:src="@drawable/ic_home_team"
                     android:tint="@color/primary" />
 
                 <LinearLayout
@@ -229,7 +229,7 @@
                     android:layout_width="@dimen/icon_size_xl"
                     android:layout_height="@dimen/icon_size_xl"
                     android:contentDescription="@null"
-                    android:src="@android:drawable/ic_menu_recent_history"
+                    android:src="@drawable/ic_home_history"
                     android:tint="@color/primary" />
 
                 <LinearLayout
@@ -292,7 +292,7 @@
                     android:layout_width="@dimen/icon_size_xl"
                     android:layout_height="@dimen/icon_size_xl"
                     android:contentDescription="@null"
-                    android:src="@android:drawable/ic_dialog_email"
+                    android:src="@drawable/ic_home_notifications"
                     android:tint="@color/primary" />
 
                 <LinearLayout
@@ -329,55 +329,6 @@
                     android:paddingBottom="@dimen/chip_padding_vertical"
                     android:text="0"
                     android:visibility="gone" />
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
-
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/cardSettings"
-            style="@style/AppCard"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_lg"
-            android:clickable="true"
-            android:focusable="true"
-            android:stateListAnimator="@animator/card_press_state_animator"
-            app:rippleColor="@color/card_ripple">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:minHeight="92dp"
-                android:orientation="horizontal"
-                android:padding="@dimen/card_padding_lg">
-
-                <ImageView
-                    android:layout_width="@dimen/icon_size_xl"
-                    android:layout_height="@dimen/icon_size_xl"
-                    android:contentDescription="@null"
-                    android:src="@android:drawable/ic_menu_manage"
-                    android:tint="@color/primary" />
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/spacing_lg"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        style="@style/TextTitle"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Perfil y ajustes" />
-
-                    <TextView
-                        style="@style/TextSecondary"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/spacing_xs"
-                        android:text="Edita tus datos y revisa la sesión actual" />
-                </LinearLayout>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 

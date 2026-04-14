@@ -3,6 +3,9 @@ package com.incidencias.ui.manager.incidents
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.Toast
@@ -40,6 +43,26 @@ class ManagerIncidentsFragment : Fragment(R.layout.fragment_active_incidents) {
         const val ARG_ONLY_UNASSIGNED = "arg_only_unassigned"
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.menu_incidents, menu)
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_filter -> {
+                showFiltersBottomSheet()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentActiveIncidentsBinding.bind(view)
@@ -74,7 +97,6 @@ class ManagerIncidentsFragment : Fragment(R.layout.fragment_active_incidents) {
 
         setupRecycler()
         setupRefresh()
-        /*setupFilters()*/
         observeUiState()
 
         if (savedInstanceState == null) {
@@ -84,9 +106,6 @@ class ManagerIncidentsFragment : Fragment(R.layout.fragment_active_incidents) {
 
     override fun onResume() {
         super.onResume()
-        if (_binding != null) {
-            viewModel.loadActiveIncidents(forceRefresh = true)
-        }
     }
 
     private fun setupRecycler() {
@@ -113,17 +132,12 @@ class ManagerIncidentsFragment : Fragment(R.layout.fragment_active_incidents) {
             viewModel.loadActiveIncidents(forceRefresh = true)
         }
     }
-/*
-    private fun setupFilters() {
-        binding.btnOpenFilters.setOnClickListener {
-            showFiltersBottomSheet()
-        }
-    }*/
 
     private fun showFiltersBottomSheet() {
         val state = viewModel.uiState.value
         val dialog = BottomSheetDialog(requireContext())
-        val sheetBinding = BottomSheetManagerFiltersBinding.inflate(LayoutInflater.from(requireContext()))
+        val sheetBinding =
+            BottomSheetManagerFiltersBinding.inflate(LayoutInflater.from(requireContext()))
         dialog.setContentView(sheetBinding.root)
 
         when (state.selectedStatus) {
@@ -150,7 +164,10 @@ class ManagerIncidentsFragment : Fragment(R.layout.fragment_active_incidents) {
             technicianItems
         )
         sheetBinding.actvTechnician.setAdapter(technicianAdapter)
-        sheetBinding.actvTechnician.setText(state.selectedTechnicianName ?: "Todos los técnicos", false)
+        sheetBinding.actvTechnician.setText(
+            state.selectedTechnicianName ?: "Todos los técnicos",
+            false
+        )
 
         sheetBinding.btnClearFilters.setOnClickListener {
             viewModel.clearFilters()
@@ -201,11 +218,7 @@ class ManagerIncidentsFragment : Fragment(R.layout.fragment_active_incidents) {
                     state.selectedTechnicianId != null ||
                     state.onlyUnassigned
 
-        /*binding.btnOpenFilters.text = if (hasFilters) {
-            "Filtrar · ${filteredItems.size} resultados"
-        } else {
-            "Filtrar"
-        }*/
+        filteredItems = if (hasFilters) filteredItems else filteredItems
     }
 
     private fun renderFilteredList() {
@@ -213,23 +226,29 @@ class ManagerIncidentsFragment : Fragment(R.layout.fragment_active_incidents) {
         incidentAdapter.submitList(filteredItems)
         updateFilterButtonText()
 
+        val state = viewModel.uiState.value
+
+        val showEmpty = filteredItems.isEmpty() &&
+                !state.isLoading &&
+                state.errorMessage == null
+
         binding.recyclerView.visibility = if (filteredItems.isNotEmpty()) View.VISIBLE else View.GONE
-        binding.layoutEmpty.visibility =
-            if (filteredItems.isEmpty() &&
-                !viewModel.uiState.value.isLoading &&
-                viewModel.uiState.value.errorMessage == null
-            ) {
-                View.VISIBLE
+        binding.emptyState.layoutEmpty.visibility = if (showEmpty) View.VISIBLE else View.GONE
+
+        if (showEmpty) {
+            binding.emptyState.ivEmpty.setImageResource(R.drawable.ic_home_incidents)
+
+            if (filteredItems.isEmpty() && state.incidents.isNotEmpty()) {
+                binding.emptyState.tvEmpty.text = "No hay incidencias que coincidan con los filtros"
+                binding.emptyState.tvEmptySubtitle.text = "Prueba a ajustar o limpiar los filtros"
             } else {
-                View.GONE
+                binding.emptyState.tvEmpty.text =
+                    state.emptyMessage ?: "No hay incidencias activas en el equipo"
+                binding.emptyState.tvEmptySubtitle.text =
+                    "Las incidencias del equipo aparecerán aquí cuando haya actividad"
             }
 
-        binding.tvEmpty.text = if (
-            filteredItems.isEmpty() && viewModel.uiState.value.incidents.isNotEmpty()
-        ) {
-            "No hay incidencias que coincidan con los filtros"
-        } else {
-            viewModel.uiState.value.emptyMessage ?: "No hay incidencias activas del equipo"
+            binding.emptyState.tvEmptySubtitle.visibility = View.VISIBLE
         }
     }
 
@@ -237,7 +256,7 @@ class ManagerIncidentsFragment : Fragment(R.layout.fragment_active_incidents) {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.uiState.collect { state ->
-                    binding.progressBar.visibility =
+                    binding.layoutLoading.visibility =
                         if (state.isLoading && state.incidents.isEmpty()) View.VISIBLE else View.GONE
 
                     binding.swipeRefresh.isRefreshing = state.isRefreshing

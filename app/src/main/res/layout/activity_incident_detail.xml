@@ -9,7 +9,8 @@
         android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/primary">
+        android:background="@color/primary"
+        android:elevation="0dp">
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar"
@@ -26,9 +27,9 @@
             android:background="@color/background"
             android:orientation="vertical"
             android:paddingStart="@dimen/padding_screen_horizontal"
-            android:paddingTop="@dimen/padding_section"
+            android:paddingTop="@dimen/spacing_lg"
             android:paddingEnd="@dimen/padding_screen_horizontal"
-            android:paddingBottom="@dimen/spacing_lg">
+            android:paddingBottom="@dimen/spacing_md">
 
             <com.google.android.material.card.MaterialCardView
                 style="@style/AppCard"
@@ -42,7 +43,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="@dimen/card_padding_xl">
+                    android:padding="@dimen/card_padding_lg">
 
                     <TextView
                         android:id="@+id/tvReference"
@@ -55,19 +56,18 @@
 
                     <TextView
                         android:id="@+id/tvTitle"
-                        style="@style/TextScreenTitle"
+                        style="@style/TextTitle"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/spacing_md"
+                        android:layout_marginTop="@dimen/spacing_sm"
                         android:maxLines="3"
                         android:text="VPN connection issue"
-                        android:textSize="@dimen/text_display" />
+                        android:textSize="22sp" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/spacing_lg"
-                        android:gravity="center_vertical"
+                        android:layout_marginTop="@dimen/spacing_md"
                         android:orientation="horizontal">
 
                         <TextView
@@ -103,202 +103,161 @@
             </com.google.android.material.card.MaterialCardView>
 
             <com.google.android.material.card.MaterialCardView
-                style="@style/AppCard"
+                style="@style/AppCardSoft"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/spacing_lg"
-                app:cardBackgroundColor="@color/surface_elevated"
-                app:strokeColor="@color/stroke_card"
-                app:strokeWidth="@dimen/card_stroke_width">
+                android:layout_marginTop="@dimen/spacing_md"
+                app:cardBackgroundColor="@color/surface"
+                app:strokeColor="@color/stroke_soft">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="@dimen/card_padding_lg">
+                    android:orientation="vertical">
 
-                    <TextView
-                        style="@style/TextTitle"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Descripción" />
-
-                    <TextView
-                        android:id="@+id/tvDescription"
-                        style="@style/TextBody"
+                    <LinearLayout
+                        android:id="@+id/layoutDetailsHeader"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/spacing_sm"
-                        android:lineSpacingExtra="2dp"
-                        android:text="I cannot connect to the corporate VPN from home." />
+                        android:background="?attr/selectableItemBackground"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:gravity="center_vertical"
+                        android:minHeight="56dp"
+                        android:orientation="horizontal"
+                        android:paddingStart="@dimen/card_padding_lg"
+                        android:paddingTop="@dimen/spacing_md"
+                        android:paddingEnd="@dimen/card_padding_lg"
+                        android:paddingBottom="@dimen/spacing_md">
+
+                        <TextView
+                            android:id="@+id/tvDetailsToggle"
+                            style="@style/TextBody"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Detalles de la incidencia"
+                            android:textStyle="bold" />
+
+                        <ImageView
+                            android:id="@+id/ivDetailsChevron"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:contentDescription="null"
+                            android:src="@drawable/ic_chevron_down_small"
+                            android:tint="@color/secondaryText" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/layoutDetailsBody"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:paddingStart="@dimen/card_padding_lg"
+                        android:paddingTop="0dp"
+                        android:paddingEnd="@dimen/card_padding_lg"
+                        android:paddingBottom="@dimen/card_padding_lg">
+
+                        <TextView
+                            style="@style/TextSmall"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Descripción"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/tvDescription"
+                            style="@style/TextBody"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/spacing_xs"
+                            android:lineSpacingExtra="2dp"
+                            android:text="I cannot connect to the corporate VPN from home." />
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:layout_marginTop="@dimen/spacing_md"
+                            android:layout_marginBottom="@dimen/spacing_md"
+                            android:background="@color/stroke_soft" />
+
+                        <TextView
+                            android:id="@+id/tvTeam"
+                            style="@style/TextSecondary"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Equipo: -" />
+
+                        <TextView
+                            android:id="@+id/tvTechnician"
+                            style="@style/TextSecondary"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/spacing_sm"
+                            android:text="Técnico: -" />
+                    </LinearLayout>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
             <com.google.android.material.card.MaterialCardView
-                style="@style/AppCard"
+                android:id="@+id/layoutActionBar"
+                style="@style/AppCardSoft"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/spacing_lg"
-                app:cardBackgroundColor="@color/surface_elevated"
-                app:strokeColor="@color/stroke_card"
-                app:strokeWidth="@dimen/card_stroke_width">
+                android:layout_marginTop="@dimen/spacing_md"
+                android:visibility="gone"
+                app:cardBackgroundColor="@color/surface"
+                app:strokeColor="@color/stroke_soft">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="@dimen/card_padding_lg">
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:padding="@dimen/card_padding">
 
-                    <TextView
-                        style="@style/TextTitle"
+                    <ImageView
+                        android:id="@+id/ivActionIcon"
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:contentDescription="null"
+                        android:src="@drawable/ic_role_support_small"
+                        android:tint="@color/primary" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/spacing_md"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/tvActionTitle"
+                            style="@style/TextBody"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Acción disponible"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/tvActionSubtitle"
+                            style="@style/TextSmall"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
+                            android:text="Gestiona esta incidencia" />
+                    </LinearLayout>
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnPrimaryAction"
+                        style="@style/ButtonPrimary"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Información general" />
-
-                    <TextView
-                        android:id="@+id/tvTeam"
-                        style="@style/TextSecondary"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/spacing_lg"
-                        android:text="Equipo: -" />
-
-                    <TextView
-                        android:id="@+id/tvTechnician"
-                        style="@style/TextSecondary"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/spacing_sm"
-                        android:text="Técnico: -" />
+                        android:layout_height="40dp"
+                        android:minWidth="0dp"
+                        android:text="Acción"
+                        app:cornerRadius="14dp" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
-
-            <LinearLayout
-                android:id="@+id/layoutTechnicianActions"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/spacing_lg"
-                android:orientation="vertical"
-                android:visibility="gone">
-
-                <com.google.android.material.card.MaterialCardView
-                    style="@style/AppCard"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:cardBackgroundColor="@color/surface_elevated"
-                    app:strokeColor="@color/stroke_card"
-                    app:strokeWidth="@dimen/card_stroke_width">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:padding="@dimen/card_padding_lg">
-
-                        <TextView
-                            style="@style/TextTitle"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Acciones técnico" />
-
-                        <com.google.android.material.button.MaterialButton
-                            android:id="@+id/btnAssignToMe"
-                            style="@style/ButtonPrimary"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/spacing_lg"
-                            android:text="Asignarme" />
-
-                        <com.google.android.material.button.MaterialButton
-                            android:id="@+id/btnStartProgress"
-                            style="@style/ButtonPrimary"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/spacing_sm"
-                            android:text="Empezar incidencia" />
-
-                        <com.google.android.material.button.MaterialButton
-                            android:id="@+id/btnResolveIncident"
-                            style="@style/ButtonPrimary"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/spacing_sm"
-                            android:text="Resolver" />
-                    </LinearLayout>
-                </com.google.android.material.card.MaterialCardView>
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/layoutManagerActions"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/spacing_lg"
-                android:orientation="vertical"
-                android:visibility="gone">
-
-                <com.google.android.material.card.MaterialCardView
-                    style="@style/AppCard"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:cardBackgroundColor="@color/surface_elevated"
-                    app:strokeColor="@color/stroke_card"
-                    app:strokeWidth="@dimen/card_stroke_width">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:padding="@dimen/card_padding_lg">
-
-                        <TextView
-                            style="@style/TextTitle"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Acciones gestión" />
-
-                        <com.google.android.material.button.MaterialButton
-                            android:id="@+id/btnChangePriority"
-                            style="@style/ButtonPrimary"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/spacing_lg"
-                            android:text="Cambiar prioridad" />
-
-                        <com.google.android.material.button.MaterialButton
-                            android:id="@+id/btnChangeTeam"
-                            style="@style/ButtonPrimary"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/spacing_sm"
-                            android:text="Cambiar equipo" />
-
-                        <com.google.android.material.button.MaterialButton
-                            android:id="@+id/btnAssignTechnicianManager"
-                            style="@style/ButtonPrimary"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/spacing_sm"
-                            android:text="Asignar técnico" />
-
-                        <com.google.android.material.button.MaterialButton
-                            android:id="@+id/btnResolveIncidentManager"
-                            style="@style/ButtonPrimary"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/spacing_sm"
-                            android:text="Resolver" />
-
-                        <com.google.android.material.button.MaterialButton
-                            android:id="@+id/btnCloseIncident"
-                            style="@style/ButtonPrimary"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/spacing_sm"
-                            android:text="Cerrar incidencia" />
-                    </LinearLayout>
-                </com.google.android.material.card.MaterialCardView>
-            </LinearLayout>
-
         </LinearLayout>
 
         <com.google.android.material.tabs.TabLayout
@@ -309,7 +268,6 @@
             app:tabIndicatorColor="@color/primary"
             app:tabSelectedTextColor="@color/primary"
             app:tabTextColor="@color/secondaryText" />
-
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.viewpager2.widget.ViewPager2
@@ -318,11 +276,31 @@
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
-    <ProgressBar
-        android:id="@+id/progressBar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:visibility="gone" />
+    <LinearLayout
+        android:id="@+id/layoutLoading"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="@dimen/spacing_xxl"
+        android:visibility="gone">
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/loadingAnimation"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            app:lottie_autoPlay="true"
+            app:lottie_loop="true"
+            app:lottie_rawRes="@raw/loading_flow" />
+
+        <TextView
+            android:id="@+id/tvLoading"
+            style="@style/TextSecondary"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_md"
+            android:gravity="center"
+            android:text="Cargando..." />
+    </LinearLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

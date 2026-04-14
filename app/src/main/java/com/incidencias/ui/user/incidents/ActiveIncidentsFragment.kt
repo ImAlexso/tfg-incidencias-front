@@ -76,9 +76,6 @@ class ActiveIncidentsFragment : Fragment(R.layout.fragment_active_incidents) {
 
     override fun onResume() {
         super.onResume()
-        if (_binding != null) {
-            viewModel.loadIncidents(IncidentListMode.ACTIVE, forceRefresh = true)
-        }
     }
 
     private fun setupRecycler() {
@@ -186,21 +183,30 @@ class ActiveIncidentsFragment : Fragment(R.layout.fragment_active_incidents) {
         filteredCount = filtered.size
         incidentAdapter.submitList(filtered)
 
+        val state = viewModel.uiState.value
+
+        val showEmpty =
+            filtered.isEmpty() &&
+                    !state.isLoading &&
+                    state.errorMessage == null
+
         binding.recyclerView.visibility = if (filtered.isNotEmpty()) View.VISIBLE else View.GONE
-        binding.layoutEmpty.visibility =
-            if (filtered.isEmpty() &&
-                !viewModel.uiState.value.isLoading &&
-                viewModel.uiState.value.errorMessage == null
-            ) {
-                View.VISIBLE
+        binding.emptyState.layoutEmpty.visibility = if (showEmpty) View.VISIBLE else View.GONE
+
+        if (showEmpty) {
+            binding.emptyState.ivEmpty.setImageResource(R.drawable.ic_home_incidents)
+
+            if (allIncidents.isNotEmpty()) {
+                binding.emptyState.tvEmpty.text = "No hay incidencias que coincidan con los filtros"
+                binding.emptyState.tvEmptySubtitle.text = "Prueba a ajustar o limpiar los filtros"
             } else {
-                View.GONE
+                binding.emptyState.tvEmpty.text =
+                    state.emptyMessage ?: "No tienes incidencias activas ahora mismo"
+                binding.emptyState.tvEmptySubtitle.text =
+                    "Las incidencias activas aparecerán aquí cuando haya actividad"
             }
 
-        if (filtered.isEmpty() && allIncidents.isNotEmpty()) {
-            binding.tvEmpty.text = "No hay incidencias que coincidan con los filtros"
-        } else if (allIncidents.isEmpty()) {
-            binding.tvEmpty.text = viewModel.uiState.value.emptyMessage ?: "No hay incidencias activas"
+            binding.emptyState.tvEmptySubtitle.visibility = View.VISIBLE
         }
     }
 
@@ -209,8 +215,7 @@ class ActiveIncidentsFragment : Fragment(R.layout.fragment_active_incidents) {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.uiState.collect { state ->
 
-                    binding.progressBar.visibility =
-                        if (state.isLoading && state.incidents.isEmpty()) View.VISIBLE else View.GONE
+                    binding.layoutLoading.visibility = if (state.isLoading && !state.isRefreshing) View.VISIBLE else View.GONE
 
                     binding.swipeRefresh.isRefreshing = state.isRefreshing
 

@@ -1,6 +1,5 @@
 package com.incidencias.ui.technician.home
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
@@ -12,7 +11,6 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.incidencias.R
 import com.incidencias.databinding.FragmentTechnicianHomeBinding
 import com.incidencias.ui.notifications.NotificationsFragment
-import com.incidencias.ui.settings.SettingsActivity
 import com.incidencias.ui.technician.TechnicianMainActivity
 import com.incidencias.ui.technician.incidents.MyAssignedIncidentsFragment
 import com.incidencias.ui.technician.incidents.TeamUnassignedIncidentsFragment
@@ -47,16 +45,16 @@ class TechnicianHomeFragment : Fragment(R.layout.fragment_technician_home) {
     }
 
     private fun setupClicks() {
-        binding.cardTeamQueue.setOnClickListener {
+        binding.cardMyAssigned.setOnClickListener {
             parentFragmentManager.beginTransaction()
-                .replace(R.id.technicianFragmentContainer, TeamUnassignedIncidentsFragment())
+                .replace(R.id.technicianFragmentContainer, MyAssignedIncidentsFragment())
                 .addToBackStack(null)
                 .commit()
         }
 
-        binding.cardMyAssigned.setOnClickListener {
+        binding.cardTeamQueue.setOnClickListener {
             parentFragmentManager.beginTransaction()
-                .replace(R.id.technicianFragmentContainer, MyAssignedIncidentsFragment())
+                .replace(R.id.technicianFragmentContainer, TeamUnassignedIncidentsFragment())
                 .addToBackStack(null)
                 .commit()
         }
@@ -66,10 +64,6 @@ class TechnicianHomeFragment : Fragment(R.layout.fragment_technician_home) {
                 .replace(R.id.technicianFragmentContainer, NotificationsFragment())
                 .addToBackStack(null)
                 .commit()
-        }
-
-        binding.cardSettings.setOnClickListener {
-            startActivity(Intent(requireContext(), SettingsActivity::class.java))
         }
     }
 
@@ -81,15 +75,15 @@ class TechnicianHomeFragment : Fragment(R.layout.fragment_technician_home) {
 
                     binding.tvWelcome.text = "Bienvenido, $firstName"
                     binding.tvSubtitle.text =
-                        "Revisa tu cola del equipo, tus incidencias asignadas y las notificaciones"
-
-                    binding.tvTeamQueueCount.text = state.teamQueueCount.toString()
-                    binding.tvTeamQueueCount.visibility =
-                        if (state.teamQueueCount > 0) View.VISIBLE else View.GONE
+                        "Consulta tus incidencias asignadas, la cola del equipo y las notificaciones"
 
                     binding.tvMyAssignedCount.text = state.myAssignedCount.toString()
                     binding.tvMyAssignedCount.visibility =
                         if (state.myAssignedCount > 0) View.VISIBLE else View.GONE
+
+                    binding.tvTeamQueueCount.text = state.teamQueueCount.toString()
+                    binding.tvTeamQueueCount.visibility =
+                        if (state.teamQueueCount > 0) View.VISIBLE else View.GONE
 
                     binding.tvNotificationsCount.text = state.unreadNotificationsCount.toString()
                     binding.tvNotificationsCount.visibility =

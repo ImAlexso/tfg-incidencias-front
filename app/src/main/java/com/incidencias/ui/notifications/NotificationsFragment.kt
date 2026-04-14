@@ -63,9 +63,6 @@ class NotificationsFragment : Fragment(R.layout.fragment_notifications) {
 
     override fun onResume() {
         super.onResume()
-        if (_binding != null) {
-            viewModel.loadNotifications(forceRefresh = true)
-        }
     }
 
     private fun setupRecycler(role: String) {
@@ -208,20 +205,19 @@ class NotificationsFragment : Fragment(R.layout.fragment_notifications) {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.uiState.collect { state ->
 
-                    binding.progressBar.visibility =
-                        if (state.isLoading) View.VISIBLE else View.GONE
+                    binding.layoutLoading.visibility =
+                        if (state.isLoading && !state.isRefreshing) View.VISIBLE else View.GONE
 
                     binding.swipeRefresh.isRefreshing = state.isRefreshing
 
                     binding.recyclerViewNotifications.visibility =
                         if (state.items.isNotEmpty()) View.VISIBLE else View.GONE
 
-                    binding.layoutEmpty.visibility =
-                        if (state.items.isEmpty() && !state.isLoading && state.errorMessage == null) {
-                            View.VISIBLE
-                        } else {
-                            View.GONE
-                        }
+                    val showEmpty =
+                        state.items.isEmpty() && !state.isLoading && state.errorMessage == null
+
+                    binding.emptyState.layoutEmpty.visibility =
+                        if (showEmpty) View.VISIBLE else View.GONE
 
                     binding.layoutError.visibility =
                         if (state.errorMessage != null && !state.isLoading && state.items.isEmpty()) {
@@ -236,6 +232,26 @@ class NotificationsFragment : Fragment(R.layout.fragment_notifications) {
                         state.unreadCount > 0 && !state.isLoading && !state.isRefreshing
 
                     adapter.submitList(state.items)
+
+                    if (showEmpty) {
+                        binding.emptyState.ivEmpty.setImageResource(R.drawable.ic_home_notifications)
+
+                        val hasFilter = state.selectedFilter != NotificationFilter.ALL
+
+                        if (hasFilter) {
+                            binding.emptyState.tvEmpty.text =
+                                "No hay notificaciones para el filtro seleccionado"
+                            binding.emptyState.tvEmptySubtitle.text =
+                                "Prueba a cambiar o limpiar el filtro"
+                        } else {
+                            binding.emptyState.tvEmpty.text =
+                                "No tienes notificaciones ahora mismo"
+                            binding.emptyState.tvEmptySubtitle.text =
+                                "Los avisos y cambios recientes aparecerán aquí"
+                        }
+
+                        binding.emptyState.tvEmptySubtitle.visibility = View.VISIBLE
+                    }
 
                     when (state.selectedFilter) {
                         NotificationFilter.ALL -> binding.chipGroup.check(binding.chipAll.id)

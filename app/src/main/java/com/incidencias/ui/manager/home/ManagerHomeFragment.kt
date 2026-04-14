@@ -1,6 +1,5 @@
 package com.incidencias.ui.manager.home
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
@@ -18,7 +17,6 @@ import com.incidencias.ui.manager.incidents.ManagerIncidentsFragment
 import com.incidencias.ui.manager.incidents.PendingClosureFragment
 import com.incidencias.ui.manager.team.ManagerTeamFragment
 import com.incidencias.ui.notifications.NotificationsFragment
-import com.incidencias.ui.settings.SettingsActivity
 import kotlinx.coroutines.launch
 
 class ManagerHomeFragment : Fragment(R.layout.fragment_manager_home) {
@@ -68,10 +66,6 @@ class ManagerHomeFragment : Fragment(R.layout.fragment_manager_home) {
 
         binding.cardNotifications.setOnClickListener {
             openManagerFragment(NotificationsFragment())
-        }
-
-        binding.cardSettings.setOnClickListener {
-            startActivity(Intent(requireContext(), SettingsActivity::class.java))
         }
     }
 

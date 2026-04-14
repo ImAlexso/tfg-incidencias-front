@@ -8,10 +8,10 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.google.android.material.tabs.TabLayoutMediator
 import com.incidencias.R
 import com.incidencias.data.remote.dto.catalog.PriorityResponse
@@ -23,7 +23,14 @@ import com.incidencias.ui.incident.tabs.AttachmentsFragment
 import com.incidencias.ui.incident.tabs.HistoryFragment
 import com.incidencias.ui.incident.tabs.InternalMessagesFragment
 import com.incidencias.ui.incident.tabs.PublicMessagesFragment
+import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.incidencias.databinding.BottomSheetIncidentActionsBinding
 import kotlinx.coroutines.launch
+import android.widget.LinearLayout
+import androidx.core.content.ContextCompat
+import com.incidencias.databinding.BottomSheetSelectionListBinding
+import com.incidencias.databinding.ItemBottomSheetOptionBinding
+import com.incidencias.ui.incident.model.SelectionSheetOption
 
 class IncidentDetailActivity : AppCompatActivity() {
 
@@ -35,6 +42,7 @@ class IncidentDetailActivity : AppCompatActivity() {
     private val viewModel: IncidentDetailViewModel by viewModels()
 
     private var tabsInitialized = false
+    private var detailsExpanded = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,43 +58,25 @@ class IncidentDetailActivity : AppCompatActivity() {
             return
         }
 
-        setupActions()
+        setupDetailsToggle()
         observeViewModel()
         viewModel.initialize(incidentId)
     }
 
-    private fun setupActions() {
-        binding.btnAssignToMe.setOnClickListener {
-            viewModel.assignToMe()
+    private fun setupDetailsToggle() {
+        binding.layoutDetailsHeader.setOnClickListener {
+            detailsExpanded = !detailsExpanded
+            renderDetailsExpanded()
         }
+        renderDetailsExpanded()
+    }
 
-        binding.btnStartProgress.setOnClickListener {
-            viewModel.startProgress()
-        }
-
-        binding.btnResolveIncident.setOnClickListener {
-            viewModel.resolveIncident()
-        }
-
-        binding.btnChangePriority.setOnClickListener {
-            viewModel.requestPriorityOptions()
-        }
-
-        binding.btnChangeTeam.setOnClickListener {
-            viewModel.requestTeamOptions()
-        }
-
-        binding.btnAssignTechnicianManager.setOnClickListener {
-            viewModel.requestAssignableTechnicians()
-        }
-
-        binding.btnResolveIncidentManager.setOnClickListener {
-            viewModel.resolveIncident()
-        }
-
-        binding.btnCloseIncident.setOnClickListener {
-            viewModel.closeIncident()
-        }
+    private fun renderDetailsExpanded() {
+        binding.layoutDetailsBody.visibility = if (detailsExpanded) View.VISIBLE else View.GONE
+        binding.ivDetailsChevron.animate()
+            .rotation(if (detailsExpanded) 180f else 0f)
+            .setDuration(180)
+            .start()
     }
 
     private fun observeViewModel() {
@@ -96,9 +86,7 @@ class IncidentDetailActivity : AppCompatActivity() {
                 launch {
                     viewModel.uiState.collect { state ->
                         val showInitialLoading = state.isLoading && state.detail == null
-
-                        binding.progressBar.visibility =
-                            if (showInitialLoading) View.VISIBLE else View.GONE
+                        binding.layoutLoading.visibility = if (showInitialLoading) View.VISIBLE else View.GONE
 
                         val detail = state.detail
                         if (detail != null) {
@@ -131,9 +119,7 @@ class IncidentDetailActivity : AppCompatActivity() {
                                 ).show()
                             }
 
-                            is IncidentDetailEvent.CloseScreen -> {
-                                finish()
-                            }
+                            is IncidentDetailEvent.CloseScreen -> finish()
 
                             is IncidentDetailEvent.ShowPriorityPicker -> {
                                 showPriorityDialog(event.priorities)
@@ -165,6 +151,8 @@ class IncidentDetailActivity : AppCompatActivity() {
         binding.tvReference.text = detail.referenceCode
         binding.tvTitle.text = detail.title
         binding.tvDescription.text = detail.description
+        binding.tvTeam.text = "Equipo: ${detail.currentTeamName ?: "-"}"
+        binding.tvTechnician.text = "Técnico: ${detail.assignedTechnicianName ?: "Sin asignar"}"
 
         val statusRaw = detail.statusName.uppercase()
         val priorityRaw = detail.priorityName?.uppercase()
@@ -186,8 +174,6 @@ class IncidentDetailActivity : AppCompatActivity() {
         }
 
         binding.tvCategory.text = detail.categoryName ?: "-"
-        binding.tvTeam.text = "Equipo: ${detail.currentTeamName ?: "-"}"
-        binding.tvTechnician.text = "Técnico: ${detail.assignedTechnicianName ?: "Sin asignar"}"
 
         when (statusRaw) {
             "OPEN" -> {
@@ -238,59 +224,75 @@ class IncidentDetailActivity : AppCompatActivity() {
 
     private fun bindRoleActions(state: IncidentDetailUiState) {
         val detail = state.detail ?: return
+        val role = state.role.uppercase()
+
+        binding.layoutActionBar.visibility = View.GONE
+        binding.btnPrimaryAction.setOnClickListener(null)
 
         val canStartProgress = viewModel.canStartProgress()
         val isTechnicianInProgress = detail.statusName.equals("IN_PROGRESS", ignoreCase = true)
 
-        val showTechnicianLayout =
-            state.role == "TECHNICIAN" &&
-                    (detail.canAssignToMe || canStartProgress || (detail.canResolve && isTechnicianInProgress))
+        if (role == "TECHNICIAN") {
+            when {
+                detail.canAssignToMe -> {
+                    binding.layoutActionBar.visibility = View.VISIBLE
+                    binding.ivActionIcon.setImageResource(R.drawable.ic_role_support_small)
+                    binding.ivActionIcon.setColorFilter(getColor(R.color.primary))
+                    binding.tvActionTitle.text = "Incidencia sin asignar"
+                    binding.tvActionSubtitle.text = "Puedes asignártela y empezar a trabajar en ella."
+                    binding.btnPrimaryAction.text = "Asignarme"
+                    binding.btnPrimaryAction.setOnClickListener {
+                        viewModel.assignToMe()
+                    }
+                }
 
-        binding.layoutTechnicianActions.visibility =
-            if (showTechnicianLayout) View.VISIBLE else View.GONE
+                canStartProgress -> {
+                    binding.layoutActionBar.visibility = View.VISIBLE
+                    binding.ivActionIcon.setImageResource(R.drawable.ic_role_support_small)
+                    binding.ivActionIcon.setColorFilter(getColor(R.color.primary))
+                    binding.tvActionTitle.text = "Lista para empezar"
+                    binding.tvActionSubtitle.text = "La incidencia ya está asignada a ti."
+                    binding.btnPrimaryAction.text = "Empezar"
+                    binding.btnPrimaryAction.setOnClickListener {
+                        viewModel.startProgress()
+                    }
+                }
 
-        binding.btnAssignToMe.visibility =
-            if (detail.canAssignToMe) View.VISIBLE else View.GONE
-
-        binding.btnStartProgress.visibility =
-            if (canStartProgress) View.VISIBLE else View.GONE
-
-        binding.btnResolveIncident.visibility =
-            if (detail.canResolve && state.role == "TECHNICIAN" && isTechnicianInProgress) {
-                View.VISIBLE
-            } else {
-                View.GONE
+                detail.canResolve && isTechnicianInProgress -> {
+                    binding.layoutActionBar.visibility = View.VISIBLE
+                    binding.ivActionIcon.setImageResource(R.drawable.ic_role_support_small)
+                    binding.ivActionIcon.setColorFilter(getColor(R.color.success))
+                    binding.tvActionTitle.text = "Incidencia en progreso"
+                    binding.tvActionSubtitle.text = "Puedes marcarla como resuelta cuando termines."
+                    binding.btnPrimaryAction.text = "Resolver"
+                    binding.btnPrimaryAction.setOnClickListener {
+                        viewModel.resolveIncident()
+                    }
+                }
             }
+            return
+        }
 
-        val showManagerLayout =
-            (state.role == "MANAGER" || state.role == "ADMIN") &&
-                    (detail.canChangePriority ||
-                            detail.canChangeTeam ||
-                            detail.canAssignTechnician ||
-                            detail.canResolve ||
-                            detail.canClose)
+        if (role == "MANAGER" || role == "ADMIN") {
+            val hasAnyManagerAction =
+                detail.canChangePriority ||
+                        detail.canChangeTeam ||
+                        detail.canAssignTechnician ||
+                        detail.canResolve ||
+                        detail.canClose
 
-        binding.layoutManagerActions.visibility =
-            if (showManagerLayout) View.VISIBLE else View.GONE
-
-        binding.btnChangePriority.visibility =
-            if (detail.canChangePriority) View.VISIBLE else View.GONE
-
-        binding.btnChangeTeam.visibility =
-            if (detail.canChangeTeam) View.VISIBLE else View.GONE
-
-        binding.btnAssignTechnicianManager.visibility =
-            if (detail.canAssignTechnician) View.VISIBLE else View.GONE
-
-        binding.btnResolveIncidentManager.visibility =
-            if (detail.canResolve && (state.role == "MANAGER" || state.role == "ADMIN")) {
-                View.VISIBLE
-            } else {
-                View.GONE
+            if (hasAnyManagerAction) {
+                binding.layoutActionBar.visibility = View.VISIBLE
+                binding.ivActionIcon.setImageResource(R.drawable.ic_role_manager_small)
+                binding.ivActionIcon.setColorFilter(getColor(R.color.badge_internal))
+                binding.tvActionTitle.text = "Gestión de incidencia"
+                binding.tvActionSubtitle.text = "Prioridad, equipo, asignación y cierre."
+                binding.btnPrimaryAction.text = "Gestionar"
+                binding.btnPrimaryAction.setOnClickListener {
+                    showManagerActionsBottomSheet(detail)
+                }
             }
-
-        binding.btnCloseIncident.visibility =
-            if (detail.canClose) View.VISIBLE else View.GONE
+        }
     }
 
     private fun setupTabs(role: String) {
@@ -321,14 +323,23 @@ class IncidentDetailActivity : AppCompatActivity() {
             return
         }
 
-        val names = priorities.map { it.name }.toTypedArray()
+        val options = priorities.map {
+            SelectionSheetOption(
+                id = it.id,
+                title = mapPriorityName(it.name),
+                subtitle = mapPrioritySubtitle(it.name),
+                iconRes = R.drawable.ic_history_flag_small,
+                tintRes = mapPriorityTint(it.name)
+            )
+        }
 
-        AlertDialog.Builder(this)
-            .setTitle("Selecciona prioridad")
-            .setItems(names) { _, which ->
-                viewModel.updatePriority(priorities[which].id)
-            }
-            .show()
+        showSelectionBottomSheet(
+            title = "Selecciona prioridad",
+            subtitle = "Ajusta la prioridad de la incidencia.",
+            options = options
+        ) { selectedId ->
+            viewModel.updatePriority(selectedId)
+        }
     }
 
     private fun showTeamDialog(teams: List<TeamResponse>) {
@@ -337,14 +348,23 @@ class IncidentDetailActivity : AppCompatActivity() {
             return
         }
 
-        val names = teams.map { it.name }.toTypedArray()
+        val options = teams.map {
+            SelectionSheetOption(
+                id = it.id,
+                title = mapTeamName(it.name),
+                subtitle = "Reasigna la incidencia a este equipo.",
+                iconRes = R.drawable.ic_home_team,
+                tintRes = R.color.primary
+            )
+        }
 
-        AlertDialog.Builder(this)
-            .setTitle("Selecciona equipo")
-            .setItems(names) { _, which ->
-                viewModel.updateTeam(teams[which].id)
-            }
-            .show()
+        showSelectionBottomSheet(
+            title = "Selecciona equipo",
+            subtitle = "Elige el equipo responsable de la incidencia.",
+            options = options
+        ) { selectedId ->
+            viewModel.updateTeam(selectedId)
+        }
     }
 
     private fun showTechnicianDialog(technicians: List<AssignableTechnicianResponse>) {
@@ -353,15 +373,163 @@ class IncidentDetailActivity : AppCompatActivity() {
             return
         }
 
-        val names = technicians.map {
-            "${it.firstName} ${it.lastName} (${it.email})"
-        }.toTypedArray()
+        val options = technicians.map {
+            SelectionSheetOption(
+                id = it.id,
+                title = "${it.firstName} ${it.lastName}",
+                subtitle = it.email,
+                iconRes = R.drawable.ic_role_support_small,
+                tintRes = R.color.success
+            )
+        }
 
-        AlertDialog.Builder(this)
-            .setTitle("Asignar técnico")
-            .setItems(names) { _, which ->
-                viewModel.assignTechnician(technicians[which].id)
+        showSelectionBottomSheet(
+            title = "Asignar técnico",
+            subtitle = "Selecciona un técnico disponible para esta incidencia.",
+            options = options
+        ) { selectedId ->
+            viewModel.assignTechnician(selectedId)
+        }
+    }
+    private fun showManagerActionsBottomSheet(detail: IncidentDetailResponse) {
+        val sheetBinding = BottomSheetIncidentActionsBinding.inflate(layoutInflater)
+        val dialog = BottomSheetDialog(this)
+        dialog.setContentView(sheetBinding.root)
+        dialog.behavior.skipCollapsed = true
+
+        bindManagerSheetAction(
+            view = sheetBinding.actionPriority,
+            visible = detail.canChangePriority
+        ) {
+            dialog.dismiss()
+            viewModel.requestPriorityOptions()
+        }
+
+        bindManagerSheetAction(
+            view = sheetBinding.actionTeam,
+            visible = detail.canChangeTeam
+        ) {
+            dialog.dismiss()
+            viewModel.requestTeamOptions()
+        }
+
+        bindManagerSheetAction(
+            view = sheetBinding.actionAssignTechnician,
+            visible = detail.canAssignTechnician
+        ) {
+            dialog.dismiss()
+            viewModel.requestAssignableTechnicians()
+        }
+
+        bindManagerSheetAction(
+            view = sheetBinding.actionResolve,
+            visible = detail.canResolve
+        ) {
+            dialog.dismiss()
+            viewModel.resolveIncident()
+        }
+
+        bindManagerSheetAction(
+            view = sheetBinding.actionClose,
+            visible = detail.canClose
+        ) {
+            dialog.dismiss()
+            viewModel.closeIncident()
+        }
+
+        val hasDangerSection = detail.canClose
+        sheetBinding.dividerDanger.visibility = if (hasDangerSection) View.VISIBLE else View.GONE
+
+        dialog.show()
+    }
+
+    private fun bindManagerSheetAction(
+        view: View,
+        visible: Boolean,
+        onClick: () -> Unit
+    ) {
+        view.visibility = if (visible) View.VISIBLE else View.GONE
+        view.setOnClickListener(if (visible) View.OnClickListener { onClick() } else null)
+    }
+    private fun showSelectionBottomSheet(
+        title: String,
+        subtitle: String,
+        options: List<SelectionSheetOption>,
+        onSelected: (Long) -> Unit
+    ) {
+        val sheetBinding = BottomSheetSelectionListBinding.inflate(layoutInflater)
+        val dialog = BottomSheetDialog(this)
+        dialog.setContentView(sheetBinding.root)
+        dialog.behavior.skipCollapsed = true
+
+        sheetBinding.tvSheetTitle.text = title
+        sheetBinding.tvSheetSubtitle.text = subtitle
+        sheetBinding.containerOptions.removeAllViews()
+
+        options.forEach { option ->
+            val itemBinding = ItemBottomSheetOptionBinding.inflate(layoutInflater)
+
+            itemBinding.tvOptionTitle.text = option.title
+            itemBinding.tvOptionSubtitle.text = option.subtitle
+            itemBinding.ivOptionIcon.setImageResource(option.iconRes)
+            itemBinding.ivOptionIcon.setColorFilter(
+                ContextCompat.getColor(this, option.tintRes)
+            )
+
+            itemBinding.root.setOnClickListener {
+                dialog.dismiss()
+                onSelected(option.id)
             }
-            .show()
+
+            val params = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            )
+            itemBinding.root.layoutParams = params
+
+            sheetBinding.containerOptions.addView(itemBinding.root)
+        }
+
+        dialog.show()
+    }
+
+    private fun mapTeamName(raw: String): String {
+        return when (raw.uppercase()) {
+            "IT_SUPPORT" -> "IT Support"
+            "DEVOPS" -> "DevOps"
+            "NETWORK" -> "Network"
+            "SYSTEMS" -> "Systems"
+            else -> raw.replace("_", " ")
+        }
+    }
+
+    private fun mapPriorityName(raw: String): String {
+        return when (raw.uppercase()) {
+            "LOW" -> "Baja"
+            "MEDIUM" -> "Media"
+            "HIGH" -> "Alta"
+            "CRITICAL" -> "Crítica"
+            else -> raw
+        }
+    }
+
+    private fun mapPrioritySubtitle(raw: String): String {
+        return when (raw.uppercase()) {
+            "LOW" -> "Impacto bajo o poco urgente."
+            "MEDIUM" -> "Prioridad estándar de trabajo."
+            "HIGH" -> "Requiere atención prioritaria."
+            "CRITICAL" -> "Impacto crítico o bloqueo importante."
+            else -> "Selecciona esta prioridad."
+        }
+    }
+
+    private fun mapPriorityTint(raw: String): Int {
+        return when (raw.uppercase()) {
+            "LOW" -> R.color.priority_low_text
+            "MEDIUM" -> R.color.priority_medium_text
+            "HIGH" -> R.color.priority_high_text
+            "CRITICAL" -> R.color.priority_critical_text
+            else -> R.color.warning
+        }
     }
 }

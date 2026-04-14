@@ -50,9 +50,7 @@ class AttachmentsFragment : Fragment(R.layout.fragment_attachments) {
         binding.recyclerViewAttachments.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerViewAttachments.adapter = adapter
 
-        binding.btnSelectFile.setOnClickListener {
-            openFilePicker()
-        }
+        binding.btnSelectFile.setOnClickListener { openFilePicker() }
 
         binding.btnUploadFile.setOnClickListener {
             val uri = selectedUri ?: return@setOnClickListener
@@ -73,12 +71,9 @@ class AttachmentsFragment : Fragment(R.layout.fragment_attachments) {
 
                     binding.progressBarAttachments.isVisible = state.isUploadingAttachment
 
-                    binding.btnSelectFile.isEnabled = !isClosed && !state.isUploadingAttachment
-                    binding.btnUploadFile.isEnabled = !isClosed && !state.isUploadingAttachment
-
-                    binding.btnSelectFile.visibility = if (isClosed) View.GONE else View.VISIBLE
-                    binding.btnUploadFile.visibility = if (isClosed) View.GONE else View.VISIBLE
-                    binding.tvSelectedFile.visibility = if (isClosed) View.GONE else View.VISIBLE
+                    binding.layoutUploadControls.visibility = if (isClosed) View.GONE else View.VISIBLE
+                    binding.btnSelectFile.isEnabled = !state.isUploadingAttachment
+                    binding.btnUploadFile.isEnabled = !state.isUploadingAttachment
 
                     if (!state.isUploadingAttachment) {
                         selectedUri = null

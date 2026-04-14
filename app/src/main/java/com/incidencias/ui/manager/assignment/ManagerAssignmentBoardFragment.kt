@@ -46,9 +46,6 @@ class ManagerAssignmentBoardFragment : Fragment(R.layout.fragment_manager_assign
 
     override fun onResume() {
         super.onResume()
-        if (_binding != null) {
-            viewModel.loadBoard(forceRefresh = true)
-        }
     }
 
     private fun setupRecycler() {
@@ -116,7 +113,7 @@ class ManagerAssignmentBoardFragment : Fragment(R.layout.fragment_manager_assign
                 viewModel.uiState.collect { state ->
                     currentTechnicians = state.technicians
 
-                    binding.progressBar.visibility =
+                    binding.layoutLoading.visibility =
                         if (state.isLoading && state.unassignedIncidents.isEmpty()) {
                             View.VISIBLE
                         } else {

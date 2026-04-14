@@ -3,8 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true"
-    android:background="@color/background">
+    android:background="@color/background"
+    android:fillViewport="true">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -29,81 +29,20 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/spacing_sm"
             android:lineSpacingExtra="2dp"
-            android:text="Gestiona asignaciones, cola del equipo y notificaciones" />
-
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/cardTeamQueue"
-            style="@style/AppCard"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_xxl"
-            android:clickable="true"
-            android:focusable="true"
-            android:stateListAnimator="@animator/card_press_state_animator"
-            app:rippleColor="@color/card_ripple">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:minHeight="92dp"
-                android:orientation="horizontal"
-                android:padding="@dimen/card_padding_lg">
-
-                <ImageView
-                    android:layout_width="@dimen/icon_size_xl"
-                    android:layout_height="@dimen/icon_size_xl"
-                    android:contentDescription="@null"
-                    android:src="@android:drawable/ic_menu_agenda"
-                    android:tint="@color/primary" />
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/spacing_lg"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        style="@style/TextTitle"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Pendientes del equipo" />
-
-                    <TextView
-                        style="@style/TextSecondary"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/spacing_xs"
-                        android:text="Consulta incidencias de tu equipo que aún no tienen técnico asignado" />
-                </LinearLayout>
-
-                <TextView
-                    android:id="@+id/tvTeamQueueCount"
-                    style="@style/BadgeText"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/bg_home_counter"
-                    android:minWidth="@dimen/badge_size"
-                    android:paddingStart="@dimen/chip_padding_horizontal"
-                    android:paddingTop="@dimen/chip_padding_vertical"
-                    android:paddingEnd="@dimen/chip_padding_horizontal"
-                    android:paddingBottom="@dimen/chip_padding_vertical"
-                    android:text="0"
-                    android:visibility="gone" />
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
+            android:text="Consulta tus incidencias asignadas, la cola del equipo y las notificaciones" />
 
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/cardMyAssigned"
             style="@style/AppCard"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_lg"
+            android:layout_marginTop="@dimen/spacing_xxl"
             android:clickable="true"
             android:focusable="true"
-            android:stateListAnimator="@animator/card_press_state_animator"
-            app:rippleColor="@color/card_ripple">
+            app:cardBackgroundColor="@color/surface_elevated"
+            app:rippleColor="@color/card_ripple"
+            app:strokeColor="@color/stroke_card"
+            app:strokeWidth="@dimen/card_stroke_width">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -117,8 +56,8 @@
                     android:layout_width="@dimen/icon_size_xl"
                     android:layout_height="@dimen/icon_size_xl"
                     android:contentDescription="@null"
-                    android:src="@android:drawable/ic_menu_edit"
-                    android:tint="@color/primary" />
+                    android:src="@drawable/ic_home_incidents"
+                    app:tint="@color/primary" />
 
                 <LinearLayout
                     android:layout_width="0dp"
@@ -138,11 +77,76 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/spacing_xs"
-                        android:text="Revisa las incidencias que tienes actualmente asignadas" />
+                        android:text="Accede a las incidencias que tienes actualmente en seguimiento" />
                 </LinearLayout>
 
                 <TextView
                     android:id="@+id/tvMyAssignedCount"
+                    style="@style/BadgeText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_home_counter"
+                    android:minWidth="@dimen/badge_size"
+                    android:paddingStart="@dimen/chip_padding_horizontal"
+                    android:paddingTop="@dimen/chip_padding_vertical"
+                    android:paddingEnd="@dimen/chip_padding_horizontal"
+                    android:paddingBottom="@dimen/chip_padding_vertical"
+                    android:text="0"
+                    android:visibility="gone" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardTeamQueue"
+            style="@style/AppCard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_lg"
+            android:clickable="true"
+            android:focusable="true"
+            app:cardBackgroundColor="@color/surface_elevated"
+            app:rippleColor="@color/card_ripple"
+            app:strokeColor="@color/stroke_card"
+            app:strokeWidth="@dimen/card_stroke_width">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:minHeight="92dp"
+                android:orientation="horizontal"
+                android:padding="@dimen/card_padding_lg">
+
+                <ImageView
+                    android:layout_width="@dimen/icon_size_xl"
+                    android:layout_height="@dimen/icon_size_xl"
+                    android:contentDescription="@null"
+                    android:src="@drawable/ic_home_history"
+                    app:tint="@color/primary" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/spacing_lg"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        style="@style/TextTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Pendientes del equipo" />
+
+                    <TextView
+                        style="@style/TextSecondary"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_xs"
+                        android:text="Consulta incidencias del equipo que todavía no tienen técnico asignado" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tvTeamQueueCount"
                     style="@style/BadgeText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -165,8 +169,10 @@
             android:layout_marginTop="@dimen/spacing_lg"
             android:clickable="true"
             android:focusable="true"
-            android:stateListAnimator="@animator/card_press_state_animator"
-            app:rippleColor="@color/card_ripple">
+            app:cardBackgroundColor="@color/surface_elevated"
+            app:rippleColor="@color/card_ripple"
+            app:strokeColor="@color/stroke_card"
+            app:strokeWidth="@dimen/card_stroke_width">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -180,8 +186,8 @@
                     android:layout_width="@dimen/icon_size_xl"
                     android:layout_height="@dimen/icon_size_xl"
                     android:contentDescription="@null"
-                    android:src="@android:drawable/ic_dialog_email"
-                    android:tint="@color/primary" />
+                    android:src="@drawable/ic_home_notifications"
+                    app:tint="@color/primary" />
 
                 <LinearLayout
                     android:layout_width="0dp"
@@ -201,7 +207,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/spacing_xs"
-                        android:text="Consulta incidencias creadas, asignaciones, mensajes y adjuntos recientes" />
+                        android:text="Revisa asignaciones, cambios de estado, mensajes y adjuntos recientes" />
                 </LinearLayout>
 
                 <TextView
@@ -217,55 +223,6 @@
                     android:paddingBottom="@dimen/chip_padding_vertical"
                     android:text="0"
                     android:visibility="gone" />
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
-
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/cardSettings"
-            style="@style/AppCard"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_lg"
-            android:clickable="true"
-            android:focusable="true"
-            android:stateListAnimator="@animator/card_press_state_animator"
-            app:rippleColor="@color/card_ripple">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:minHeight="92dp"
-                android:orientation="horizontal"
-                android:padding="@dimen/card_padding_lg">
-
-                <ImageView
-                    android:layout_width="@dimen/icon_size_xl"
-                    android:layout_height="@dimen/icon_size_xl"
-                    android:contentDescription="@null"
-                    android:src="@android:drawable/ic_menu_manage"
-                    android:tint="@color/primary" />
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/spacing_lg"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        style="@style/TextTitle"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Perfil y ajustes" />
-
-                    <TextView
-                        style="@style/TextSecondary"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/spacing_xs"
-                        android:text="Edita tus datos y revisa la sesión actual" />
-                </LinearLayout>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 

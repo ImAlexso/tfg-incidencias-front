@@ -2,17 +2,18 @@ package com.incidencias.ui.auth
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.KeyEvent
 import android.view.View
-import android.widget.Toast
+import android.view.inputmethod.EditorInfo
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.widget.doAfterTextChanged
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.incidencias.databinding.ActivityLoginBinding
 import com.incidencias.session.SessionManager
-import com.incidencias.ui.admin.AdminMainActivity
 import com.incidencias.ui.manager.ManagerMainActivity
 import com.incidencias.ui.technician.TechnicianMainActivity
 import com.incidencias.ui.user.UserMainActivity
@@ -54,10 +55,77 @@ class LoginActivity : AppCompatActivity() {
 
     private fun setupListeners() {
         binding.btnLogin.setOnClickListener {
-            val email = binding.etEmail.text?.toString()?.trim().orEmpty()
-            val password = binding.etPassword.text?.toString()?.trim().orEmpty()
-            viewModel.login(email, password)
+            submitLogin()
         }
+
+        binding.etPassword.setOnEditorActionListener { _, actionId, event ->
+            val isDoneAction = actionId == EditorInfo.IME_ACTION_DONE
+            val isEnterKey =
+                event?.keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_DOWN
+
+            if (isDoneAction || isEnterKey) {
+                submitLogin()
+                true
+            } else {
+                false
+            }
+        }
+
+        binding.etEmail.doAfterTextChanged {
+            clearInputErrors()
+            hideInlineError()
+        }
+
+        binding.etPassword.doAfterTextChanged {
+            clearInputErrors()
+            hideInlineError()
+        }
+    }
+
+    private fun submitLogin() {
+        hideInlineError()
+
+        val email = binding.etEmail.text?.toString()?.trim().orEmpty()
+        val password = binding.etPassword.text?.toString()?.trim().orEmpty()
+
+        if (email.isBlank()) {
+            binding.tilEmail.error = "Introduce tu correo"
+        }
+
+        if (password.isBlank()) {
+            binding.tilPassword.error = "Introduce tu contraseña"
+        }
+
+        if (email.isBlank() || password.isBlank()) {
+            return
+        }
+
+        viewModel.login(email, password)
+    }
+
+    private fun clearInputErrors() {
+        binding.tilEmail.error = null
+        binding.tilPassword.error = null
+    }
+
+    private fun showInlineError(message: String) {
+        binding.tvLoginError.text = message
+        binding.tvLoginError.visibility = View.VISIBLE
+    }
+
+    private fun hideInlineError() {
+        binding.tvLoginError.visibility = View.GONE
+        binding.tvLoginError.text = ""
+    }
+
+    private fun setLoading(isLoading: Boolean) {
+        binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
+        binding.btnLogin.isEnabled = !isLoading
+        binding.etEmail.isEnabled = !isLoading
+        binding.etPassword.isEnabled = !isLoading
+        binding.tilEmail.isEnabled = !isLoading
+        binding.tilPassword.isEnabled = !isLoading
+        binding.btnLogin.text = if (isLoading) "Accediendo..." else "Entrar"
     }
 
     private fun observeUiState() {
@@ -66,29 +134,22 @@ class LoginActivity : AppCompatActivity() {
                 viewModel.uiState.collect { state ->
                     when (state) {
                         is LoginUiState.Idle -> {
-                            binding.progressBar.visibility = View.GONE
-                            binding.btnLogin.isEnabled = true
+                            setLoading(false)
                         }
 
                         is LoginUiState.Loading -> {
-                            binding.progressBar.visibility = View.VISIBLE
-                            binding.btnLogin.isEnabled = false
+                            hideInlineError()
+                            setLoading(true)
                         }
 
                         is LoginUiState.Success -> {
-                            binding.progressBar.visibility = View.GONE
-                            binding.btnLogin.isEnabled = true
+                            setLoading(false)
                             navigateByRole(state.role)
                         }
 
                         is LoginUiState.Error -> {
-                            binding.progressBar.visibility = View.GONE
-                            binding.btnLogin.isEnabled = true
-                            Toast.makeText(
-                                this@LoginActivity,
-                                state.message,
-                                Toast.LENGTH_LONG
-                            ).show()
+                            setLoading(false)
+                            showInlineError(state.message)
                             viewModel.resetState()
                         }
                     }
@@ -102,9 +163,8 @@ class LoginActivity : AppCompatActivity() {
             "USER" -> Intent(this, UserMainActivity::class.java)
             "TECHNICIAN" -> Intent(this, TechnicianMainActivity::class.java)
             "MANAGER" -> Intent(this, ManagerMainActivity::class.java)
-            "ADMIN" -> Intent(this, AdminMainActivity::class.java)
             else -> {
-                Toast.makeText(this, "Rol no reconocido: $role", Toast.LENGTH_LONG).show()
+                showInlineError("Rol no reconocido: $role")
                 return
             }
         }

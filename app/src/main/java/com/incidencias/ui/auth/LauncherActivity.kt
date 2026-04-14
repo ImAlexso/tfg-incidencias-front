@@ -6,7 +6,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.lifecycleScope
 import com.incidencias.session.SessionManager
-import com.incidencias.ui.admin.AdminMainActivity
 import com.incidencias.ui.manager.ManagerMainActivity
 import com.incidencias.ui.technician.TechnicianMainActivity
 import com.incidencias.ui.user.UserMainActivity
@@ -53,7 +52,6 @@ class LauncherActivity : AppCompatActivity() {
             "USER" -> Intent(this, UserMainActivity::class.java)
             "TECHNICIAN" -> Intent(this, TechnicianMainActivity::class.java)
             "MANAGER" -> Intent(this, ManagerMainActivity::class.java)
-            "ADMIN" -> Intent(this, AdminMainActivity::class.java)
             else -> Intent(this, LoginActivity::class.java)
         }
 

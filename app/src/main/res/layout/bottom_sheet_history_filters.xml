@@ -1,88 +1,139 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:fillViewport="true">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/surface"
         android:orientation="vertical"
-        android:padding="20dp">
+        android:paddingStart="@dimen/padding_screen_horizontal"
+        android:paddingTop="10dp"
+        android:paddingEnd="@dimen/padding_screen_horizontal"
+        android:paddingBottom="@dimen/spacing_lg">
+
+        <View
+            android:layout_width="40dp"
+            android:layout_height="4dp"
+            android:layout_gravity="center_horizontal"
+            android:background="@drawable/bg_bottom_sheet_handle" />
 
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Filtrar histórico"
-            android:textColor="@color/onSurface"
-            android:textSize="20sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:text="Prioridad"
-            android:textColor="@color/onSurface"
-            android:textStyle="bold" />
-
-        <RadioGroup
-            android:id="@+id/rgPriority"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp">
+            android:layout_marginTop="14dp"
+            android:text="Filtrar histórico"
+            android:textColor="@color/onSurface"
+            android:textSize="22sp"
+            android:textStyle="bold" />
 
-            <RadioButton
-                android:id="@+id/rbPriorityAll"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Todas" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="Prioridad de eventos"
+            android:textColor="@color/secondaryText"
+            android:textSize="@dimen/text_small" />
 
-            <RadioButton
-                android:id="@+id/rbPriorityLow"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Baja" />
+        <com.google.android.material.card.MaterialCardView
+            style="@style/AppCardSoft"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            app:cardBackgroundColor="@color/surfaceSoft"
+            app:strokeColor="@color/stroke_soft">
 
-            <RadioButton
-                android:id="@+id/rbPriorityMedium"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Media" />
+                android:orientation="vertical"
+                android:padding="16dp">
 
-            <RadioButton
-                android:id="@+id/rbPriorityHigh"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Alta" />
+                <TextView
+                    style="@style/TextBody"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Prioridad"
+                    android:textStyle="bold" />
 
-            <RadioButton
-                android:id="@+id/rbPriorityCritical"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Crítica" />
-        </RadioGroup>
+                <RadioGroup
+                    android:id="@+id/rgPriority"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp">
+
+                    <RadioButton
+                        android:id="@+id/rbPriorityAll"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:buttonTint="@color/primary"
+                        android:minHeight="36dp"
+                        android:text="Todas"
+                        android:textColor="@color/onSurface" />
+
+                    <RadioButton
+                        android:id="@+id/rbPriorityLow"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:buttonTint="@color/primary"
+                        android:minHeight="36dp"
+                        android:text="Baja"
+                        android:textColor="@color/onSurface" />
+
+                    <RadioButton
+                        android:id="@+id/rbPriorityMedium"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:buttonTint="@color/primary"
+                        android:minHeight="36dp"
+                        android:text="Media"
+                        android:textColor="@color/onSurface" />
+
+                    <RadioButton
+                        android:id="@+id/rbPriorityHigh"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:buttonTint="@color/primary"
+                        android:minHeight="36dp"
+                        android:text="Alta"
+                        android:textColor="@color/onSurface" />
+
+                    <RadioButton
+                        android:id="@+id/rbPriorityCritical"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:buttonTint="@color/primary"
+                        android:minHeight="36dp"
+                        android:text="Crítica"
+                        android:textColor="@color/onSurface" />
+                </RadioGroup>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="18dp"
             android:gravity="end"
             android:orientation="horizontal">
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnClearFilters"
-                style="@style/Widget.Material3.Button.TextButton"
+                style="@style/ButtonGhost"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Limpiar" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnApplyFilters"
+                style="@style/ButtonPrimary"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
+                android:layout_marginStart="@dimen/spacing_sm"
                 android:text="Aplicar" />
         </LinearLayout>
-
     </LinearLayout>
 </ScrollView>

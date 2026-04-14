@@ -3,6 +3,9 @@ package com.incidencias.ui.technician.incidents
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import androidx.fragment.app.Fragment
@@ -36,6 +39,26 @@ class TeamUnassignedIncidentsFragment : Fragment(R.layout.fragment_active_incide
     private var selectedPriority: String? = null
     private var filteredCount: Int = 0
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.menu_incidents, menu)
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_filter -> {
+                showFiltersBottomSheet()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentActiveIncidentsBinding.bind(view)
@@ -44,7 +67,6 @@ class TeamUnassignedIncidentsFragment : Fragment(R.layout.fragment_active_incide
 
         setupRecycler()
         setupRefresh()
-        setupFilters()
         observeUiState()
 
         if (savedInstanceState == null) {
@@ -54,9 +76,6 @@ class TeamUnassignedIncidentsFragment : Fragment(R.layout.fragment_active_incide
 
     override fun onResume() {
         super.onResume()
-        if (_binding != null) {
-            viewModel.loadIncidents(TechnicianListMode.TEAM_UNASSIGNED, forceRefresh = true)
-        }
     }
 
     private fun setupRecycler() {
@@ -85,18 +104,11 @@ class TeamUnassignedIncidentsFragment : Fragment(R.layout.fragment_active_incide
         }
     }
 
-    private fun setupFilters() {
-        /*binding.btnOpenFilters.setOnClickListener {
-            showFiltersBottomSheet()
-        }*/
-        updateFilterButtonText()
-    }
-
     private fun showFiltersBottomSheet() {
         val dialog = BottomSheetDialog(requireContext())
-        val sheetBinding = BottomSheetActiveFiltersBinding.inflate(LayoutInflater.from(requireContext()))
-        sheetBinding.rgStatus.visibility = View.GONE
-        sheetBinding.tvStatusLabel.visibility = View.GONE
+        val sheetBinding =
+            BottomSheetActiveFiltersBinding.inflate(LayoutInflater.from(requireContext()))
+        sheetBinding.cardStatusSection.visibility = View.GONE
         dialog.setContentView(sheetBinding.root)
 
         when (selectedPriority) {
@@ -131,12 +143,7 @@ class TeamUnassignedIncidentsFragment : Fragment(R.layout.fragment_active_incide
 
     private fun updateFilterButtonText() {
         val hasFilters = selectedPriority != null
-
-       /* binding.btnOpenFilters.text = if (hasFilters) {
-            "Filtrar · $filteredCount resultados"
-        } else {
-            "Filtrar"
-        }*/
+        filteredCount = if (hasFilters) filteredCount else 0
     }
 
     private fun applyFilters() {
@@ -150,19 +157,29 @@ class TeamUnassignedIncidentsFragment : Fragment(R.layout.fragment_active_incide
 
         incidentAdapter.submitList(filtered)
 
+        val state = viewModel.uiState.value
+
+        val showEmpty = filtered.isEmpty() &&
+                !state.isLoading &&
+                state.errorMessage == null
+
         binding.recyclerView.visibility = if (filtered.isNotEmpty()) View.VISIBLE else View.GONE
-        binding.layoutEmpty.visibility =
-            if (filtered.isEmpty() && !viewModel.uiState.value.isLoading && viewModel.uiState.value.errorMessage == null) {
-                View.VISIBLE
+        binding.emptyState.layoutEmpty.visibility = if (showEmpty) View.VISIBLE else View.GONE
+
+        if (showEmpty) {
+            binding.emptyState.ivEmpty.setImageResource(R.drawable.ic_home_team)
+
+            if (allIncidents.isNotEmpty()) {
+                binding.emptyState.tvEmpty.text = "No hay incidencias que coincidan con los filtros"
+                binding.emptyState.tvEmptySubtitle.text = "Prueba a ajustar o limpiar los filtros"
             } else {
-                View.GONE
+                binding.emptyState.tvEmpty.text =
+                    state.emptyMessage ?: "No hay incidencias pendientes de asignación en tu equipo"
+                binding.emptyState.tvEmptySubtitle.text =
+                    "Cuando entren nuevas incidencias sin asignar, aparecerán aquí"
             }
 
-        if (filtered.isEmpty() && allIncidents.isNotEmpty()) {
-            binding.tvEmpty.text = "No hay incidencias que coincidan con los filtros"
-        } else if (allIncidents.isEmpty()) {
-            binding.tvEmpty.text =
-                viewModel.uiState.value.emptyMessage ?: "No hay incidencias pendientes de asignación en tu equipo"
+            binding.emptyState.tvEmptySubtitle.visibility = View.VISIBLE
         }
     }
 
@@ -170,7 +187,7 @@ class TeamUnassignedIncidentsFragment : Fragment(R.layout.fragment_active_incide
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.uiState.collect { state ->
-                    binding.progressBar.visibility =
+                    binding.layoutLoading.visibility =
                         if (state.isLoading && state.incidents.isEmpty()) View.VISIBLE else View.GONE
 
                     binding.swipeRefresh.isRefreshing = state.isRefreshing

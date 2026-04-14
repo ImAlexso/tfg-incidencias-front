@@ -1,43 +1,80 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerViewMessages"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:padding="8dp" />
+    android:background="@color/background">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="8dp">
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingStart="@dimen/padding_screen_horizontal"
+        android:paddingTop="@dimen/spacing_md"
+        android:paddingEnd="@dimen/padding_screen_horizontal"
+        android:paddingBottom="0dp">
 
-        <EditText
-            android:id="@+id/etNewMessage"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewMessages"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
             android:layout_weight="1"
-            android:hint="Escribe un mensaje"
-            android:minHeight="48dp" />
+            android:clipToPadding="false"
+            android:paddingBottom="@dimen/spacing_md" />
 
-        <Button
-            android:id="@+id/btnSendMessage"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:id="@+id/layoutComposer"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:text="Enviar" />
+            android:layout_marginTop="@dimen/spacing_sm"
+            android:layout_marginBottom="@dimen/spacing_lg"
+            android:gravity="bottom"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/etNewMessage"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/bg_message_input_soft"
+                android:gravity="top|start"
+                android:hint="Escribe un mensaje"
+                android:inputType="textCapSentences|textMultiLine"
+                android:maxLines="4"
+                android:minHeight="52dp"
+                android:paddingStart="16dp"
+                android:paddingTop="14dp"
+                android:paddingEnd="16dp"
+                android:paddingBottom="14dp"
+                android:textColor="@color/onSurface"
+                android:textColorHint="@color/secondaryText" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnSendMessage"
+                style="@style/ButtonPrimary"
+                android:layout_width="52dp"
+                android:layout_height="52dp"
+                android:layout_marginStart="@dimen/spacing_sm"
+                android:contentDescription="Enviar mensaje"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                android:minWidth="0dp"
+                android:minHeight="0dp"
+                android:padding="0dp"
+                android:text=""
+                app:cornerRadius="16dp"
+                app:icon="@drawable/ic_send_message"
+                app:iconGravity="textStart"
+                app:iconPadding="0dp"
+                app:iconTint="@android:color/white" />
+        </LinearLayout>
     </LinearLayout>
 
     <ProgressBar
         android:id="@+id/progressBarMessages"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
+        android:layout_gravity="center"
         android:visibility="gone" />
 
-</LinearLayout>
+</FrameLayout>

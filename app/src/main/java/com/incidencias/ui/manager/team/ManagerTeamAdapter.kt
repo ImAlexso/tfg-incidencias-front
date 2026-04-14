@@ -31,7 +31,6 @@ class ManagerTeamAdapter(
         holder.binding.tvOpenCount.text = item.openCount.toString()
         holder.binding.tvInProgressCount.text = item.inProgressCount.toString()
         holder.binding.tvResolvedCount.text = item.resolvedCount.toString()
-        holder.binding.tvTotalCount.text = item.totalCount.toString()
 
         holder.binding.root.setOnClickListener {
             onItemClick(item)

@@ -71,4 +71,6 @@ dependencies {
     androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
 
     implementation("androidx.viewpager2:viewpager2:1.1.0")
+
+    implementation("com.airbnb.android:lottie:6.4.0")
 }

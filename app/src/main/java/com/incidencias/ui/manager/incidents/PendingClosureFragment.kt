@@ -44,9 +44,6 @@ class PendingClosureFragment : Fragment(R.layout.fragment_active_incidents) {
 
     override fun onResume() {
         super.onResume()
-        if (_binding != null) {
-            viewModel.loadPendingClosure(forceRefresh = true)
-        }
     }
 
     private fun setupRecycler() {
@@ -78,8 +75,8 @@ class PendingClosureFragment : Fragment(R.layout.fragment_active_incidents) {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.uiState.collect { state ->
-                    binding.progressBar.visibility =
-                        if (state.isLoading && state.incidents.isEmpty()) View.VISIBLE else View.GONE
+                    binding.layoutLoading.visibility =
+                        if (state.isLoading && !state.isRefreshing) View.VISIBLE else View.GONE
 
                     binding.swipeRefresh.isRefreshing = state.isRefreshing
 
@@ -97,15 +94,20 @@ class PendingClosureFragment : Fragment(R.layout.fragment_active_incidents) {
                     binding.recyclerView.visibility =
                         if (state.incidents.isNotEmpty()) View.VISIBLE else View.GONE
 
-                    binding.layoutEmpty.visibility =
-                        if (state.incidents.isEmpty() && !state.isLoading && state.errorMessage == null) {
-                            View.VISIBLE
-                        } else {
-                            View.GONE
-                        }
+                    val showEmpty =
+                        state.incidents.isEmpty() && !state.isLoading && state.errorMessage == null
 
-                    binding.tvEmpty.text =
-                        state.emptyMessage ?: "No hay incidencias resueltas"
+                    binding.emptyState.layoutEmpty.visibility =
+                        if (showEmpty) View.VISIBLE else View.GONE
+
+                    if (showEmpty) {
+                        binding.emptyState.ivEmpty.setImageResource(R.drawable.ic_home_history)
+                        binding.emptyState.tvEmpty.text =
+                            state.emptyMessage ?: "No hay incidencias pendientes de cierre"
+                        binding.emptyState.tvEmptySubtitle.text =
+                            "Las incidencias resueltas pendientes de cierre aparecerán aquí"
+                        binding.emptyState.tvEmptySubtitle.visibility = View.VISIBLE
+                    }
 
                     if (state.errorMessage != null && state.incidents.isNotEmpty()) {
                         Toast.makeText(requireContext(), state.errorMessage, Toast.LENGTH_LONG).show()

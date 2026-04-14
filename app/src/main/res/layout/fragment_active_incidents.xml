@@ -30,15 +30,8 @@
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
     </LinearLayout>
 
-    <ProgressBar
-        android:id="@+id/progressBar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:visibility="gone" />
-
     <LinearLayout
-        android:id="@+id/layoutEmpty"
+        android:id="@+id/layoutLoading"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
@@ -46,28 +39,27 @@
         android:padding="@dimen/spacing_xxl"
         android:visibility="gone">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="📭"
-            android:textSize="34sp" />
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/loadingAnimation"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            app:lottie_autoPlay="true"
+            app:lottie_loop="true"
+            app:lottie_rawRes="@raw/loading_flow" />
 
         <TextView
-            android:id="@+id/tvEmpty"
-            style="@style/TextTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_sm"
-            android:text="No hay incidencias" />
-
-        <TextView
+            android:id="@+id/tvLoading"
             style="@style/TextSecondary"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_xs"
+            android:layout_marginTop="@dimen/spacing_md"
             android:gravity="center"
-            android:text="Cuando haya incidencias activas, aparecerán aquí." />
+            android:text="Cargando incidencias..." />
     </LinearLayout>
+
+    <include
+        android:id="@+id/emptyState"
+        layout="@layout/view_empty_state" />
 
     <LinearLayout
         android:id="@+id/layoutError"

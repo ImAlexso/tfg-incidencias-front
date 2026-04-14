@@ -41,9 +41,6 @@ class ManagerTeamFragment : Fragment(R.layout.fragment_manager_team) {
 
     override fun onResume() {
         super.onResume()
-        if (_binding != null) {
-            viewModel.loadTeam(forceRefresh = true)
-        }
     }
 
     private fun setupRecycler() {
@@ -79,8 +76,8 @@ class ManagerTeamFragment : Fragment(R.layout.fragment_manager_team) {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.uiState.collect { state ->
-                    binding.progressBar.visibility =
-                        if (state.isLoading && state.items.isEmpty()) View.VISIBLE else View.GONE
+                    binding.layoutLoading.visibility =
+                        if (state.isLoading && !state.isRefreshing) View.VISIBLE else View.GONE
 
                     binding.swipeRefresh.isRefreshing = state.isRefreshing
 
@@ -98,14 +95,23 @@ class ManagerTeamFragment : Fragment(R.layout.fragment_manager_team) {
                     binding.recyclerView.visibility =
                         if (state.items.isNotEmpty()) View.VISIBLE else View.GONE
 
-                    binding.layoutEmpty.visibility =
-                        if (state.items.isEmpty() && !state.isLoading && state.errorMessage == null) {
-                            View.VISIBLE
-                        } else {
-                            View.GONE
-                        }
+                    val showEmpty =
+                        state.items.isEmpty() && !state.isLoading && state.errorMessage == null
 
-                    binding.tvEmpty.text = state.emptyMessage
+                    binding.emptyState.layoutEmpty.visibility =
+                        if (showEmpty) View.VISIBLE else View.GONE
+
+                    if (showEmpty) {
+                        binding.emptyState.ivEmpty.setImageResource(R.drawable.ic_home_team)
+
+                        binding.emptyState.tvEmpty.text =
+                            state.emptyMessage ?: "No hay técnicos disponibles en el equipo"
+
+                        binding.emptyState.tvEmptySubtitle.text =
+                            "Cuando haya técnicos asociados al equipo, aparecerán aquí"
+
+                        binding.emptyState.tvEmptySubtitle.visibility = View.VISIBLE
+                    }
 
                     if (state.errorMessage != null && state.items.isNotEmpty()) {
                         Toast.makeText(requireContext(), state.errorMessage, Toast.LENGTH_LONG).show()
