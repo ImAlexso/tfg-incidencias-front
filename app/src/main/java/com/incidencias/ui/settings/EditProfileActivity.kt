@@ -10,6 +10,9 @@ import com.incidencias.databinding.ActivityEditProfileBinding
 import com.incidencias.session.SessionManager
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 
 class EditProfileActivity : AppCompatActivity() {
 
@@ -21,6 +24,7 @@ class EditProfileActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityEditProfileBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        setupKeyboardInsets()
 
         sessionManager = SessionManager(applicationContext)
         userRepository = UserRepository(applicationContext)
@@ -92,6 +96,17 @@ class EditProfileActivity : AppCompatActivity() {
                     Toast.LENGTH_LONG
                 ).show()
             }
+        }
+    }
+    private fun setupKeyboardInsets() {
+        ViewCompat.setOnApplyWindowInsetsListener(binding.scrollEditProfile) { view, insets ->
+            val imeBottom = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
+            val navBottom = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom
+            val keyboardBottom = (imeBottom - navBottom).coerceAtLeast(0)
+
+            view.updatePadding(bottom = keyboardBottom)
+
+            insets
         }
     }
 }

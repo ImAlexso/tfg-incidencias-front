@@ -21,6 +21,7 @@
         app:titleTextColor="@android:color/white" />
 
     <ScrollView
+        android:id="@+id/scrollEditProfile"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:fillViewport="true"

@@ -19,6 +19,9 @@ import com.incidencias.ui.technician.TechnicianMainActivity
 import com.incidencias.ui.user.UserMainActivity
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 
 class LoginActivity : AppCompatActivity() {
 
@@ -32,6 +35,7 @@ class LoginActivity : AppCompatActivity() {
 
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        setupKeyboardInsets()
 
         sessionManager = SessionManager(applicationContext)
 
@@ -171,5 +175,16 @@ class LoginActivity : AppCompatActivity() {
 
         startActivity(intent)
         finish()
+    }
+    private fun setupKeyboardInsets() {
+        ViewCompat.setOnApplyWindowInsetsListener(binding.rootLogin) { view, insets ->
+            val imeBottom = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
+            val navBottom = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom
+            val keyboardBottom = (imeBottom - navBottom).coerceAtLeast(0)
+
+            view.updatePadding(bottom = keyboardBottom)
+
+            insets
+        }
     }
 }

@@ -17,6 +17,9 @@ import com.incidencias.ui.incident.IncidentDetailViewModel
 import com.incidencias.ui.incident.adapter.PublicMessageAdapter
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 
 class PublicMessagesFragment : Fragment(R.layout.fragment_public_messages) {
 
@@ -32,6 +35,19 @@ class PublicMessagesFragment : Fragment(R.layout.fragment_public_messages) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentPublicMessagesBinding.bind(view)
+
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { _, insets ->
+            val imeBottom = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
+            val navBottom = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom
+
+            val keyboardBottom = (imeBottom - navBottom).coerceAtLeast(0)
+
+            binding.layoutMessagesContainer.updatePadding(
+                bottom = keyboardBottom
+            )
+
+            insets
+        }
 
         viewLifecycleOwner.lifecycleScope.launch {
             val currentUserEmail = SessionManager(requireContext()).emailFlow.first().orEmpty()

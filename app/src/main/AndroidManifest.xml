@@ -32,9 +32,6 @@
             android:name=".ui.settings.SettingsActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.admin.AdminMainActivity"
-            android:exported="false" />
-        <activity
             android:name=".ui.manager.ManagerMainActivity"
             android:exported="false" />
         <activity

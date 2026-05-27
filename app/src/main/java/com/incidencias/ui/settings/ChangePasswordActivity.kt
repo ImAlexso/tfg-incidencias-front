@@ -8,6 +8,9 @@ import androidx.lifecycle.lifecycleScope
 import com.incidencias.data.repository.UserRepository
 import com.incidencias.databinding.ActivityChangePasswordBinding
 import kotlinx.coroutines.launch
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 
 class ChangePasswordActivity : AppCompatActivity() {
 
@@ -18,6 +21,7 @@ class ChangePasswordActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityChangePasswordBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        setupKeyboardInsets()
 
         userRepository = UserRepository(applicationContext)
 
@@ -77,6 +81,17 @@ class ChangePasswordActivity : AppCompatActivity() {
                     Toast.LENGTH_LONG
                 ).show()
             }
+        }
+    }
+    private fun setupKeyboardInsets() {
+        ViewCompat.setOnApplyWindowInsetsListener(binding.scrollChangePassword) { view, insets ->
+            val imeBottom = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
+            val navBottom = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom
+            val keyboardBottom = (imeBottom - navBottom).coerceAtLeast(0)
+
+            view.updatePadding(bottom = keyboardBottom)
+
+            insets
         }
     }
 }

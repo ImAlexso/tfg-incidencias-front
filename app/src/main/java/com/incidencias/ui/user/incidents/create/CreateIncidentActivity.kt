@@ -14,6 +14,9 @@ import com.incidencias.data.remote.dto.catalog.PriorityResponse
 import com.incidencias.data.remote.dto.catalog.TeamResponse
 import com.incidencias.databinding.ActivityCreateIncidentBinding
 import kotlinx.coroutines.launch
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 
 class CreateIncidentActivity : AppCompatActivity() {
 
@@ -28,6 +31,7 @@ class CreateIncidentActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityCreateIncidentBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        setupKeyboardInsets()
 
         setSupportActionBar(binding.toolbar)
         binding.toolbar.setNavigationOnClickListener { finish() }
@@ -153,6 +157,17 @@ class CreateIncidentActivity : AppCompatActivity() {
             items
         ).apply {
             setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        }
+    }
+    private fun setupKeyboardInsets() {
+        ViewCompat.setOnApplyWindowInsetsListener(binding.scrollCreateIncident) { view, insets ->
+            val imeBottom = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
+            val navBottom = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom
+            val keyboardBottom = (imeBottom - navBottom).coerceAtLeast(0)
+
+            view.updatePadding(bottom = keyboardBottom)
+
+            insets
         }
     }
 }

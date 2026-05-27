@@ -6,6 +6,7 @@
 
     <color name="background">#121316</color>
     <color name="surface">#181A1F</color>
+    <color name="surfaceSoft">#1F2229</color>
     <color name="surface_elevated">#1F2229</color>
     <color name="surfaceVariant">#23262D</color>
 
@@ -19,4 +20,46 @@
     <color name="card_ripple">#33FFFFFF</color>
 
     <color name="text_muted">#9AA3AF</color>
+
+    <color name="badge_message_soft">#143A36</color>
+    <color name="badge_internal_soft">#332844</color>
+    <color name="badge_attachment_soft">#252932</color>
+    <color name="badge_assignment_soft">#332A1F</color>
+    <color name="badge_status_soft">#1E2A3A</color>
+
+    <!-- Neutral / chips en modo oscuro -->
+    <color name="neutral_chip">#2A2F39</color>
+    <color name="neutral_badge">#23262D</color>
+    <color name="chip_checked_bg">#2A2440</color>
+    <color name="chip_checked_text">#D8C8FF</color>
+
+    <!-- Chips genéricos -->
+    <color name="status_chip_soft">#1E2A3A</color>
+    <color name="priority_chip_soft">#33241F</color>
+
+    <!-- Estados de incidencia -->
+    <color name="status_open_bg">#1E2A3A</color>
+    <color name="status_open_text">#93C5FD</color>
+
+    <color name="status_in_progress_bg">#2A2440</color>
+    <color name="status_in_progress_text">#C4B5FD</color>
+
+    <color name="status_resolved_bg">#143A36</color>
+    <color name="status_resolved_text">#6EE7B7</color>
+
+    <color name="status_closed_bg">#2A2F39</color>
+    <color name="status_closed_text">#CBD5E1</color>
+
+    <!-- Prioridades -->
+    <color name="priority_critical_bg">#3A1414</color>
+    <color name="priority_critical_text">#FCA5A5</color>
+
+    <color name="priority_high_bg">#3A1414</color>
+    <color name="priority_high_text">#FCA5A5</color>
+
+    <color name="priority_medium_bg">#3A2A12</color>
+    <color name="priority_medium_text">#FCD34D</color>
+
+    <color name="priority_low_bg">#143A36</color>
+    <color name="priority_low_text">#6EE7B7</color>
 </resources>
